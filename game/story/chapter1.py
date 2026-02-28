@@ -1,0 +1,1 @@
+# just example file to show how to try structure our project

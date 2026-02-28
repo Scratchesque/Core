@@ -1,0 +1,5 @@
+1. Install a python version that works with pygame, i found 3.12.10 works
+2. Install .venv with requirements.txt, In vs studio its 'Ctrl Shift P' then python > create environment
+3. Run in terminal 'python -m game.main' from the root folder
+
+This is very very alpha version, 0.0.0.1

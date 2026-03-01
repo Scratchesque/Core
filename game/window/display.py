@@ -1,13 +1,37 @@
 import pygame
+from game.environments.base import BaseEnvironment
+from game.core.constants import *
 
 class Display:
-    # manual init only when first created so we can call this class over and over
-    def init(screen_width=700, screen_height=500):
+    # no self, manual init only when first created so we can call this class over and over
+    def start(environment: BaseEnvironment):
         pygame.display.init()
-        pygame.display.set_mode([screen_width, screen_height])
+        screen = pygame.display.set_mode([SCREEN_WIDTH, SCREEN_HEIGHT])
 
-        Display.set_caption("Scratchesque")
         # Display.set_icon(r"Path/ICON.jpg")
+        Display.set_caption(environment.title)
+        
+        clock = pygame.time.Clock()
+        delta_time = 0
+
+        environment.setup()
+        game_state = True
+        
+        while game_state:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    return
+            
+            pygame.display.update()
+            # ?? pygame.display.flip()
+
+            game_state = environment.loop(screen, delta_time)
+
+            delta_time = clock.tick(60) / 1000
+
+        # ends the pygame window so another level can be loaded
+        pygame.display.quit()
+
         
       
     def set_caption(text):
@@ -23,7 +47,5 @@ class Display:
     def update_screen(list=None):
         return pygame.display.update(list)
     
-    def quit_screen():
-        input('Enter any key to exit > ')
+    def exit_screen():
         pygame.display.quit()
-        exit()

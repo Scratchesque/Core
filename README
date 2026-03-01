@@ -1,5 +1,11 @@
-1. Install a python version that works with pygame, i found 3.12.10 works
+1. Install a python version that works with pygame, use python versions below 3.14
 2. Install .venv with requirements.txt, In vs studio its 'Ctrl Shift P' then python > create environment
 3. Run in terminal 'python -m game.main' from the root folder
 
-This is very very alpha version, 0.0.0.1
+This got a bit more structure but still alpha version, v0.0.1 or something
+
+I've put some comments but its currently working so that you can setup any environment you want to work I believe
+To make 'new levels' go to environments/base.py and use the base class, the setup and loop in there are called in window/display.py
+To make add elements to the screen you have to draw them to the screen, in elements/sprite.py there are functions for updating (for example position) or drawing (like a triangle) for each sprite, then in the environment level you call for them to be updated or whatever you want to do to them
+
+Obviously if you don't like some things feel free to change it cause this is just my way of thinking how to implement our game

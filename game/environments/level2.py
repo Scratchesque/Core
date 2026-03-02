@@ -2,19 +2,18 @@ from game.environments.base import BaseEnvironment
 from game.core.constants import *
 from game.window.ui import *
 
-class Level1(BaseEnvironment):
+class Level2(BaseEnvironment):
     def __init__(self, title):
-        background_hex = 'ffffff'
-        theme = 'level1'
+        background_hex = '000000'
+        theme = 'level2'
         super().__init__(title, background_hex, theme)
 
     def setup(self, manager):
-        self.quit_button = Button((350, 275), (100, 50), 'Quit',manager=manager)
+        
+        self.quit_button = Button((250, 175), (150, 50), 'Quit', manager)
     
     def loop(self, event):
         quit_result = self.quit_button.button_pressed(event)
         if quit_result:
             print('Quit Game!')
             return False
-            # pygame.quit() # try not to exit from inside the environment but if you have to there is an exception so it doesnt crash  
-        

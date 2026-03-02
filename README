@@ -2,13 +2,13 @@
 2. Install .venv with requirements.txt, In vs studio its 'Ctrl Shift P' then python > create environment
 3. Run in terminal 'python -m game.main' from the root folder
 
-This got a bit more structure but still alpha version, v0.0.1 or something
+This version has got core down so that we can make multiple levels, all thats left is to create the elements to work with our future story
 
-I've put some comments but its currently working so that you can setup any environment you want to work I believe
-To make 'new levels' go to environments/base.py and use the base class, the setup and loop in there are called in window/display.py
-To make add elements to the screen you have to draw them to the screen, in elements/sprite.py there are functions for updating (for example position) or drawing (like a triangle) for each sprite, then in the environment level you call for them to be updated or whatever you want to do to them
+To make 'new levels' use the base class from  environments/base.py, the setup and loop in there are called in window/display.py, Look at level1.py/level2.py for better representation of how to setup new levels
+You can get available gui elements from window/ui.py but rn theres only a button implemented
+In the setup function you want to initialize everything you want on the scene, and in the update function there are things that are interacted with through the user that needs updateing. 
 
-Obviously if you don't like some things feel free to change it cause this is just my way of thinking how to implement our game
+Obviously if you don't like some things feel free to change it cause this is just my way of thinking how to implement our game so far
 
 License
 

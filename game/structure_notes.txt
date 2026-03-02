@@ -1,6 +1,0 @@
-1 window available
-
-need make a list or structure of each levels
-each level/menu can use the same func
-
-when a level is called to be loaded, the loading function can set up each environment

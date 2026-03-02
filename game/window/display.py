@@ -5,7 +5,7 @@ from game.core.constants import *
 class Display:
     # no self, manual init only when first created so we can call this class over and over
     def start(environment: BaseEnvironment):
-        pygame.display.init()
+        pygame.init()
         screen = pygame.display.set_mode([SCREEN_WIDTH, SCREEN_HEIGHT])
 
         # Display.set_icon(r"Path/ICON.jpg")

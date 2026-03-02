@@ -9,3 +9,7 @@ To make 'new levels' go to environments/base.py and use the base class, the setu
 To make add elements to the screen you have to draw them to the screen, in elements/sprite.py there are functions for updating (for example position) or drawing (like a triangle) for each sprite, then in the environment level you call for them to be updated or whatever you want to do to them
 
 Obviously if you don't like some things feel free to change it cause this is just my way of thinking how to implement our game
+
+License
+
+Scratchesque uses MIT license. See the third_party_licenses folder for licenses of used third party libraries.

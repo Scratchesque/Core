@@ -18,4 +18,6 @@ class Level1(BaseEnvironment):
 
         if event.type == pygame_gui.UI_BUTTON_PRESSED:
               if event.ui_element == self.hello_button:
-                  print('Hello World!')
+                  print('Quit Game!')
+                  pygame.quit() # try not to exit from inside the environment but if you have to there is an exception so it doesnt crash  
+

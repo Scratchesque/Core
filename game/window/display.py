@@ -24,6 +24,9 @@ class Display:
 
         manager = pygame_gui.UIManager((SCREEN_WIDTH, SCREEN_HEIGHT), theme_path=environment.theme_path)
 
+        # Preload commonly used fonts to avoid runtime warnings when first rendered. Big fix for linux
+        manager.preload_fonts([{'name': 'fira_code', 'point_size': 14, 'style': 'bold'}])
+
         environment.setup(manager)
         
         clock = pygame.time.Clock()
@@ -35,13 +38,18 @@ class Display:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     return 
-                
+                manager.process_events(event)
+                # Process pygame_gui events first so UI events (e.g., button presses) are generated.
+                if event.type in (pygame_gui.UI_BUTTON_PRESSED, pygame_gui.UI_TEXT_BOX_LINK_CLICKED):
+                    ui_result = environment.on_ui_event(event)
+                    if ui_result == False:
+                        return
                 result = environment.loop(event)
                 if result == False: 
                     return
-                manager.process_events(event)
             
             manager.update(delta_time)
+            environment.update(delta_time)
             screen.blit(background, (0, 0))
             manager.draw_ui(screen)
 

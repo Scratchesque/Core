@@ -1,5 +1,8 @@
-from game.window.display import Display as main_window
+import pygame_gui
+
 from game.environments.level1 import Level1
+from game.window.display import Display as main_window
+
 
 def main_loop():
     level1 = Level1("Level1")
@@ -8,8 +11,6 @@ def main_loop():
     main_window.start(level1)
     main_window.start(level2)
 
-    
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main_loop()
-   
-    

@@ -1,5 +1,4 @@
 from game.environments.base import BaseEnvironment
-from game.elements.player import TestPlayer
 from game.core.constants import *
 import pygame
 import pygame_gui

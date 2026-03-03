@@ -17,7 +17,7 @@ class Button(pygame_gui.elements.UIButton):
         super().__init__(rect, text, manager, container=container, object_id=object_id)
 
     # Example custom method
-    def button_pressed(self,event):
+    def on_click(self,event):
         if event.type == pygame_gui.UI_BUTTON_PRESSED:
             if event.ui_element == self:
                 return True
@@ -58,8 +58,7 @@ class UIFactory:
 
 class TypingTextBox(pygame_gui.elements.UITextBox):
     def __init__(self, pos, size, html_text, manager, object_id=None, typing_speed=30, container=None):
-        rect = pygame.Rect(pos, size)
-        super().__init__("", rect, manager, container=container, object_id=object_id)
+        super().__init__("", (pos, size), manager, container=container, object_id=object_id)
         self.full_text = html_text
         self.visible_chars = 0
         self.typing_speed = typing_speed  # chars per second
@@ -80,3 +79,10 @@ class TypingTextBox(pygame_gui.elements.UITextBox):
             self.visible_chars = new_count
             partial_html = truncate_html(self.full_text, self.visible_chars)
             self.set_text(partial_html)
+
+    def url_click(self,event):
+        if event.type == pygame_gui.UI_TEXT_BOX_LINK_CLICKED:
+            if event.ui_element == self:
+                return True
+        return False
+    

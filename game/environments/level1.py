@@ -8,12 +8,12 @@ class Level1(BaseEnvironment):
         theme = 'level1'
         super().__init__(title, background_hex, theme)
 
-    def setup(self, manager):
+    def create_ui(self, manager):
         self.title_label = UIFactory.label((20, 20), (660, 30), 'Title', manager, object_id='title')
         self.dialogue_box = TypingTextBox(
             (20, 60),
             (660, 160),
-            "<b>Guide</b>: Welcome. This is a small dialogue box example.",
+            "<b>Guide</b>: Welcome. <a>https://google.com</a> This is a small dialogue box example.",
             manager,
             object_id='dialogue',
             typing_speed=30
@@ -27,16 +27,16 @@ class Level1(BaseEnvironment):
             anchor='midbottom'
         )
     
-    def loop(self, event):
-        pass
-    
     def on_ui_event(self, event):
-        quit_result = self.quit_button.button_pressed(event)
+        quit_result = self.quit_button.on_click(event)
+        url_clicked = self.dialogue_box.url_click(event)
+        if url_clicked:
+            print('Pressed url box!')
         if quit_result:
             print('Quit Game!')
             return False
             # pygame.quit() # try not to exit from inside the environment but if you have to there is an exception so it doesnt crash  
 
-    def update(self, delta_time):
+    def update_frame(self, delta_time):
         self.dialogue_box.update_typing(delta_time)
         

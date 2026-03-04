@@ -1,15 +1,7 @@
-from game.environments.level1 import Level1
-from game.environments.level2 import Level2
-from game.window.display import Display as main_window
+from game.window.game_manager import GameManager
 
-
-def main_loop():
-    level1 = Level1("Level1")
-    level2 = Level2("Level2")
-
-    main_window.init(level1)
-    main_window.init(level2)
-
+def main():
+    GameManager()
 
 if __name__ == "__main__":
-    main_loop()
+    main()

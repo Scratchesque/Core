@@ -1,7 +1,7 @@
-from game.window.display import Display
+from game.window.game_manager import GameManager
 
 def main():
-    Display()
+    GameManager()
 
 if __name__ == "__main__":
     main()

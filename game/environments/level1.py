@@ -8,13 +8,13 @@ class Level1(BaseEnvironment):
         theme = 'level1'
         super().__init__(title, background_hex, theme)
 
-    def create_ui(self, manager):
-        self.title_label = UIFactory.label((20, 20), (660, 30), 'Title', manager, object_id='title')
+    def create_ui(self, ui_manager):
+        self.title_label = UIFactory.label((20, 20), (660, 30), 'Title', ui_manager, object_id='title')
         self.dialogue_box = TypingTextBox(
             (20, 60),
             (660, 160),
             "<b>Guide</b>: Welcome. <a>https://google.com</a> This is a small dialogue box example.",
-            manager,
+            ui_manager,
             object_id='dialogue',
             typing_speed=30
         )
@@ -22,7 +22,7 @@ class Level1(BaseEnvironment):
             (SCREEN_WIDTH // 2, SCREEN_HEIGHT - 40),
             (100, 50),
             'Quit',
-            manager,
+            ui_manager,
             object_id='quit',
             anchor='midbottom'
         )

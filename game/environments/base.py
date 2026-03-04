@@ -8,8 +8,8 @@ class BaseEnvironment():
         hex_str = f"{hex:06x}" if isinstance(hex, int) else str(hex)
         self.background_colour = Color(f'#{hex_str}')
         self.theme_path = f'game/themes/{theme}.json'
-    
-    def create_ui(self, manager):
+
+    def create_ui(self, ui_manager):
         pass
     
     def on_ui_event(self, event):
@@ -20,6 +20,6 @@ class BaseEnvironment():
         # Per-frame updates (e.g., typing effects, animations).
         pass
 
-    # Passes the main window so that environmennts can switch to other environments
-    def set_window(self, window):
-        self.window = window
+    # Passes the game manager so that environmennts can switch to other environments
+    def set_manager(self, manager):
+        self.game_manager = manager

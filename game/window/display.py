@@ -3,71 +3,31 @@ from game.environments.base import BaseEnvironment
 from game.core.constants import *
 import pygame_gui
 
-from game.environments.level1 import Level1
-from game.environments.level2 import Level2
-from game.environments.level_select import LevelSelect
-
 # The main window rendered on the screen
 class Display:
     # Starts rendering the environment selected
-    def __init__(self):
-        self.set_environments([
-            LevelSelect("Main Menu"),
-            Level1("Level 1"),
-            Level2("Level 2"),
-        ])
-        self.change_env("Main Menu")
-        self.run()
-
-    # From main.py sets all available levels/environments that can be rendered
-    def set_environments(self, environments: list[BaseEnvironment]):
-        self.envs = environments
-
-    # Stops the current loop and loop and starts loading the next environmnet
-    def change_env(self, env_title: str):
-        self.running = False
-        self.load_level = True
-        for env in self.envs:
-            if env.title == env_title:
-                self.next_env = env
-
-    def load_env(self):
-        if self.load_level:
-            self.env = self.next_env
-
-    # Starts loading the window and setting up environment loop
-    def run(self):
-
-        self.load_env()
-
+    def run(self, env: BaseEnvironment):
+        self.env = env
+        
         pygame.init()
         pygame.display.set_caption(self.env.title)
         # self.set_icon(r"Path/ICON.jpg")
 
         self.running = True
-        self.load_level = False
 
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-        self.background = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT))
-        self.manager = pygame_gui.UIManager((SCREEN_WIDTH, SCREEN_HEIGHT), theme_path=self.env.theme_path)
+        self.surface = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT))
+        self.ui_manager = pygame_gui.UIManager((SCREEN_WIDTH, SCREEN_HEIGHT), theme_path=self.env.theme_path)
 
-        self.background.fill(self.env.background_colour)
-        self.manager.preload_fonts([{'name': 'fira_code', 'point_size': 14, 'style': 'bold'}])
+        self.surface.fill(self.env.background_colour)
+        self.ui_manager.preload_fonts([{'name': 'fira_code', 'point_size': 14, 'style': 'bold'}])
 
-        self.env.set_window(self)
-
-        try:
-            self.main_loop()
-        except Exception as e:
-            print(f'Error: {e}')
-        finally:
-            self.exit_screen()
-            
-                
+        self.main_loop()
+        
     # The main window loop for rendering the environment
     def main_loop(self):
 
-        self.env.create_ui(self.manager)
+        self.env.create_ui(self.ui_manager)
         
         clock = pygame.time.Clock()
         delta_time = 0
@@ -86,10 +46,10 @@ class Display:
         # Things to update each frame in the environment
         self.env.update_frame(delta_time)
         # pygame_gui manager updating
-        self.manager.update(delta_time)
+        self.ui_manager.update(delta_time)
         # Reseting the screen each frame and drawing it back
-        self.screen.blit(self.background, (0, 0))
-        self.manager.draw_ui(self.screen)
+        self.screen.blit(self.surface, (0, 0))
+        self.ui_manager.draw_ui(self.screen)
 
         pygame.display.update()
 
@@ -98,24 +58,26 @@ class Display:
         for event in pygame.event.get():
             # If user press x on window then return 
             if event.type == pygame.QUIT:
-                self.running = False 
+                self.stop_game_loop()
             
             # pygame_gui manager processing
-            self.manager.process_events(event)
+            self.ui_manager.process_events(event)
 
             # If events from the environment function gets false then return
             result = self.env.on_ui_event(event)
             if result == False: 
-                self.running = False
+                self.stop_game_loop()
 
     # Sets icon for window, at least 32x32
     def set_icon(self, path):
         icon = pygame.image.load(path)
         pygame.display.set_icon(icon)
 
+    def stop_game_loop(self):
+        self.running = False
+
     # Exits the current window and checks to see if it should run again
     def exit_screen(self):
         pygame.display.quit()
-        if self.load_level:
-            self.run()
+        
         

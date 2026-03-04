@@ -20,5 +20,6 @@ class BaseEnvironment():
         # Per-frame updates (e.g., typing effects, animations).
         pass
 
+    # Passes the main window so that environmennts can switch to other environments
     def set_window(self, window):
         self.window = window

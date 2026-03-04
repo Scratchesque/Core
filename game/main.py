@@ -8,16 +8,14 @@ def main_loop():
 
     main_window = Display()
 
-
-    main_window.set_environments(
-        [
+    main_window.set_environments([
             LevelSelect("Main Menu"),
             Level1("Level 1"),
-            Level2("Level 2")
-         ]
+            Level2("Level 2"),
+        ]
     )
     main_window.change_env("Main Menu")
-    main_window.init()
+    main_window.run()
 
 
 if __name__ == "__main__":

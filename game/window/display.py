@@ -3,19 +3,22 @@ from game.environments.base import BaseEnvironment
 from game.core.constants import *
 import pygame_gui
 
+# The main window rendered on the screen
 class Display:
-    # made it a self anyway cause techically it can be recreated as another var, cause its easier to reference from inside methods now
+    # From main.py sets all available levels/environments that can be rendered
     def set_environments(self, environments: list[BaseEnvironment]):
         self.envs = environments
 
-    def change_env(self, env_title):
+    # Stops the current loop and loop and starts loading the next environmnet
+    def change_env(self, env_title: str):
         self.running = False
         self.load_level = True
         for env in self.envs:
             if env.title == env_title:
                 self.env = env
 
-    def init(self):
+    # Starts loading the window and setting up environment loop
+    def run(self):
         pygame.init()
         pygame.display.set_caption(self.env.title)
         # self.set_icon(r"Path/ICON.jpg")
@@ -32,19 +35,16 @@ class Display:
 
         self.env.set_window(self)
 
-        print('a')
         try:
-            self.run()
+            self.main_loop()
         except Exception as e:
             print(f'Error: {e}')
         finally:
-            if not self.load_level:
-                self.exit_screen()
-            else:
-                self.init()
+            self.exit_screen()
+            
                 
-
-    def run(self):
+    # The main window loop for rendering the environment
+    def main_loop(self):
 
         self.env.create_ui(self.manager)
         
@@ -54,40 +54,47 @@ class Display:
         while self.running:
             delta_time = clock.tick(60) / 1000
 
-            # process events      
-            for event in pygame.event.get():
-                # if user press x on window then return 
-                if event.type == pygame.QUIT:
-                    self.running = False 
+            # Process user input / events  
+            self.process_events()
                 
-                # pygame_gui manager processing
-                self.manager.process_events(event)
+            # Things to be processed each frame
+            self.update_frame(delta_time)
 
-                # if events from the environment function gets false then return
-                result = self.env.on_ui_event(event)
-                if result == False: 
-                    self.running = False
+    # Rendering objects on the window
+    def update_frame(self,delta_time):
+        # Things to update each frame in the environment
+        self.env.update_frame(delta_time)
+        # pygame_gui manager updating
+        self.manager.update(delta_time)
+        # Reseting the screen each frame and drawing it back
+        self.screen.blit(self.background, (0, 0))
+        self.manager.draw_ui(self.screen)
+
+        pygame.display.update()
+
+    # pygame events
+    def process_events(self):
+        for event in pygame.event.get():
+            # If user press x on window then return 
+            if event.type == pygame.QUIT:
+                self.running = False 
             
-            # things to update each frame in the environment
-            self.env.update_frame(delta_time)
-            # pygame_gui manager updating
-            self.manager.update(delta_time)
-            # reseting the screen each frame and drawing it back
-            self.screen.blit(self.background, (0, 0))
-            self.manager.draw_ui(self.screen)
+            # pygame_gui manager processing
+            self.manager.process_events(event)
 
-            pygame.display.update()
+            # If events from the environment function gets false then return
+            result = self.env.on_ui_event(event)
+            if result == False: 
+                self.running = False
 
-        
+    # Sets icon for window, at least 32x32
     def set_icon(self, path):
         icon = pygame.image.load(path)
         pygame.display.set_icon(icon)
 
-    def get_screen(self):
-        return pygame.display.get_surface()
-
-    def update_screen(self,list=None):
-        return pygame.display.update(list)
-
+    # Exits the current window and checks to see if it should run again
     def exit_screen(self):
         pygame.display.quit()
+        if self.load_level:
+            self.run()
+        

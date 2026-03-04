@@ -43,15 +43,5 @@ class LevelSelect(BaseEnvironment):
             print('Quit Game!')
             return False
 
-        # quit_result = self.quit_button.on_click(event)
-        # url_clicked = self.dialogue_box.url_click(event)
-        # if url_clicked:
-        #     print("Pressed url box!")
-        # if quit_result:
-        #     print("Quit Game!")
-        #     return False
-        # pygame.quit() # try not to exit from inside the environment but if you have to there is an exception so it doesnt crash
-
     def update_frame(self, delta_time):
         pass
-        # self.dialogue_box.update_typing(delta_time)

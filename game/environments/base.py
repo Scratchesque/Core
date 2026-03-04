@@ -19,3 +19,6 @@ class BaseEnvironment():
     def update_frame(self, delta_time):
         # Per-frame updates (e.g., typing effects, animations).
         pass
+
+    def set_window(self, window):
+        self.window = window

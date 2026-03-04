@@ -11,12 +11,16 @@ class Level2(BaseEnvironment):
     def create_ui(self, manager):
         
         self.quit_button = UIFactory.button((250, 175), (150, 50), 'Quit', manager, object_id='quit')
-    
+        self.back_button = UIFactory.button((100, 175), (100, 50), 'Back', manager)
+
     def on_ui_event(self, event):
         quit_result = self.quit_button.on_click(event)
+        back_result = self.back_button.on_click(event)
         if quit_result:
             print('Quit Game!')
             return False
+        if back_result:
+            self.window.change_env('Main Menu')
     
     def update_frame(self, delta_time):
         # Per-frame updates (e.g., typing effects, animations).

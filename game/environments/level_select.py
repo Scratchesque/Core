@@ -1,8 +1,6 @@
 from game.core.constants import *
 from game.environments.base import BaseEnvironment
-from game.environments.level1 import Level1
-from game.environments.level2 import Level2
-from game.window.ui import TypingTextBox, UIFactory
+from game.window.ui import UIFactory
 
 
 class LevelSelect(BaseEnvironment):

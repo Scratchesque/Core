@@ -15,10 +15,17 @@ class Display:
         self.load_level = True
         for env in self.envs:
             if env.title == env_title:
-                self.env = env
+                self.next_env = env
+
+    def load_env(self):
+        if self.load_level:
+            self.env = self.next_env
 
     # Starts loading the window and setting up environment loop
     def run(self):
+
+        self.load_env()
+
         pygame.init()
         pygame.display.set_caption(self.env.title)
         # self.set_icon(r"Path/ICON.jpg")

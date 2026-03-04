@@ -3,8 +3,22 @@ from game.environments.base import BaseEnvironment
 from game.core.constants import *
 import pygame_gui
 
+from game.environments.level1 import Level1
+from game.environments.level2 import Level2
+from game.environments.level_select import LevelSelect
+
 # The main window rendered on the screen
 class Display:
+    # Starts rendering the environment selected
+    def __init__(self):
+        self.set_environments([
+            LevelSelect("Main Menu"),
+            Level1("Level 1"),
+            Level2("Level 2"),
+        ])
+        self.change_env("Main Menu")
+        self.run()
+
     # From main.py sets all available levels/environments that can be rendered
     def set_environments(self, environments: list[BaseEnvironment]):
         self.envs = environments

@@ -72,7 +72,8 @@ class UIFactory:
 
 class TypingTextBox(pygame_gui.elements.UITextBox):
     def __init__(self, pos, size, html_text, manager, object_id=None, typing_speed=30, container=None):
-        super().__init__("", (pos, size), manager, container=container, object_id=object_id)
+        rect = pygame.Rect(pos, size)
+        super().__init__("", rect, manager, container=container, object_id=object_id)
         self.full_text = html_text
         self.visible_chars = 0
         self.typing_speed = typing_speed  # chars per second

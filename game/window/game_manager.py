@@ -1,8 +1,8 @@
-
 from game.environments.level1 import Level1
 from game.environments.level2 import Level2
 from game.environments.level_select import LevelSelect
 from game.window.display import Display
+
 
 class GameManager:
     def __init__(self):
@@ -12,7 +12,7 @@ class GameManager:
             Level2("Level 2"),
         ]
         self.display = Display()
-        self.change_env('Main Menu')
+        self.change_env("Main Menu")
         self.start()
 
     def start(self):
@@ -21,7 +21,7 @@ class GameManager:
             self.env.set_manager(self)
             self.display.run(self.env)
         except Exception as e:
-            print(f'Error: {e}')
+            print(f"Error: {e}")
         finally:
             self.exit_game()
 
@@ -31,7 +31,6 @@ class GameManager:
         for env in self.envs_list:
             if env.title == env_title:
                 self.env = env
-
 
     def exit_game(self):
         self.display.exit_screen()

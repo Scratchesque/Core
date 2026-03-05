@@ -1,11 +1,23 @@
 # here make it easy to place buttons and other elements on the screen?
 # idk how pygame elements work
-import pygame_gui
 import pygame
+import pygame_gui
+
 from game.window.html_typing import truncate_html, visible_text_length
 
+
 class Button(pygame_gui.elements.UIButton):
-    def __init__(self, pos, size, text, manager, object_id=None, center=False, anchor=None, container=None):
+    def __init__(
+        self,
+        pos,
+        size,
+        text,
+        manager,
+        object_id=None,
+        center=False,
+        anchor=None,
+        container=None,
+    ):
         rect = pygame.Rect((0, 0), size)
         if anchor is not None:
             # Use pygame.Rect anchor names, e.g. "center", "midtop", "midbottom".
@@ -17,7 +29,7 @@ class Button(pygame_gui.elements.UIButton):
         super().__init__(rect, text, manager, container=container, object_id=object_id)
 
     # Example custom method
-    def on_click(self,event):
+    def on_click(self, event):
         if event.type == pygame_gui.UI_BUTTON_PRESSED:
             if event.ui_element == self:
                 return True
@@ -44,7 +56,9 @@ class UIFactory:
     def text_box(pos, size, html_text, manager, object_id=None, container=None):
         # Multi-line narrative or dialogue text. Supports basic HTML-style tags.
         rect = pygame.Rect(pos, size)
-        return pygame_gui.elements.UITextBox(html_text, rect, manager, container=container, object_id=object_id)
+        return pygame_gui.elements.UITextBox(
+            html_text, rect, manager, container=container, object_id=object_id
+        )
 
     @staticmethod
     def image(pos, size, image_path, manager, object_id=None, container=None):
@@ -80,9 +94,8 @@ class TypingTextBox(pygame_gui.elements.UITextBox):
             partial_html = truncate_html(self.full_text, self.visible_chars)
             self.set_text(partial_html)
 
-    def url_click(self,event):
+    def url_click(self, event):
         if event.type == pygame_gui.UI_TEXT_BOX_LINK_CLICKED:
             if event.ui_element == self:
                 return True
         return False
-    

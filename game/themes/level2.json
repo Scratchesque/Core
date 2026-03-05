@@ -1,17 +1,14 @@
- {
-     "button":
-     {
-         "colours":
-         {
-             "normal_border": "Black",
-             "normal_bg": "White",
-             "normal_text": "Black"
-         },
-         "misc":
-         {
-             "shape": "rounded_rectangle",
-             "shape_corner_radius": "5",
-             "border_width": "5"
-         }
-     }
- }
+{
+  "button": {
+    "colours": {
+      "normal_border": "Black",
+      "normal_bg": "White",
+      "normal_text": "Black"
+    },
+    "misc": {
+      "shape": "rounded_rectangle",
+      "shape_corner_radius": "5",
+      "border_width": "5"
+    }
+  }
+}

@@ -1,7 +1,7 @@
 {
   "#test_font": {
     "font": {
-      "name": "fira_code",
+      "name": "custom_font",
       "size": "14",
       "bold": "1",
       "italic": "0",
@@ -16,7 +16,6 @@
     }
   },
   "button": {
-    "prototype": "#test_font",
     "colours": {
       "normal_border": "White",
       "normal_bg": "SlateGray",
@@ -37,6 +36,9 @@
     "parent": "label"
   },
   "#dialogue": {
-    "prototype": "#test_font"
+    "font": {
+      "name": "custom_font",
+      "size": "14"
+    }
   }
 }

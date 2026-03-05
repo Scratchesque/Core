@@ -18,7 +18,7 @@ class Level1(BaseEnvironment):
             (660, 160),
             "<b>Guide</b>: Welcome. <a>https://google.com</a> This is a small dialogue box example.",
             ui_manager,
-            object_id="#test_font",
+            object_id="#dialogue",
             typing_speed=30,
         )
         self.quit_button = UIFactory.button(

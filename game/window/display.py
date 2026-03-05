@@ -22,12 +22,6 @@ class Display:
         self.ui_manager = pygame_gui.UIManager((SCREEN_WIDTH, SCREEN_HEIGHT), theme_path=self.env.theme_path)
 
         self.surface.fill(self.env.background_colour)
-        self.ui_manager.preload_fonts([{
-                    "name": "fira_code",
-                    "point_size": 14,
-                    "style": "regular",
-                    "antialiased": "1",
-                }])
 
         self.main_loop()
 

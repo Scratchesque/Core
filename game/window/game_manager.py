@@ -12,8 +12,7 @@ class GameManager:
     def __init__(self):
         self.envs_list = self._load_environments()
         self.display = Display()
-        start_env = self._get_start_environment()
-        self.change_env(start_env.title)
+        self.change_env("Main Menu")
         self.start()
 
     def start(self):
@@ -50,16 +49,17 @@ class GameManager:
                 # Only load environment classes declared in this module/file.
                 if cls.__module__ != module.__name__:
                     continue
-
-                title = getattr(cls, "ENV_TITLE", None) or self._title_from_class_name(cls.__name__)
-                print("loading environment", title)
-                environments.append(cls(title))
+                
+                print("loading environment", cls.title)
+                environments.append(cls())
 
         if not environments:
             raise RuntimeError("No environments found in game/environments.")
 
         return environments
 
+    # what if someone wanted to change the start an environment, either it would have to be first in the sorted list, or they would have look through all the environments if they didnt know to see which is true to set it to false so they can set theirs to run
+    # better just set in here the main game manager init where to start off the program because main calls this class no?
     def _get_start_environment(self):
         for env in self.envs_list:
             if getattr(env, "START_ENV", False):
@@ -68,6 +68,9 @@ class GameManager:
         # Fallback when no environment explicitly marks itself as start.
         return self.envs_list[0]
 
+    # when scaling the project with more levels/environments, if someone were to delete/not use the env title, it falls back to the class name?
+    # is it not better to set it inside the class init instead because it also for now sets the title name of the window and the names for levels in the main menu. if it were the class name things can get confusing so we should keep it consistent
+    # cool regex tho
     def _title_from_class_name(self, class_name):
         with_spaces = re.sub(r"(?<=[a-z])(?=[A-Z])", " ", class_name)
         with_spaces = re.sub(r"(?<=[A-Za-z])(?=[0-9])", " ", with_spaces)

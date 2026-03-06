@@ -4,10 +4,8 @@ from game.window.ui import UIFactory
 
 
 class LevelSelect(BaseEnvironment):
-    ENV_TITLE = "Main Menu"
-    START_ENV = True
-
-    def __init__(self, title):
+    def __init__(self):
+        title = "Main Menu"
         background_hex = "ffffff"
         theme = "level1"
         super().__init__(title, background_hex, theme)

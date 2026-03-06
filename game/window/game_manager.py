@@ -50,7 +50,6 @@ class GameManager:
                 if cls.__module__ != module.__name__:
                     continue
                 
-                print("loading environment", cls.title)
                 environments.append(cls())
 
         if not environments:

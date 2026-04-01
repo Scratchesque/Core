@@ -4,7 +4,8 @@ from game.window.ui import TypingTextBox, UIFactory
 
 
 class Level1(BaseEnvironment):
-    def __init__(self, title):
+    def __init__(self):
+        title = "Level 1"
         background_hex = "ffffff"
         theme = "level1"
         super().__init__(title, background_hex, theme)

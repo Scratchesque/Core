@@ -4,7 +4,8 @@ from game.window.ui import UIFactory
 
 
 class LevelSelect(BaseEnvironment):
-    def __init__(self, title):
+    def __init__(self):
+        title = "Main Menu"
         background_hex = "ffffff"
         theme = "level1"
         super().__init__(title, background_hex, theme)
@@ -12,11 +13,12 @@ class LevelSelect(BaseEnvironment):
         self.reset()
 
     def reset(self):
-        self.levels = ["Level 1", "Level 2"]
+        self.levels = []
         self.buttons = []  # this need to be reset unless every time the ui is created it adds more buttons to the list
 
     def create_ui(self, ui_manager):
         self.reset()
+        self.levels = [env.title for env in self.game_manager.envs_list if env.title != self.title]
 
         x = 50
         for level in self.levels:

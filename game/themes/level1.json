@@ -1,28 +1,44 @@
 {
-    "button":
-    {
-        "colours":
-        {
-            "normal_border": "White",
-            "normal_bg": "SlateGray",
-            "normal_text": "White"
-        },
-        "misc":
-        {
-            "shape": "rounded_rectangle",
-            "shape_corner_radius": "10",
-            "border_width": "2"
-        }
-    },
-    "label":
-    {
-        "colours":
-        {
-            "normal_text": "Black"
-        }
-    },
-    "#title":
-    {
-        "parent": "label"
+  "#test_font": {
+    "font": {
+      "name": "custom_font",
+      "size": "14",
+      "bold": "1",
+      "italic": "0",
+      "regular_resource": {
+        "package": "game.assets",
+        "resource": "FiraCode-Regular.ttf"
+      },
+      "bold_resource": {
+        "package": "game.assets",
+        "resource": "FiraCode-Bold.ttf"
+      }
     }
+  },
+  "button": {
+    "colours": {
+      "normal_border": "White",
+      "normal_bg": "SlateGray",
+      "normal_text": "White"
+    },
+    "misc": {
+      "shape": "rounded_rectangle",
+      "shape_corner_radius": "10",
+      "border_width": "2"
+    }
+  },
+  "label": {
+    "colours": {
+      "normal_text": "Black"
+    }
+  },
+  "#title": {
+    "parent": "label"
+  },
+  "#dialogue": {
+    "font": {
+      "name": "custom_font",
+      "size": "14"
+    }
+  }
 }

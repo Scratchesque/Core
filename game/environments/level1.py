@@ -1,4 +1,5 @@
 from game.core.constants import *
+from game.environments.base import BaseEnvironment
 from game.core.ui import UIFactory, TypingTextBox
 
 class Level1(BaseEnvironment):

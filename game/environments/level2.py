@@ -1,6 +1,5 @@
 from game.core.constants import *
-from game.environments.base import BaseEnvironment
-from game.window.ui import UIFactory
+from game.core.ui import UIFactory
 
 
 class Level2(BaseEnvironment):

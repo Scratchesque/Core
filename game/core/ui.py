@@ -1,9 +1,7 @@
 # here make it easy to place buttons and other elements on the screen?
 # idk how pygame elements work
 import pygame
-import pygame_gui
-
-from game.window.html_typing import truncate_html, visible_text_length
+from game.core.html_typing import truncate_html, visible_text_length
 
 
 class Button(pygame_gui.elements.UIButton):

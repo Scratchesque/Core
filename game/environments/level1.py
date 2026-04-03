@@ -1,3 +1,4 @@
+from game.window.ui_windows import *
 from game.core.constants import *
 from game.environments.base import BaseEnvironment
 from game.core.ui import UIFactory, TypingTextBox
@@ -10,6 +11,10 @@ class Level1(BaseEnvironment):
         super().__init__(title, background_hex, theme)
 
     def create_ui(self, ui_manager):
+
+        ScalingWindow(pygame.Rect((50, 50), (224, 224)), ui_manager)
+        EverythingWindow(pygame.Rect((10, 10), (640, 480)), ui_manager)
+
         self.title_label = UIFactory.label(
             (20, 20), (660, 30), "Title", ui_manager, object_id="title"
         )

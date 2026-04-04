@@ -50,6 +50,7 @@ class Display:
         self.ui_manager.update(delta_time)
         # Reseting the screen each frame and drawing it back
         self.screen.blit(self.surface, (0, 0))
+        self.surface.fill(self.env.background_colour)
         self.ui_manager.draw_ui(self.screen)
 
         pygame.display.update()

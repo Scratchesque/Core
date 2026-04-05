@@ -31,7 +31,7 @@ class Display:
         delta_time = 0
 
         while self.running:
-            delta_time = clock.tick(60) / 1000
+            delta_time = clock.tick(FPS) / 1000
 
             # Process user input / events
             self.process_events()

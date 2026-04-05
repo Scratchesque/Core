@@ -19,10 +19,9 @@ class Level2(BaseEnvironment):
         quit_result = self.quit_button.on_click(event)
         back_result = self.back_button.on_click(event)
         if quit_result:
-            print("Quit Game!")
-            return False
+            self.game_manager.change_env("QUIT")
         if back_result:
-            self.game_manager.change_env("Main Menu")
+            self.game_manager.change_env("BACK")
 
     def update_frame(self, delta_time):
         # Per-frame updates (e.g., typing effects, animations).

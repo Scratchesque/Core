@@ -66,10 +66,8 @@ class Display:
             self.ui_manager.process_events(event)
 
             # If events from the environment function gets false then return
-            result = self.env.on_ui_event(event)
-            if result == False:
-                self.stop_game_loop()
-
+            self.env.on_ui_event(event)
+            
     # Sets icon for window, at least 32x32
     def set_icon(self, path):
         icon = pygame.image.load(path)

@@ -10,6 +10,7 @@ from game.window.display import Display
 class GameManager:
     def __init__(self):
         self.envs_list = self._load_environments()
+        self.env = self.envs_list[0] # for initalising
         self.display = Display()
         self.change_env("Main Menu")
 
@@ -24,13 +25,22 @@ class GameManager:
             self.quit_load_level()
 
     def change_env(self, env_title: str):
-        self.display.stop_game_loop()
-        self.load_level = True
-        for env in self.envs_list:
-            if env.title == env_title:
-                self.env = env
-                return
-
+        if env_title == "QUIT":
+            self.display.stop_game_loop()
+        elif env_title == "BACK":
+            self.display.stop_game_loop()
+            self.load_level = True
+            prev = self.prev_env
+            self.prev_env = self.env
+            self.env = prev
+        else:
+            for env in self.envs_list:
+                if env.title == env_title:
+                    self.display.stop_game_loop()
+                    self.load_level = True
+                    self.prev_env = self.env 
+                    self.env = env
+                    
     def _load_environments(self):
         environments = []
         for module_info in sorted(pkgutil.iter_modules(environments_pkg.__path__), key=lambda m: m.name):

@@ -44,9 +44,7 @@ class Level1(BaseEnvironment):
         if url_clicked:
             print("Pressed url box!")
         if quit_result:
-            print("Quit Game!")
-            return False
-            # pygame.quit() # try not to exit from inside the environment but if you have to there is an exception so it doesnt crash
+            self.game_manager.change_env("QUIT")
         self.player.process_event(event)
 
     def update_frame(self, delta_time):

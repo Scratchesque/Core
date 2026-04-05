@@ -10,14 +10,8 @@ class LevelSelect(BaseEnvironment):
         theme = "level1"
         super().__init__(title, background_hex, theme)
 
-        self.reset()
-
-    def reset(self):
-        self.levels = []
-        self.buttons = []  # this need to be reset unless every time the ui is created it adds more buttons to the list
-
     def create_ui(self, ui_manager):
-        self.reset()
+        self.buttons = []  # this need to be reset unless every time the ui is created it adds more buttons to the list
         self.levels = [env.title for env in self.game_manager.envs_list if env.title != self.title]
 
         x = 50
@@ -36,8 +30,7 @@ class LevelSelect(BaseEnvironment):
 
         quit_result = self.quit_button.on_click(event)
         if quit_result:
-            print("Quit Game!")
-            return False
+            self.game_manager.change_env("QUIT")
 
     def update_frame(self, delta_time):
         pass

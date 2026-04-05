@@ -6,7 +6,7 @@ from game.core.ui import UIFactory
 class LevelSelect(BaseEnvironment):
     def __init__(self):
         title = "Main Menu"
-        background_hex = "ffffff"
+        background_hex = "background.jpg"
         theme = "level1"
         super().__init__(title, background_hex, theme)
 

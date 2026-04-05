@@ -8,28 +8,25 @@ from game.environments.base import BaseEnvironment
 # The main window rendered on the screen
 class Display:
     # Starts rendering the environment selected
-    def run(self, env: BaseEnvironment):
-        self.env = env
-
+    def __init__(self):
         pygame.init()
-        pygame.display.set_caption(self.env.title)
-        # self.set_icon(r"Path/ICON.jpg")
-
-        self.running = True
-
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         self.surface = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT))
-        self.ui_manager = pygame_gui.UIManager((SCREEN_WIDTH, SCREEN_HEIGHT), theme_path=self.env.theme_path)
 
-        self.surface.fill(self.env.background_colour)
+    def run(self, env: BaseEnvironment):
+        pygame.display.set_caption(env.title)
 
+        self.env = env
+        self.running = True
+        self.ui_manager = pygame_gui.UIManager((SCREEN_WIDTH, SCREEN_HEIGHT), theme_path=env.theme_path)
+
+        env.clear_screen()
+        env.create_ui(self.ui_manager)
+        
         self.main_loop()
 
     # The main window loop for rendering the environment
     def main_loop(self):
-
-        self.env.create_ui(self.ui_manager)
-
         clock = pygame.time.Clock()
         delta_time = 0
 
@@ -44,13 +41,12 @@ class Display:
 
     # Rendering objects on the window
     def update_frame(self, delta_time):
+        # Reseting the screen each frame and drawing it back
+        self.env.clear_screen()
         # Things to update each frame in the environment
         self.env.update_frame(delta_time)
-        # pygame_gui manager updating
+        # pygame_gui manager updating/drawing
         self.ui_manager.update(delta_time)
-        # Reseting the screen each frame and drawing it back
-        self.screen.blit(self.surface, (0, 0))
-        self.surface.fill(self.env.background_colour)
         self.ui_manager.draw_ui(self.screen)
 
         pygame.display.update()

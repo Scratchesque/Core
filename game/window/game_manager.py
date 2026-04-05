@@ -9,9 +9,9 @@ from game.window.display import Display
 
 class GameManager:
     def __init__(self):
+        self.display = Display()
         self.envs_list = self._load_environments()
         self.env = self.envs_list[0] # for initalising
-        self.display = Display()
         self.change_env("Main Menu")
 
     def start(self):

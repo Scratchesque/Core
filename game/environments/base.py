@@ -1,13 +1,18 @@
-from pygame import Color
+from pygame import Color, image
 
 
 class BaseEnvironment:
-    def __init__(self, title: str, hex: str | int, theme: str | None = None):
+    def __init__(self, title: str, background: str, theme: str | None = None):
         self.title = title
 
-        # Allow int or string hex values; int gets zero-padded to 6 digits.
-        hex_str = f"{hex:06x}" if isinstance(hex, int) else str(hex)
-        self.background_colour = Color(f"#{hex_str}")
+        # allow hex or image background
+        self.background_colour = None
+        if background[0] == '#':
+            self.background_colour = Color(background)
+        else:
+            self.background_img = f'game/assets/{background}'
+            self.img = image.load(self.background_img).convert()
+        
         self.theme_path = f"game/themes/{theme}.json"
 
     def create_ui(self, ui_manager):
@@ -20,6 +25,13 @@ class BaseEnvironment:
     def update_frame(self, delta_time):
         # Per-frame updates (e.g., typing effects, animations).
         pass
+    
+    def clear_screen(self):
+        screen = self.game_manager.display.screen
+        if self.background_colour != None:
+            screen.fill(self.background_colour)
+        else:
+            screen.blit(self.img, (0, 0))
 
     # Passes the game manager so that environmennts can switch to other environments
     def set_manager(self, manager):

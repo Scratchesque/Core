@@ -1,5 +1,6 @@
 import pygame
 from pygame.locals import *
+from game.core.constants import *
 
 class Player:
     def __init__(self, start_pos, court_size):
@@ -18,6 +19,7 @@ class Player:
         
         self.rect = pygame.Rect((start_pos[0], start_pos[1]), (self.width, self.length))
         self.colour = pygame.Color("#000000")
+        self.area_surface = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT))
 
     def process_event(self, event):
         if event.type == KEYDOWN:
@@ -75,4 +77,7 @@ class Player:
             self.rect.x = self.position[0]
 
     def render(self, screen):
-        pygame.draw.rect(screen, self.colour, self.rect)
+        screen.blit(self.area_surface,(0,0))
+        self.area_surface.fill((1,1,1))
+        self.area_surface.set_colorkey((1,1,1))
+        pygame.draw.rect(self.area_surface, self.colour, self.rect)

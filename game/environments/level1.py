@@ -50,4 +50,4 @@ class Level1(BaseEnvironment):
     def update_frame(self, delta_time):
         self.dialogue_box.update_typing(delta_time)
         self.player.update(delta_time)
-        self.player.render(self.game_manager.display.surface)
+        self.player.render(self.game_manager.display.screen)

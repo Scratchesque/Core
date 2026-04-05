@@ -1,7 +1,4 @@
-
-from pygame_gui.elements import UIWindow, UIImage
 import pygame
-import pygame_gui
 from pygame.locals import *
 
 class Player:

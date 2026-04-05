@@ -1,4 +1,4 @@
-from pygame_gui.elements import UIImage, UIWindow, UIHorizontalScrollBar, UILabel, UITextEntryLine, UIScreenSpaceHealthBar, UIHorizontalSlider
+from pygame_gui.elements import UIImage, UIWindow, UILabel, UITextEntryLine, UIScreenSpaceHealthBar, UIHorizontalSlider
 import pygame
 
 class ScalingWindow(UIWindow):

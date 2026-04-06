@@ -1,5 +1,75 @@
-from pygame_gui.elements import UIImage, UIWindow, UILabel, UITextEntryLine, UIScreenSpaceHealthBar, UIHorizontalSlider
+from pygame_gui.elements import UIImage, UIWindow, UILabel, UITextEntryLine, UIScreenSpaceHealthBar, UIHorizontalSlider, UIButton
+from pygame_gui import *
 import pygame
+from game.core.constants import *
+
+class MovementWindow(UIWindow):
+    def __init__(self, rect, ui_manager, player):
+        super().__init__(rect, ui_manager,
+                         window_display_title='Movement',
+                         object_id='#player_movement_window',
+                         resizable=False)
+        
+        self.player = player
+
+        UIButton(
+            pygame.Rect((50,0), (100, 50)),
+            "Up",
+            manager=ui_manager,
+            container=self,
+            parent_element=self,
+            object_id="#up",
+        )
+
+        UIButton(
+            pygame.Rect((50,100), (100, 50)),
+            "Down",
+            manager=ui_manager,
+            container=self,
+            parent_element=self,
+            object_id="#down",
+        )
+
+        UIButton(
+            pygame.Rect((0,50), (100, 50)),
+            "Left",
+            manager=ui_manager,
+            container=self,
+            parent_element=self,
+            object_id="#left",
+        )
+
+        UIButton(
+            pygame.Rect((100,50), (100, 50)),
+            "Right",
+            manager=ui_manager,
+            container=self,
+            parent_element=self,
+            object_id="#right",
+        )
+
+    def process_event(self, event):
+        super().process_event(event)
+        # here ive just used another way like object ids, to not save each button indivudually to their own self.xxxx
+        if event.type == UI_BUTTON_START_PRESS:
+            if event.ui_object_id == '#player_movement_window.#up':
+                self.player.move_up = True
+            if event.ui_object_id == '#player_movement_window.#down':
+                self.player.move_down = True
+            if event.ui_object_id == '#player_movement_window.#left':
+                self.player.move_left = True
+            if event.ui_object_id == '#player_movement_window.#right':
+                self.player.move_right = True
+
+        if event.type == UI_BUTTON_PRESSED:
+            if event.ui_object_id == '#player_movement_window.#up':
+                self.player.move_up = False
+            if event.ui_object_id == '#player_movement_window.#down':
+                self.player.move_down = False
+            if event.ui_object_id == '#player_movement_window.#left':
+                self.player.move_left = False
+            if event.ui_object_id == '#player_movement_window.#right':
+                self.player.move_right = False
 
 class ScalingWindow(UIWindow):
     def __init__(self, rect, ui_manager):

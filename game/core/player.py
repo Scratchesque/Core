@@ -29,28 +29,6 @@ class Player:
         image_rect.width = 50
         self.player_image = UIImage(relative_rect=image_rect, image_surface=loaded_image, manager=ui_manager)
 
-    def process_event(self, event):
-        if event.type == KEYDOWN:
-            if event.key == K_UP:
-                self.move_up = True
-            if event.key == K_DOWN:
-                self.move_down = True
-            if event.key == K_LEFT:
-                self.move_left = True
-            if event.key == K_RIGHT:
-                self.move_right = True
-
-        if event.type == KEYUP:
-            if event.key == K_UP:
-                self.move_up = False
-            if event.key == K_DOWN:
-                self.move_down = False
-            if event.key == K_LEFT:
-                self.move_left = False
-            if event.key == K_RIGHT:
-                self.move_right = False
-        
-
     def update(self, dt):
         if self.move_up:
             self.position[1] -= dt * self.move_speed

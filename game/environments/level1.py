@@ -16,8 +16,6 @@ class Level1(BaseEnvironment):
         ScalingWindow(pygame.Rect((50, 50), (224, 224)), ui_manager)
         EverythingWindow(pygame.Rect((10, 10), (640, 480)), ui_manager)
 
-        self.player = (Player((5, int(SCREEN_HEIGHT/2)), (SCREEN_WIDTH,SCREEN_HEIGHT), ui_manager))
-
         self.title_label = UIFactory.label(
             (20, 20), (660, 30), "Title", ui_manager, object_id="title"
         )
@@ -45,8 +43,6 @@ class Level1(BaseEnvironment):
             print("Pressed url box!")
         if quit_result:
             self.game_manager.change_env("QUIT")
-        self.player.process_event(event)
 
     def update_frame(self, delta_time):
         self.dialogue_box.update_typing(delta_time)
-        self.player.update(delta_time)

@@ -13,7 +13,7 @@ class TestingEnv(BaseEnvironment):
         super().__init__(title, background_hex, theme)
 
     def create_ui(self, ui_manager):
-        self.player = Player((5, int(SCREEN_HEIGHT/2)), (SCREEN_WIDTH,SCREEN_HEIGHT), ui_manager)
+        self.player = Player((5, int(SCREEN_HEIGHT/2)), ui_manager)
 
         self.test_button = UIFactory.button(
             (SCREEN_WIDTH // 2+75, SCREEN_HEIGHT - 40),

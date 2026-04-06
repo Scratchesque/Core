@@ -1,9 +1,11 @@
 import pygame
 from pygame.locals import *
 from game.core.constants import *
+from pygame import image, transform
+from pygame_gui.elements import UIImage
 
 class Player:
-    def __init__(self, start_pos, court_size):
+    def __init__(self, start_pos, court_size, ui_manager):
         self.move_up = False
         self.move_down = False
         self.move_left = False
@@ -20,6 +22,12 @@ class Player:
         self.rect = pygame.Rect((start_pos[0], start_pos[1]), (self.width, self.length))
         self.colour = pygame.Color("#000000")
         self.area_surface = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT))
+
+        loaded_image = image.load('game/assets/background.jpg').convert()
+        image_rect = loaded_image.get_rect()
+        image_rect.height = 50
+        image_rect.width = 50
+        self.player_image = UIImage(relative_rect=image_rect, image_surface=loaded_image, manager=ui_manager)
 
     def process_event(self, event):
         if event.type == KEYDOWN:
@@ -75,9 +83,5 @@ class Player:
                 self.position[0] = self.court_size[0] - self.length - 10
 
             self.rect.x = self.position[0]
-
-    def render(self, screen):
-        screen.blit(self.area_surface,(0,0))
-        self.area_surface.fill((1,1,1))
-        self.area_surface.set_colorkey((1,1,1))
-        pygame.draw.rect(self.area_surface, self.colour, self.rect)
+        
+        self.player_image.rect = self.rect

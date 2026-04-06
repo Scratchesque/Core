@@ -10,8 +10,8 @@ class BaseEnvironment:
         if background[0] == '#':
             self.background_colour = Color(background)
         else:
-            self.background_img = f'game/assets/{background}'
-            self.img = image.load(self.background_img).convert()
+            path = f'game/assets/{background}'
+            self.background_img = image.load(path).convert()
         
         self.theme_path = f"game/themes/{theme}.json"
 
@@ -31,7 +31,7 @@ class BaseEnvironment:
         if self.background_colour != None:
             screen.fill(self.background_colour)
         else:
-            screen.blit(self.img, (0, 0))
+            screen.blit(self.background_img, (0, 0))
 
     # Passes the game manager so that environmennts can switch to other environments
     def set_manager(self, manager):

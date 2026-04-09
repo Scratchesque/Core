@@ -21,6 +21,8 @@ class Display:
         self.running = True
         self.ui_manager = pygame_gui.UIManager(self.resolution, theme_path=env.theme_path)
 
+        # how can i reset this properlly tho, cause not 100% if its right or not ;p
+        self.ui_manager.clear_and_reset()
         self.env.render_background()
         env.create_ui(self.ui_manager)
         

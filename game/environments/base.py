@@ -53,7 +53,9 @@ class BaseEnvironment:
             
             self.level_data = self._dict_to_namespace(data)
         except:
-            self.level_data = {}
+            # default file now
+            # this was setup before so if the file is wrong or misentry then theres no default data
+            self._load_data('game/levels/intro.json')
 
     # Passes the game manager so that environmennts can switch to other environments
     def set_manager(self, manager):

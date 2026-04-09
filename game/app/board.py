@@ -16,6 +16,7 @@ class Board:
         self.manager = manager
 
         self.complete = False
+        self.movement_window = None
 
         self.create_frame() 
         self.init_level()
@@ -48,9 +49,12 @@ class Board:
 
     def on_ui_event(self, event):
         if self.test_button.on_click(event):
-            # bugs cause if you press this more than once, spawns more windows, so it thinks its been pressed more times than it has, probably best to just get rid of these ui windows
-            # only temp for now untill we got the coding block implemented 
-            MovementWindow(Rect((SCREEN_WIDTH-500, 150), (250, 250)), self.manager, self.player)
+            if self.movement_window is None or not self.movement_window.alive():
+                self.movement_window = MovementWindow(
+                Rect((SCREEN_WIDTH-500, 150), (250, 250)),
+                self.manager,
+                self.player
+            )
 
         if self.carrot.collision_check(self.player):
             if self.complete == False:

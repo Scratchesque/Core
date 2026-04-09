@@ -29,17 +29,17 @@ class GameManager:
             self.display.stop_game_loop()
         elif env_title == "BACK":
             self.display.stop_game_loop()
-            self.load_level = True
             prev = self.prev_env
             self.prev_env = self.env
             self.env = prev
+            self.load_level = True
         else:
             for env in self.envs_list:
                 if env.title == env_title:
                     self.display.stop_game_loop()
-                    self.load_level = True
                     self.prev_env = self.env 
                     self.env = env
+                    self.load_level = True
                     
     def _load_environments(self):
         environments = []

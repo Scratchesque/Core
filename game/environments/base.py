@@ -22,7 +22,7 @@ class BaseEnvironment:
         self.background_img = image.load(img_path).convert()
         self.theme_path = f"game/themes/{init_data.theme}.json"
 
-    def create_ui(self, ui_manager):
+    def create_ui(self):
         pass
 
     def on_ui_event(self, event):
@@ -60,6 +60,12 @@ class BaseEnvironment:
             return data_list
         except:
             return False
+
+    def reset_new_level_data(self, level_file):
+        self.__init__(level_file)
+        self.ui_manager.clear_and_reset()
+        self.render_background()
+        self.create_ui()
 
     # Passes the game manager so that environmennts can switch to other environments
     def set_manager(self, manager):

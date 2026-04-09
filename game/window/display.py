@@ -20,9 +20,10 @@ class Display:
         self.env = env
         self.running = True
         self.ui_manager = pygame_gui.UIManager(self.resolution, theme_path=env.theme_path)
+        self.env.ui_manager = self.ui_manager
 
         self.env.render_background()
-        env.create_ui(self.ui_manager)
+        env.create_ui()
         
         self.main_loop()
 

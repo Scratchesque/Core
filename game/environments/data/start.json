@@ -1,10 +1,11 @@
 {
     "env":{
         "init":{
-            "title": "Level 2",
+            "title": "Start",
             "background": "menu/background.png",
             "theme": "game"
-        }
+        },
+        "next_level_data": "level1"
     },
     "board": {
         "tiles_amm": [5,5],

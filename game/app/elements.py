@@ -4,11 +4,11 @@ from pygame import image
 
 
 class TiledElement():
-    def __init__(self, tile_pos, tile_size, frame_pos, row_tiles_amm, img_path, ui_manager):
+    def __init__(self, tile_pos, tiles_size, frame_pos, tiles_amm, img_path, ui_manager):
         # the element needs to know the constraints of itself so it cant go out, here it sets that up
         self.frame_pos = frame_pos
-        self.tile_size = tile_size
-        self.row_tiles_amm = row_tiles_amm
+        self.tiles_size = tiles_size
+        self.tiles_amm = tiles_amm
 
         # then this takes a normal (0,1) (2,6) or any position within the board and translates it to where it should be on the screen
         self.x = tile_pos[0]
@@ -17,8 +17,8 @@ class TiledElement():
 
         loaded_image = image.load(f'game/assets/{img_path}').convert_alpha()
         self.image_rect = loaded_image.get_rect()
-        self.image_rect.height = self.tile_size
-        self.image_rect.width = self.tile_size
+        self.image_rect.width = self.tiles_size[0]
+        self.image_rect.height = self.tiles_size[1]
         self.image_rect.x = self.position[0]
         self.image_rect.y = self.position[1]
 
@@ -29,15 +29,15 @@ class TiledElement():
     def set_coord(self):
         if self.x < 0:
             self.x = 0
-        elif self.x > self.row_tiles_amm - 1:
-                self.x = self.row_tiles_amm -1
+        elif self.x > self.tiles_amm[0] - 1:
+                self.x = self.tiles_amm[0] -1
         if self.y < 0:
             self.y = 0
-        elif self.y > self.row_tiles_amm - 1:
-            self.y = self.row_tiles_amm -1
+        elif self.y > self.tiles_amm[1] - 1:
+            self.y = self.tiles_amm[1] -1
 
-        x = self.x * self.tile_size + self.frame_pos[0]
-        y = self.y * self.tile_size + self.frame_pos[1]
+        x = self.x * self.tiles_size[0] + self.frame_pos[0]
+        y = self.y * self.tiles_size[1] + self.frame_pos[1]
         self.position = [x, y]
 
     def move(self, direction):

@@ -3,7 +3,17 @@
         "init":{
             "title": "Level 1",
             "background": "menu/background.png",
-            "theme": "level1"
+            "theme": "game"
+        },
+        "next_level_data": "level2"
+    },
+    "board": {
+        "tiles_amm": [10,10],
+        "board_size": [1200, 980],
+        "board_pos":[50,50],
+        "start_pos":{
+            "player":[0,1],
+            "carrot":[2,5]
         }
     }
 }

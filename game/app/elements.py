@@ -1,7 +1,65 @@
-import math
-from pygame_gui.elements import UIImage
-from pygame import image
+from pygame import image, Rect
+from pygame_gui.elements import UIImage, UIWindow, UIButton
+from pygame_gui import *
+from game.core.constants import *
 
+class MovementWindow(UIWindow):
+    def __init__(self, rect, ui_manager, player):
+        super().__init__(rect, ui_manager,
+                         window_display_title='Movement',
+                         object_id='#player_movement_window',
+                         resizable=False)
+        
+        self.player = player
+
+        UIButton(
+            Rect((50,0), (100, 50)),
+            "Up",
+            manager=ui_manager,
+            container=self,
+            parent_element=self,
+            object_id="#up",
+        )
+
+        UIButton(
+            Rect((50,100), (100, 50)),
+            "Down",
+            manager=ui_manager,
+            container=self,
+            parent_element=self,
+            object_id="#down",
+        )
+
+        UIButton(
+            Rect((0,50), (100, 50)),
+            "Left",
+            manager=ui_manager,
+            container=self,
+            parent_element=self,
+            object_id="#left",
+        )
+
+        UIButton(
+            Rect((100,50), (100, 50)),
+            "Right",
+            manager=ui_manager,
+            container=self,
+            parent_element=self,
+            object_id="#right",
+        )
+
+    def process_event(self, event):
+        super().process_event(event)
+        # here ive just used another way like object ids, to not save each button indivudually to their own self.xxxx
+        if event.type == UI_BUTTON_PRESSED:
+            if event.ui_object_id == '#player_movement_window.#up':
+                self.player.move('U')
+            if event.ui_object_id == '#player_movement_window.#down':
+                self.player.move('D')
+            if event.ui_object_id == '#player_movement_window.#left':
+                self.player.move('L')
+            if event.ui_object_id == '#player_movement_window.#right':
+                self.player.move('R')
 
 class TiledElement():
     def __init__(self, tile_pos, tiles_size, frame_pos, tiles_amm, img_path, ui_manager):

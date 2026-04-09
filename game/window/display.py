@@ -22,8 +22,7 @@ class Display:
         self.ui_manager = pygame_gui.UIManager(self.resolution, theme_path=env.theme_path)
         self.env.ui_manager = self.ui_manager
 
-        self.env.render_background()
-        env.create_ui()
+        env.reset()
         
         self.main_loop()
 

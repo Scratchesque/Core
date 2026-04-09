@@ -17,7 +17,7 @@ class GameManager:
     def start(self):
         try:
             self.load_level = False
-            self.env.set_manager(self)
+            self.env.game_manager = self
             self.display.run(self.env)
         except Exception as e:
             print(f"Error: {e}")

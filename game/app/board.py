@@ -2,7 +2,6 @@ from pygame import image
 from pygame_gui.elements import UIImage
 
 from game.core.constants import *
-from game.core.ui import UIFactory
 from game.app.elements import TiledElement
 
 class Board:

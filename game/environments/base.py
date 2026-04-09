@@ -20,7 +20,7 @@ class BaseEnvironment:
         self.title = init_data.title
         img_path = f'game/assets/{init_data.background}'
         self.background_img = image.load(img_path).convert()
-        self.theme_path = f"game/themes/{init_data.theme}.json"
+        self.theme_path = f"game/environments/themes/{init_data.theme}.json"
 
     def create_ui(self):
         pass
@@ -32,13 +32,6 @@ class BaseEnvironment:
     def update_frame(self, delta_time):
         # Per-frame updates (e.g., typing effects, animations).
         pass
-    
-    def render_background(self):
-        display = self.game_manager.display
-        image_rect = self.background_img.get_rect()
-        image_rect.width = display.resolution[0]
-        image_rect.height = display.resolution[1]
-        UIImage(relative_rect=image_rect, image_surface=self.background_img, manager=display.ui_manager)
     
     # chatgpt made this for me cause i didnt have a clue, but it allows us to get a json file and use a.b.c to get variables from the file
     def _dict_to_namespace(self, dictionary):
@@ -60,13 +53,16 @@ class BaseEnvironment:
             return data_list
         except:
             return False
-
-    def reset_new_level_data(self, level_file):
-        self.__init__(level_file)
+    
+    def render_background(self):
+        display = self.game_manager.display
+        image_rect = self.background_img.get_rect()
+        image_rect.width = display.resolution[0]
+        image_rect.height = display.resolution[1]
+        UIImage(relative_rect=image_rect, image_surface=self.background_img, manager=display.ui_manager)
+        
+    def reset(self):
         self.ui_manager.clear_and_reset()
         self.render_background()
         self.create_ui()
 
-    # Passes the game manager so that environmennts can switch to other environments
-    def set_manager(self, manager):
-        self.game_manager = manager

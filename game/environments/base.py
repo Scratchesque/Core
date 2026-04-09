@@ -1,17 +1,12 @@
 from pygame import Color, image
-
+from pygame_gui.elements import UIImage
 
 class BaseEnvironment:
     def __init__(self, title: str, background: str, theme: str | None = None):
         self.title = title
 
-        # allow hex or image background
-        self.background_colour = None
-        if background[0] == '#':
-            self.background_colour = Color(background)
-        else:
-            path = f'game/assets/{background}'
-            self.background_img = image.load(path).convert()
+        path = f'game/assets/{background}'
+        self.background_img = image.load(path).convert()
         
         self.theme_path = f"game/themes/{theme}.json"
 
@@ -26,12 +21,13 @@ class BaseEnvironment:
         # Per-frame updates (e.g., typing effects, animations).
         pass
     
-    def clear_screen(self):
-        screen = self.game_manager.display.screen
-        if self.background_colour != None:
-            screen.fill(self.background_colour)
-        else:
-            screen.blit(self.background_img, (0, 0))
+    def render_background(self):
+        display = self.game_manager.display
+        image_rect = self.background_img.get_rect()
+        image_rect.width = display.resolution[0]
+        image_rect.height = display.resolution[1]
+        UIImage(relative_rect=image_rect, image_surface=self.background_img, manager=display.ui_manager)
+            
 
     # Passes the game manager so that environmennts can switch to other environments
     def set_manager(self, manager):

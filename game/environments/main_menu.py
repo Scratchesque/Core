@@ -6,9 +6,9 @@ from game.core.ui import UIFactory
 class LevelSelect(BaseEnvironment):
     def __init__(self):
         title = "Main Menu"
-        background_hex = "background.jpg"
+        background = "menu/background.png"
         theme = "level1"
-        super().__init__(title, background_hex, theme)
+        super().__init__(title, background, theme)
 
     def create_ui(self, ui_manager):
         self.buttons = []  # this need to be reset unless every time the ui is created it adds more buttons to the list

@@ -7,9 +7,9 @@ from game.core.player import Player
 class Level1(BaseEnvironment):
     def __init__(self):
         title = "Level 1"
-        background_hex = "#ffffff"
+        background = "menu/background.png"
         theme = "level1"
-        super().__init__(title, background_hex, theme)
+        super().__init__(title, background, theme)
 
     def create_ui(self, ui_manager):
 

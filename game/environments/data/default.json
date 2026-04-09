@@ -1,0 +1,9 @@
+{
+    "env":{
+        "init":{
+            "title":"DEFAULT",
+            "background": "menu/background.png",
+            "theme": "level1"
+        }
+    }
+}

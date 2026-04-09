@@ -1,9 +1,0 @@
-{
-    "board": {
-        "row_tiles_amm": 10,
-        "start_pos":{
-            "player":[0,1],
-            "carrot":[2,5]
-        }
-    }
-}

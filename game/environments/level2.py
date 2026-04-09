@@ -5,10 +5,7 @@ from game.core.ui import UIFactory
 
 class Level2(BaseEnvironment):
     def __init__(self):
-        title = "Level 2"
-        background = "menu/background.png"
-        theme = "level2"
-        super().__init__(title, background, theme)
+        super().__init__(level_file="level2")
 
     def create_ui(self, ui_manager):
 

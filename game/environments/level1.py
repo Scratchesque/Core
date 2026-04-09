@@ -5,10 +5,7 @@ from game.core.ui import UIFactory, TypingTextBox
 
 class Level1(BaseEnvironment):
     def __init__(self):
-        title = "Level 1"
-        background = "menu/background.png"
-        theme = "level1"
-        super().__init__(title, background, theme)
+        super().__init__(level_file="level1")
 
     def create_ui(self, ui_manager):
 

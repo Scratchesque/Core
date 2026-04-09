@@ -5,10 +5,7 @@ from game.core.ui import UIFactory
 
 class LevelSelect(BaseEnvironment):
     def __init__(self):
-        title = "Main Menu"
-        background = "menu/background.png"
-        theme = "main_menu"
-        super().__init__(title, background, theme)
+        super().__init__(level_file="menu")
 
     def create_ui(self, ui_manager):
         # i can make a proper version of the main menu loading in some time, not a priority but it does need fixing

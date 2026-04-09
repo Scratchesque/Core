@@ -6,16 +6,21 @@ from types import SimpleNamespace
 from pathlib import Path
 
 class BaseEnvironment:
-    def __init__(self, title: str, background_file: str, theme_file: str | None = None,  level_file: str | None = None,):
-        self.title = title
+    def __init__(self, level_file):
+        root_dir = "game/environments/data/"
+        env_path = f"{root_dir}{level_file}.json"
+        self.env_data = self._load_data(env_path)
+        if not self.env_data:
+            print(f'Using default env data. Could not find env data: {level_file}')
+            default_path = f"{root_dir}default.json"
+            self.env_data = self._load_data(default_path)
 
-        img_path = f'game/assets/{background_file}'
+        init_data = self.env_data.env.init
+
+        self.title = init_data.title
+        img_path = f'game/assets/{init_data.background}'
         self.background_img = image.load(img_path).convert()
-        
-        self.theme_path = f"game/themes/{theme_file}.json"
-
-        level_path = f"game/levels/{level_file}.json"
-        self._load_data(level_path)
+        self.theme_path = f"game/themes/{init_data.theme}.json"
 
     def create_ui(self, ui_manager):
         pass
@@ -50,10 +55,11 @@ class BaseEnvironment:
             path = Path(file_path)
             with open(path, 'r', encoding='utf-8') as f:
                 data = json.load(f)
-            
-            self.level_data = self._dict_to_namespace(data)
+            data_list = self._dict_to_namespace(data)
+            data_list.env.init # checks if init data exists
+            return data_list
         except:
-            self.level_data = {}
+            return False
 
     # Passes the game manager so that environmennts can switch to other environments
     def set_manager(self, manager):

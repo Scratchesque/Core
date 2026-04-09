@@ -1,14 +1,21 @@
-from pygame import Color, image
+from pygame import image
 from pygame_gui.elements import UIImage
 
+import json
+from types import SimpleNamespace
+from pathlib import Path
+
 class BaseEnvironment:
-    def __init__(self, title: str, background: str, theme: str | None = None):
+    def __init__(self, title: str, background_file: str, theme_file: str | None = None,  level_file: str | None = None,):
         self.title = title
 
-        path = f'game/assets/{background}'
-        self.background_img = image.load(path).convert()
+        img_path = f'game/assets/{background_file}'
+        self.background_img = image.load(img_path).convert()
         
-        self.theme_path = f"game/themes/{theme}.json"
+        self.theme_path = f"game/themes/{theme_file}.json"
+
+        level_path = f"game/levels/{level_file}.json"
+        self._load_data(level_path)
 
     def create_ui(self, ui_manager):
         pass
@@ -27,7 +34,26 @@ class BaseEnvironment:
         image_rect.width = display.resolution[0]
         image_rect.height = display.resolution[1]
         UIImage(relative_rect=image_rect, image_surface=self.background_img, manager=display.ui_manager)
+    
+    # chatgpt made this for me cause i didnt have a clue, but it allows us to get a json file and use a.b.c to get variables from the file
+    def _dict_to_namespace(self, dictionary):
+        if isinstance(dictionary, dict):
+            return SimpleNamespace(**{k: self._dict_to_namespace(v) for k, v in dictionary.items()})
+        elif isinstance(dictionary, list):
+            return [self._dict_to_namespace(item) for item in dictionary]
+        else:
+            return dictionary
+
+    def _load_data(self,file_path):
+        # Load from file
+        try:
+            path = Path(file_path)
+            with open(path, 'r', encoding='utf-8') as f:
+                data = json.load(f)
             
+            self.level_data = self._dict_to_namespace(data)
+        except:
+            self.level_data = {}
 
     # Passes the game manager so that environmennts can switch to other environments
     def set_manager(self, manager):

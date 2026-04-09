@@ -4,21 +4,21 @@ from pygame_gui.windows import UIConfirmationDialog
 
 from game.core.constants import *
 from game.core.ui import UIFactory
-from game.board.elements import TiledElement
+from game.app.elements import TiledElement
 from game.window.ui_windows import MovementWindow
 
-
-class GameBoard:
-    def __init__(self, game_pos, game_size, row_tiles_amm, manager):
-        self.game_pos = game_pos
-        self.tiles_len = game_size/row_tiles_amm
-        self.row_tiles_amm = row_tiles_amm
+class Board:
+    def __init__(self, board_pos, board_size, level_data, manager):
+        self.data = level_data
+        self.board_pos = board_pos
+        self.tiles_len = board_size/self.data.row_tiles_amm
+        self.row_tiles_amm = self.data.row_tiles_amm
         self.manager = manager
 
         self.complete = False
 
         self.create_frame() 
-        self.init_level((0,0),(1,2))
+        self.init_level()
 
     def create_frame(self):
         # just creating a grid , nothing extra yet like platforms or other things in the level
@@ -29,14 +29,14 @@ class GameBoard:
 
         for height in range(self.row_tiles_amm):
             for length in range(self.row_tiles_amm):
-                tile_rect.x = self.game_pos[0] + self.tiles_len * length
-                tile_rect.y = self.game_pos[1] + self.tiles_len * height
+                tile_rect.x = self.board_pos[0] + self.tiles_len * length
+                tile_rect.y = self.board_pos[1] + self.tiles_len * height
                 UIImage(tile_rect, tile_img, self.manager)
 
-    def init_level(self, player_tile_pos, carrot_tile_pos):
+    def init_level(self):
         # creating the elements to be on the screen from 'elements.py'       
-        self.carrot = TiledElement(carrot_tile_pos, self.tiles_len, self.game_pos, self.row_tiles_amm, 'levels/carrot.png', self.manager)
-        self.player = TiledElement(player_tile_pos, self.tiles_len, self.game_pos, self.row_tiles_amm, 'levels/bunny.png', self.manager)
+        self.carrot = TiledElement(self.data.start_pos.carrot, self.tiles_len, self.board_pos, self.row_tiles_amm, 'levels/carrot.png', self.manager)
+        self.player = TiledElement(self.data.start_pos.player, self.tiles_len, self.board_pos, self.row_tiles_amm, 'levels/bunny.png', self.manager)
 
         self.test_button = UIFactory.button(
             (SCREEN_WIDTH -200, SCREEN_HEIGHT - 100),

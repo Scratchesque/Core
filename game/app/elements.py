@@ -27,33 +27,29 @@ class TiledElement():
 
     # sets the position it should be on the screen based on x,y values set earlier
     def set_coord(self):
+        if self.x < 0:
+            self.x = 0
+        elif self.x > self.row_tiles_amm - 1:
+                self.x = self.row_tiles_amm -1
+        if self.y < 0:
+            self.y = 0
+        elif self.y > self.row_tiles_amm - 1:
+            self.y = self.row_tiles_amm -1
+
         x = self.x * self.tile_size + self.frame_pos[0]
         y = self.y * self.tile_size + self.frame_pos[1]
         self.position = [x, y]
 
-    # adds directions to the existing position
-    def translate_coord(self, x,y):
-        self.x += x
-        self.y += y
-    
     def move(self, direction):
         if direction == 'U':
-            self.translate_coord(0,-1)
-            if self.y < 0:
-                self.y = 0
+            self.y -= 1
         if direction == 'D':
-            self.translate_coord(0,1)
-            if self.y > self.row_tiles_amm - 1:
-                self.y = self.row_tiles_amm -1
+            self.y += 1           
         if direction == 'L':
-            self.translate_coord(-1,0)
-            if self.x < 0:
-                self.x = 0
+            self.x -= 1
         if direction == 'R':
-            self.translate_coord(1,0)
-            if self.x > self.row_tiles_amm - 1:
-                self.x = self.row_tiles_amm -1
-        
+            self.x += 1
+
         self.set_coord()
         self.element_img.rect.x = self.position[0]
         self.element_img.rect.y = self.position[1]

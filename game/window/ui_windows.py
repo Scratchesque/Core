@@ -51,25 +51,15 @@ class MovementWindow(UIWindow):
     def process_event(self, event):
         super().process_event(event)
         # here ive just used another way like object ids, to not save each button indivudually to their own self.xxxx
-        if event.type == UI_BUTTON_START_PRESS:
-            if event.ui_object_id == '#player_movement_window.#up':
-                self.player.move_up = True
-            if event.ui_object_id == '#player_movement_window.#down':
-                self.player.move_down = True
-            if event.ui_object_id == '#player_movement_window.#left':
-                self.player.move_left = True
-            if event.ui_object_id == '#player_movement_window.#right':
-                self.player.move_right = True
-
         if event.type == UI_BUTTON_PRESSED:
             if event.ui_object_id == '#player_movement_window.#up':
-                self.player.move_up = False
+                self.player.move('U')
             if event.ui_object_id == '#player_movement_window.#down':
-                self.player.move_down = False
+                self.player.move('D')
             if event.ui_object_id == '#player_movement_window.#left':
-                self.player.move_left = False
+                self.player.move('L')
             if event.ui_object_id == '#player_movement_window.#right':
-                self.player.move_right = False
+                self.player.move('R')
 
 class ScalingWindow(UIWindow):
     def __init__(self, rect, ui_manager):

@@ -7,7 +7,7 @@ class LevelSelect(BaseEnvironment):
     def __init__(self):
         title = "Main Menu"
         background = "menu/background.png"
-        theme = "level1"
+        theme = "main_menu"
         super().__init__(title, background, theme)
 
     def create_ui(self, ui_manager):
@@ -16,14 +16,14 @@ class LevelSelect(BaseEnvironment):
 
         x = 50
         for level in self.levels:
-            self.buttons.append(UIFactory.button((x, SCREEN_HEIGHT // 2), (100, 50), level, ui_manager))
+            self.buttons.append(UIFactory.button_img((x, SCREEN_HEIGHT // 2), (100, 50), 'game/assets/menu/button.png', level, ui_manager, object_id='#trasparent'))
             x += 150
 
         self.quit_button = UIFactory.button((250, 175), (150, 50), "Quit", ui_manager, object_id="quit")
 
     def on_ui_event(self, event):
         for x in range(len(self.buttons)):
-            if self.buttons[x].on_click(event):
+            if self.buttons[x].button.on_click(event):
                 title = self.levels[x]
                 self.game_manager.change_env(title)
                 print(f"Pressed {title}!")

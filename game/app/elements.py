@@ -94,61 +94,54 @@ class MovementWindow(UIWindow):
             if event.ui_object_id == '#player_movement_window.#right':
                 self.player.move('R')
 
-class TiledElement():
-    def __init__(self, tile_pos, tiles_size, frame_pos, tiles_amm, img_path, ui_manager):
-        # the element needs to know the constraints of itself so it cant go out, here it sets that up
-        self.frame_pos = frame_pos
+class TiledElement(UIImage):
+    def __init__(self, start_pos, tiles_size, tiles_amm, img_path, ui_manager, container):
+        self.pos = start_pos
         self.tiles_size = tiles_size
         self.tiles_amm = tiles_amm
 
-        # then this takes a normal (0,1) (2,6) or any position within the board and translates it to where it should be on the screen
-        self.x = tile_pos[0]
-        self.y = tile_pos[1]
-        self.set_coord()
-
         loaded_image = image.load(f'game/assets/{img_path}').convert_alpha()
         self.image_rect = loaded_image.get_rect()
-        self.image_rect.width = self.tiles_size[0]
-        self.image_rect.height = self.tiles_size[1]
-        self.image_rect.x = self.position[0]
-        self.image_rect.y = self.position[1]
 
         # calling this renders it to the screen via the ui_manager
-        self.element_img = UIImage(relative_rect=self.image_rect, image_surface=loaded_image, manager=ui_manager)
+        super().__init__(relative_rect=self.image_rect, image_surface=loaded_image, manager=ui_manager, container=container)
+        self.set_dimensions(self.tiles_size)
+        self.set_coord(start_pos)
 
     # sets the position it should be on the screen based on x,y values set earlier
-    def set_coord(self):
-        if self.x < 0:
-            self.x = 0
-        elif self.x > self.tiles_amm[0] - 1:
-                self.x = self.tiles_amm[0] -1
-        if self.y < 0:
-            self.y = 0
-        elif self.y > self.tiles_amm[1] - 1:
-            self.y = self.tiles_amm[1] -1
+    def set_coord(self, pos):
+        x = pos[0]
+        y = pos[1]
+        if x < 0:
+            x = 0
+        elif x > self.tiles_amm[0] - 1:
+            x = self.tiles_amm[0] -1
+        if y < 0:
+            y = 0
+        elif y > self.tiles_amm[1] - 1:
+            y = self.tiles_amm[1] -1
 
-        x = self.x * self.tiles_size[0] + self.frame_pos[0]
-        y = self.y * self.tiles_size[1] + self.frame_pos[1]
-        self.position = [x, y]
+        x = x * self.tiles_size[0]
+        y = y * self.tiles_size[1]
+
+        self.set_relative_position((x, y))
 
     def move(self, direction):
         if direction == 'U':
-            self.y -= 1
+            self.pos[1] -= 1
         if direction == 'D':
-            self.y += 1           
+            self.pos[1] += 1           
         if direction == 'L':
-            self.x -= 1
+            self.pos[0] -= 1
         if direction == 'R':
-            self.x += 1
+            self.pos[0] += 1
 
-        self.set_coord()
-        self.element_img.rect.x = self.position[0]
-        self.element_img.rect.y = self.position[1]
+        self.set_coord(self.pos)
     
     # check if element is ontop of another
     def collision_check(self, obj):
-        x = self.x == obj.x
-        y = self.y == obj.y
+        x = self.pos[0] == obj.pos[0]
+        y = self.pos[1] == obj.pos[1]
         if x and y: 
             return True
         return False

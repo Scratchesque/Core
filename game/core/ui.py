@@ -34,6 +34,10 @@ class Button(pygame_gui.elements.UIButton):
                 return True
         return False
 
+class ButtonImg():
+            def __init__(self, image, button):
+                self.image = image
+                self.button = button
 
 class UIFactory:
     @staticmethod
@@ -67,6 +71,14 @@ class UIFactory:
             image = pygame.transform.smoothscale(image, size)
         rect = pygame.Rect(pos, image.get_size())
         return pygame_gui.elements.UIImage(rect, image, manager, container=container, object_id=object_id)
+    
+    @staticmethod
+    def button_img(pos,size,image_path,text,manager,object_id=None,container=None):
+        # i tried just using buttons and adding a image to the theme.json, but auto scaling was having problems so this is the other fix i found
+        image = pygame.image.load(image_path).convert_alpha()
+        image = pygame_gui.elements.UIImage(pygame.Rect(pos, size), image, manager)
+        button = Button(pos, size, text, manager, object_id, container=container)
+        return ButtonImg(image, button)
 
 
 class TypingTextBox(pygame_gui.elements.UITextBox):

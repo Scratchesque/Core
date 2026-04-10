@@ -10,17 +10,20 @@ class Display:
     # Starts rendering the environment selected
     def __init__(self):
         pygame.init()
-        self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-        self.surface = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT))
+        self.resolution = (SCREEN_WIDTH, SCREEN_HEIGHT)
+        self.screen = pygame.display.set_mode(self.resolution, pygame.FULLSCREEN)
+        self.surface = pygame.Surface(self.resolution)
 
     def run(self, env: BaseEnvironment):
         pygame.display.set_caption(env.title)
 
         self.env = env
         self.running = True
-        self.ui_manager = pygame_gui.UIManager((SCREEN_WIDTH, SCREEN_HEIGHT), theme_path=env.theme_path)
+        self.ui_manager = pygame_gui.UIManager(self.resolution, theme_path=env.theme_path)
 
-        env.clear_screen()
+        # how can i reset this properlly tho, cause not 100% if its right or not ;p
+        self.ui_manager.clear_and_reset()
+        self.env.render_background()
         env.create_ui(self.ui_manager)
         
         self.main_loop()
@@ -41,8 +44,6 @@ class Display:
 
     # Rendering objects on the window
     def update_frame(self, delta_time):
-        # Reseting the screen each frame and drawing it back
-        self.env.clear_screen()
         # Things to update each frame in the environment
         self.env.update_frame(delta_time)
         # pygame_gui manager updating/drawing

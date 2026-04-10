@@ -6,9 +6,9 @@ from game.core.ui import UIFactory
 class Level2(BaseEnvironment):
     def __init__(self):
         title = "Level 2"
-        background_hex = "#000000"
+        background = "menu/background.png"
         theme = "level2"
-        super().__init__(title, background_hex, theme)
+        super().__init__(title, background, theme)
 
     def create_ui(self, ui_manager):
 

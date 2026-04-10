@@ -61,7 +61,11 @@ class BaseEnvironment:
         image_rect.height = display.resolution[1]
         UIImage(relative_rect=image_rect, image_surface=self.background_img, manager=display.ui_manager)
         
-    def reset(self):
+    def reset(self, level_file = ""):
+        if level_file != "":
+            self.__init__(level_file)
+        else:
+            self.__init__()
         self.ui_manager.clear_and_reset()
         self.render_background()
         self.create_ui()

@@ -7,6 +7,9 @@
         },
         "next_level_data": "level1"
     },
+    "story": {
+        "intro_dialouge": "<b>Guide</b>: To complete this level, be built different!"
+    },
     "board": {
         "tiles_amm": [5,5],
         "board_size": [1200, 980],

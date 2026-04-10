@@ -6,6 +6,9 @@
             "theme": "game"
         }
     },
+    "story": {
+        "intro_dialouge": "<b>Guide</b>: Same as start level lol"
+    },
     "board": {
         "tiles_amm": [5,5],
         "board_size": [1200, 980],

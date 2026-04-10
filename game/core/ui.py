@@ -76,7 +76,7 @@ class UIFactory:
     def button_img(pos,size,image_path,text,manager,object_id=None,container=None):
         # i tried just using buttons and adding a image to the theme.json, but auto scaling was having problems so this is the other fix i found
         image = pygame.image.load(image_path).convert_alpha()
-        image = pygame_gui.elements.UIImage(pygame.Rect(pos, size), image, manager)
+        image = pygame_gui.elements.UIImage(pygame.Rect(pos, size), image, manager, container=container)
         button = Button(pos, size, text, manager, object_id, container=container)
         return ButtonImg(image, button)
 

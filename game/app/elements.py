@@ -1,7 +1,40 @@
 from pygame import image, Rect
-from pygame_gui.elements import UIImage, UIWindow, UIButton
+from pygame_gui.elements import UIImage, UIWindow, UIButton, UIPanel
 from pygame_gui import *
 from game.core.constants import *
+from game.core.ui import TypingTextBox, UIFactory
+import pygame
+
+class DialoguePanel(UIPanel):
+    def __init__(self, pos, size, text, ui_manager):
+        super().__init__(pygame.Rect(pos, size), starting_height=5, manager=ui_manager, object_id="#dialouge_background")
+        
+        # this is prlly not the best for now of setting pos/size but its only as a temp measure untill we decide how we want to talk to the user to look like
+        padding = 10
+        ui_size = (size[0]-padding*2,size[1]//3-padding*2) 
+
+        text_pos = (padding,padding)
+        self.text_box = TypingTextBox(
+            text_pos,
+            ui_size,
+            text,
+            ui_manager,
+            container=self.panel_container,
+            object_id="#dialogue",
+            typing_speed=30,
+        )
+
+        conf_pos = (padding, size[1] - ui_size[1] - padding)
+        self.confirm = UIFactory.button_img(conf_pos, ui_size, "game/assets/menu/button.png", "Confirm", ui_manager, object_id="#transparent", container=self.panel_container)
+
+    def on_ui_event(self, event):
+        if self.confirm.button.on_click(event):
+            self.kill()
+        pass
+
+    def update_frame(self, delta_time):
+        self.text_box.update_typing(delta_time)
+        pass
 
 class MovementWindow(UIWindow):
     def __init__(self, rect, ui_manager, player):

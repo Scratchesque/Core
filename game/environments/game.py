@@ -42,10 +42,19 @@ class TestingEnv(BaseEnvironment):
         UILabel(rect, self.title, self.ui_manager)
 
         # Pop up telling user what to do
-        rect = Rect((SCREEN_WIDTH // 2, SCREEN_HEIGHT //2), (300, 300)) 
-        UIMessageWindow(rect, "To complete this level, be built different!", self.ui_manager)
+        size = (300, 300)
+        
+        self.dialogue_panel = DialoguePanel(
+            (SCREEN_WIDTH // 2- size[0]//2, SCREEN_HEIGHT //2- size[1]//2),
+            size,
+            "To complete this level, be built different!",
+            self.ui_manager,
+        )
+        
 
     def on_ui_event(self, event):
+        self.dialogue_panel.on_ui_event(event)
+
         if self.test_button.on_click(event):
             # bugs cause if you press this more than once, spawns more windows, so it thinks its been pressed more times than it has, probably best to just get rid of these ui windows
             # only temp for now untill we got the coding block implemented 
@@ -71,4 +80,5 @@ class TestingEnv(BaseEnvironment):
 
 
     def update_frame(self, delta_time):
+        self.dialogue_panel.update_frame(delta_time)
         pass

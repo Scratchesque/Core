@@ -8,33 +8,33 @@ from game.environments.base import BaseEnvironment
 # The main window rendered on the screen
 class Display:
     # Starts rendering the environment selected
-    def run(self, env: BaseEnvironment):
-        self.env = env
-
+    def __init__(self):
         pygame.init()
-        pygame.display.set_caption(self.env.title)
-        # self.set_icon(r"Path/ICON.jpg")
+        self.resolution = (SCREEN_WIDTH, SCREEN_HEIGHT)
+        self.screen = pygame.display.set_mode(self.resolution, pygame.FULLSCREEN)
+        self.surface = pygame.Surface(self.resolution)
 
+    def run(self, env: BaseEnvironment):
+        pygame.display.set_caption(env.title)
+
+        self.env = env
         self.running = True
+        self.ui_manager = pygame_gui.UIManager(self.resolution, theme_path=env.theme_path)
 
-        self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-        self.surface = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT))
-        self.ui_manager = pygame_gui.UIManager((SCREEN_WIDTH, SCREEN_HEIGHT), theme_path=self.env.theme_path)
-
-        self.surface.fill(self.env.background_colour)
-
+        # how can i reset this properlly tho, cause not 100% if its right or not ;p
+        self.ui_manager.clear_and_reset()
+        self.env.render_background()
+        env.create_ui(self.ui_manager)
+        
         self.main_loop()
 
     # The main window loop for rendering the environment
     def main_loop(self):
-
-        self.env.create_ui(self.ui_manager)
-
         clock = pygame.time.Clock()
         delta_time = 0
 
         while self.running:
-            delta_time = clock.tick(60) / 1000
+            delta_time = clock.tick(FPS) / 1000
 
             # Process user input / events
             self.process_events()
@@ -46,10 +46,8 @@ class Display:
     def update_frame(self, delta_time):
         # Things to update each frame in the environment
         self.env.update_frame(delta_time)
-        # pygame_gui manager updating
+        # pygame_gui manager updating/drawing
         self.ui_manager.update(delta_time)
-        # Reseting the screen each frame and drawing it back
-        self.screen.blit(self.surface, (0, 0))
         self.ui_manager.draw_ui(self.screen)
 
         pygame.display.update()
@@ -65,10 +63,8 @@ class Display:
             self.ui_manager.process_events(event)
 
             # If events from the environment function gets false then return
-            result = self.env.on_ui_event(event)
-            if result == False:
-                self.stop_game_loop()
-
+            self.env.on_ui_event(event)
+            
     # Sets icon for window, at least 32x32
     def set_icon(self, path):
         icon = pygame.image.load(path)

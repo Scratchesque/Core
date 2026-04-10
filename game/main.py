@@ -2,7 +2,8 @@ from game.window.game_manager import GameManager
 
 
 def main():
-    GameManager()
+    game = GameManager()
+    game.start()
 
 
 if __name__ == "__main__":

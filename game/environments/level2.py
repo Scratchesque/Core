@@ -1,14 +1,14 @@
 from game.core.constants import *
 from game.environments.base import BaseEnvironment
-from game.window.ui import UIFactory
+from game.core.ui import UIFactory
 
 
 class Level2(BaseEnvironment):
     def __init__(self):
         title = "Level 2"
-        background_hex = "000000"
+        background = "menu/background.png"
         theme = "level2"
-        super().__init__(title, background_hex, theme)
+        super().__init__(title, background, theme)
 
     def create_ui(self, ui_manager):
 
@@ -19,10 +19,9 @@ class Level2(BaseEnvironment):
         quit_result = self.quit_button.on_click(event)
         back_result = self.back_button.on_click(event)
         if quit_result:
-            print("Quit Game!")
-            return False
+            self.game_manager.change_env("QUIT")
         if back_result:
-            self.game_manager.change_env("Main Menu")
+            self.game_manager.change_env("BACK")
 
     def update_frame(self, delta_time):
         # Per-frame updates (e.g., typing effects, animations).

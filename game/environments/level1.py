@@ -1,16 +1,20 @@
+from game.window.ui_windows import *
 from game.core.constants import *
 from game.environments.base import BaseEnvironment
-from game.window.ui import TypingTextBox, UIFactory
-
+from game.core.ui import UIFactory, TypingTextBox
 
 class Level1(BaseEnvironment):
     def __init__(self):
         title = "Level 1"
-        background_hex = "ffffff"
+        background = "menu/background.png"
         theme = "level1"
-        super().__init__(title, background_hex, theme)
+        super().__init__(title, background, theme)
 
     def create_ui(self, ui_manager):
+
+        ScalingWindow(pygame.Rect((50, 50), (224, 224)), ui_manager)
+        EverythingWindow(pygame.Rect((10, 10), (640, 480)), ui_manager)
+
         self.title_label = UIFactory.label(
             (20, 20), (660, 30), "Title", ui_manager, object_id="title"
         )
@@ -37,9 +41,7 @@ class Level1(BaseEnvironment):
         if url_clicked:
             print("Pressed url box!")
         if quit_result:
-            print("Quit Game!")
-            return False
-            # pygame.quit() # try not to exit from inside the environment but if you have to there is an exception so it doesnt crash
+            self.game_manager.change_env("QUIT")
 
     def update_frame(self, delta_time):
         self.dialogue_box.update_typing(delta_time)

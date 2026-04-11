@@ -11,7 +11,14 @@
         "intro_dialouge": "<b>Guide</b>: To complete this level, be built different!"
     },
     "board": {
-        "tiles_amm": [5,5],
+        "map":{
+            "level_1/water": "SproutLands/Tilesets/Water",
+            "level_1/terrain": "SproutLands/Tilesets/Grass",
+            "level_1/tree": "SproutLands/Objects/Basic_Grass_Biom_things",
+            "level_1/house": "SproutLands/Tilesets/Wooden_House_Walls_Tilset",
+            "level_1/door": "SproutLands/Tilesets/Doors",
+            "level_1/vegetation": "SproutLands/Objects/Basic_Grass_Biom_things"
+        },
         "board_size": [1200, 980],
         "board_pos":[50,50],
         "start_pos":{

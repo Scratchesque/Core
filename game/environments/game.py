@@ -6,7 +6,6 @@ from game.environments.base import BaseEnvironment
 from game.app.code_blocks import Panel
 
 from pygame import Rect
-from pygame_gui.windows import UIConfirmationDialog, UIMessageWindow
 from pygame_gui.elements import UILabel
 
 class GameEnv(BaseEnvironment):
@@ -16,8 +15,6 @@ class GameEnv(BaseEnvironment):
     def create_ui(self):
         # Board: (50,50) - (1200, 980)
         self.board = Board(
-            board_pos=(50,50),
-            board_size=(1200, SCREEN_HEIGHT-50*2),
             env_data=self.env_data.board, 
             manager=self.ui_manager)
 
@@ -54,16 +51,9 @@ class GameEnv(BaseEnvironment):
         
 
     def on_ui_event(self, event):   
-        if self.board.carrot.collision_check(self.board.player):
-            if self.board.complete == False:
-                self.board.complete = True
-                rect = Rect((SCREEN_WIDTH // 2, SCREEN_HEIGHT //2), (300, 300)) 
-                UIConfirmationDialog(rect, "You Win!", self.ui_manager)
-
-        if self.menu_button.on_click(event):
-            self.game_manager.change_env("Main Menu")
-
-        if event.type == UI_CONFIRMATION_DIALOG_CONFIRMED: # here you check if it goes to the next level by rerendering, or using something else, also sets it back to the start
+        # code below is not the best it only checks if a dialouge created from another file has been clicked, and if so it tries to reset to the next level
+        # but if theres any problems once in this try loop, then all errors exit out silently to main menu which isnt that nice  
+        if event.type == UI_CONFIRMATION_DIALOG_CONFIRMED:
             try:
                 self.reset(self.env_data.env.next_level_data)
             except:

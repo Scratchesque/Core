@@ -58,7 +58,11 @@
   },
   "#board_background":{
     "colours": {
-      "dark_bg": "Yellow"
+      "dark_bg": "#00000000"
+    },
+    "misc": {
+      "border_width": "0",
+      "shadow_width": "0"
     }
   }
 }

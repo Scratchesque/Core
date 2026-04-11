@@ -1,8 +1,9 @@
-from pygame import image, Rect
+from pygame import image, Rect, Surface
 from pygame_gui.elements import UIImage, UIPanel
 from pygame_gui import *
 from game.core.constants import *
 from game.core.ui import TypingTextBox, UIFactory
+from game.core.csv_support import *
 
 class DialoguePanel(UIPanel):
     def __init__(self, pos, size, text, ui_manager):
@@ -37,19 +38,24 @@ class DialoguePanel(UIPanel):
         pass
         
 class TiledElement(UIImage):
-    def __init__(self, start_pos, tiles_size, tiles_amm, img_path, ui_manager, container):
+    def __init__(self, start_pos, tiles_size, tiles_amm, img_path, ui_manager, container=None, tile=None):
         self.x = start_pos[0]
         self.y = start_pos[1]
 
         self.tiles_size = tiles_size
         self.tiles_amm = tiles_amm
 
-        loaded_image = image.load(f'game/assets/{img_path}').convert_alpha()
-        self.image_rect = loaded_image.get_rect()
+        img_path = f'game/assets/{img_path}'
+        if tile == None:
+            loaded_image = image.load(img_path).convert_alpha()
+        else:
+            loaded_image = cut_graphics(img_path, tile)
+        rect = loaded_image.get_rect()
 
         # calling this renders it to the screen via the ui_manager
-        super().__init__(relative_rect=self.image_rect, image_surface=loaded_image, manager=ui_manager, container=container)
+        super().__init__(relative_rect=rect, image_surface=loaded_image, manager=ui_manager, container=container)
         self.set_dimensions(self.tiles_size)
+        self.update_screen_pos()
 
     # sets the position it should be on the screen based on x,y values set earlier
     def set_screen_inbounds(self):
@@ -77,6 +83,8 @@ class TiledElement(UIImage):
             self.x -= 1
         if direction == 'R':
             self.x += 1
+
+        self.update_screen_pos()
     
     # check if element is ontop of another
     def collision_check(self, obj):
@@ -90,4 +98,5 @@ class TiledElement(UIImage):
         super().update(delta_time)
         # this is uncessary cause it updates every frame, but then we can just change .x .y values without calling again
         # but it can be used for animating the player walking jumping etc possibly
-        self.update_screen_pos()
+        # This was most likely causeing the lag, just update when moving for animations
+        

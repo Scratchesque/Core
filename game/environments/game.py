@@ -45,7 +45,7 @@ class GameEnv(BaseEnvironment):
         self.dialogue_panel = DialoguePanel(
             (SCREEN_WIDTH // 2- size[0]//2, SCREEN_HEIGHT //2- size[1]//2),
             size,
-            "To complete this level, be built different!",
+            self.env_data.story.intro_dialogue,
             self.ui_manager,
         )
         

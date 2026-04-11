@@ -6,8 +6,8 @@ from game.app.elements import TiledElement
 
 class Board(UIPanel):
     def __init__(self, board_pos, board_size, env_data, manager):
-        super().__init__(Rect(board_pos, board_size), manager=manager, object_id="#board_background")
-
+        super().__init__(Rect(board_pos, board_size), manager=manager, object_id="#board_background", starting_height=1)
+        # beceause its in a panel now, any elements place outside the container arent rendered, so the level can be very but zoomed in on some tiles 
         self.env_data = env_data
         self.manager = manager
 

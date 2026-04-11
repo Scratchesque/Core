@@ -3,6 +3,7 @@ from game.app.elements import *
 from game.core.constants import *
 from game.core.ui import UIFactory
 from game.environments.base import BaseEnvironment
+from game.app.code_blocks import Panel
 
 from pygame import Rect
 from pygame_gui.windows import UIConfirmationDialog, UIMessageWindow
@@ -20,23 +21,22 @@ class GameEnv(BaseEnvironment):
             env_data=self.env_data.board, 
             manager=self.ui_manager)
 
-        # Code Blocks: (1200,0) - (1920,1080)
+        # Code Blocks: (1200,50) - (1920,1080)
         # here implement the blocks that will be generated to interact with the board somehow?
-        self.movement_window = None
-        self.test_button = UIFactory.button(
-            (SCREEN_WIDTH -200, SCREEN_HEIGHT - 100),
-            (100, 50),
-            "Movement",
-            self.ui_manager,
-            object_id="move",
-        )
+        self.test = Panel(
+            board_pos=(1245,50),
+            board_size=(SCREEN_WIDTH-1200-50*2, SCREEN_HEIGHT-50*2),
+            env_data=self.env_data.board, 
+            manager=self.ui_manager, player=self.board.player)
+        
+        # FOR SOME REASON PYGAME NOT ACCTUALY MAKE SIZE 100, 100, ITS 95, 95
 
         # other misc stuff
         self.menu_button = UIFactory.button(
-            (SCREEN_WIDTH - 350, SCREEN_HEIGHT - 100),
+            (500, 500),
             (100, 50), 
             "Menu", 
-            self.ui_manager)
+            self.ui_manager, container=self.test.panel_container)
 
         # Level Text
         rect = Rect((0,0), (100, 50)) 
@@ -53,19 +53,7 @@ class GameEnv(BaseEnvironment):
         )
         
 
-    def on_ui_event(self, event):
-        self.dialogue_panel.on_ui_event(event)
-
-        if self.test_button.on_click(event):
-            # bugs cause if you press this more than once, spawns more windows, so it thinks its been pressed more times than it has, probably best to just get rid of these ui windows
-            # only temp for now untill we got the coding block implemented 
-            if self.movement_window is None or not self.movement_window.alive():
-                self.movement_window = MovementWindow(
-                    Rect((SCREEN_WIDTH-500, 150), (250, 250)),
-                    self.ui_manager,
-                    self.board.player
-                )
-            
+    def on_ui_event(self, event):   
         if self.board.carrot.collision_check(self.board.player):
             if self.board.complete == False:
                 self.board.complete = True
@@ -82,7 +70,5 @@ class GameEnv(BaseEnvironment):
                 self.game_manager.change_env("Main Menu")
                 self.reset()
 
-
     def update_frame(self, delta_time):
-        self.dialogue_panel.update_frame(delta_time)
         pass

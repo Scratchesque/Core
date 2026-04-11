@@ -48,8 +48,12 @@
   },
   "#transparent": {
     "colours": {
-        "normal_bg": "#00000000",
-        "normal_text": "White"
+      "normal_bg": "#00000000",
+      "normal_text": "White"
+    },
+    "misc": {
+      "border_width": "0",
+      "shadow_width": "0"
     }
   },
   "#board_background":{

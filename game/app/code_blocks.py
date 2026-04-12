@@ -1,8 +1,9 @@
 from pygame import Rect
 from pygame_gui.elements import UIPanel, UIButton
-from pygame_gui import *
-from game.core.constants import *
+from pygame_gui._constants import *
+from game.core.constants import PLAYER_VEL
 
+# This file should contain information about how we put in the code blocks
 class CodeBlocks(UIPanel):
     def __init__(self, panel_pos, panel_size, manager, player):
         # Setting the start height to 2 as it can be placed above the board tiles
@@ -40,13 +41,17 @@ class CodeBlocks(UIPanel):
     def process_event(self, event):
         super().process_event(event)
         # here ive just used another way like object ids, to not save each button indivudually to their own self.xxxx
-        if event.type == UI_BUTTON_PRESSED:
+        if event.type == UI_BUTTON_START_PRESS:
             if event.ui_object_id == '#code_panel.#up':
-                self.player.move('U')
+                self.player.vel.y = -PLAYER_VEL
             if event.ui_object_id == '#code_panel.#down':
-                self.player.move('D')
+                self.player.vel.y = PLAYER_VEL
             if event.ui_object_id == '#code_panel.#left':
-                self.player.move('L')
+                self.player.vel.x = -PLAYER_VEL
             if event.ui_object_id == '#code_panel.#right':
-                self.player.move('R')
+                self.player.vel.x = PLAYER_VEL
 
+        if event.type == UI_BUTTON_PRESSED:
+            self.player.vel.x = 0
+            self.player.vel.y = 0
+            

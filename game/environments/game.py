@@ -1,12 +1,10 @@
-from game.app.board import *
-from game.app.elements import *
+from game.app.board import Board
+from game.app.panels import DialoguePanel, LevelText
 from game.core.constants import *
 from game.core.ui import UIFactory
 from game.environments.base import BaseEnvironment
-from game.app.code_blocks import *
-
-from pygame import Rect
-from pygame_gui.elements import UILabel
+from game.app.code_blocks import CodeBlocks
+from pygame_gui._constants import *
 
 # This contains all of the  
 class GameEnv(BaseEnvironment):
@@ -55,8 +53,7 @@ class GameEnv(BaseEnvironment):
             (SCREEN_WIDTH // 2- size[0]//2, SCREEN_HEIGHT //2- size[1]//2),
             size,
             self.env_data.story.intro_dialogue,
-            self.ui_manager,
-        )
+            self.ui_manager)
         
 
     def on_ui_event(self, event):

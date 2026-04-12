@@ -7,6 +7,7 @@ from game.environments.base import BaseEnvironment
 from game.window.display import Display
 
 
+# This process is explained on trello under (Completed) 'Start getting the core of the program'
 class GameManager:
     def __init__(self):
         self.display = Display()

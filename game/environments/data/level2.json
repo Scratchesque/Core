@@ -7,20 +7,21 @@
         }
     },
     "story": {
-        "intro_dialogue": "<b>Guide</b>: Same as start level lol"
+        "intro_dialogue": "<b>Guide</b>: Same as before"
     },
     "board": {
         "map":{
-            "level_1/water": "SproutLands/Tilesets/Water",
-            "level_1/terrain": "SproutLands/Tilesets/Grass",
-            "level_1/tree": "SproutLands/Objects/Basic_Grass_Biom_things",
-            "level_1/house": "SproutLands/Tilesets/Wooden_House_Walls_Tilset",
-            "level_1/door": "SproutLands/Tilesets/Doors",
-            "level_1/vegetation": "SproutLands/Objects/Basic_Grass_Biom_things"
+            "water": ["level_1/water", "SproutLands/Tilesets/Water"],
+            "water_bounds": ["level_1/water_bounds", "SproutLands/Tilesets/Water"],
+            "terrain": ["level_1/terrain", "SproutLands/Tilesets/Grass"],
+            "tree": ["level_1/tree","SproutLands/Objects/Basic_Grass_Biom_things"],
+            "house": ["level_1/house", "SproutLands/Tilesets/Wooden_House_Walls_Tilset"],
+            "door": ["level_1/door", "SproutLands/Tilesets/Doors"],
+            "vegetation": ["level_1/vegetation", "SproutLands/Objects/Basic_Grass_Biom_things"]
         },
         "start_pos":{
-            "player":[10,15],
-            "goal":[5,19]
+            "player":[7,12],
+            "goal":[3,12]
         }
     }
 }

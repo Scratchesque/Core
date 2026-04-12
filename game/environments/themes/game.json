@@ -41,12 +41,12 @@
       "size": "14"
     }
   },
-  "#dialouge_background":{
+  "#dialouge_panel":{
     "colours": {
       "dark_bg": "White"
     }
   },
-  "#transparent": {
+  "#transparent_button": {
     "colours": {
       "normal_bg": "#00000000",
       "normal_text": "White"
@@ -56,7 +56,7 @@
       "shadow_width": "0"
     }
   },
-  "#board_background":{
+  "#transparent_panel":{
     "colours": {
       "dark_bg": "#00000000"
     },

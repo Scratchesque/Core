@@ -11,7 +11,7 @@
             "border_width": "2"
         }
     },
-    "#trasparent": {
+    "#transparent_button": {
         "colours": {
             "normal_bg": "#00000000",
             "normal_text": "White"

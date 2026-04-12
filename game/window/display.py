@@ -19,8 +19,7 @@ class Display:
 
         self.env = env
         self.running = True
-        self.ui_manager = pygame_gui.UIManager(self.resolution, theme_path=env.theme_path)
-        self.env.ui_manager = self.ui_manager
+        env.ui_manager = pygame_gui.UIManager(self.resolution, theme_path=env.theme_path)
 
         env.reset()
         
@@ -45,8 +44,8 @@ class Display:
         # Things to update each frame in the environment
         self.env.update_frame(delta_time)
         # pygame_gui manager updating/drawing
-        self.ui_manager.update(delta_time)
-        self.ui_manager.draw_ui(self.screen)
+        self.env.ui_manager.update(delta_time)
+        self.env.ui_manager.draw_ui(self.screen)
 
         pygame.display.update()
 
@@ -58,7 +57,7 @@ class Display:
                 self.stop_game_loop()
 
             # pygame_gui manager processing
-            self.ui_manager.process_events(event)
+            self.env.ui_manager.process_events(event)
 
             # If events from the environment function gets false then return
             self.env.on_ui_event(event)

@@ -11,7 +11,7 @@ class GameManager:
     def __init__(self):
         self.display = Display()
         self.envs_list = self._load_environments()
-        self.env = self.envs_list[0] # for initalising
+        self.env = self.envs_list[0] # for initalising prev_env
         self.change_env("Main Menu")
 
     def start(self):
@@ -20,7 +20,7 @@ class GameManager:
         self.env.game_manager = self
         self.display.run(self.env)
         # except Exception as e:
-        #     print(f"Error: {e}")
+            # print(f"Error: {e}")
         # finally:
         self.quit_load_level()
 
@@ -70,4 +70,3 @@ class GameManager:
             self.start()
         else:
             self.display.exit_screen()
-

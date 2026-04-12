@@ -34,11 +34,6 @@ class Button(pygame_gui.elements.UIButton):
                 return True
         return False
 
-class ButtonImg():
-            def __init__(self, image, button):
-                self.image = image
-                self.button = button
-
 class UIFactory:
     @staticmethod
     def button(pos, size, text, manager, object_id=None, center=False, anchor=None, container=None):
@@ -78,6 +73,13 @@ class UIFactory:
         image = pygame.image.load(image_path).convert_alpha()
         image = pygame_gui.elements.UIImage(pygame.Rect(pos, size), image, manager, container=container)
         button = Button(pos, size, text, manager, object_id, container=container)
+
+        # maybe temp, maybe not, untill/if theres a need to fix 
+        class ButtonImg:
+            def __init__(self, image, button):
+                self.image = image
+                self.button = button
+
         return ButtonImg(image, button)
 
 

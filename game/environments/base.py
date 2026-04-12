@@ -1,15 +1,17 @@
-from pygame import image
+from pygame import image, Rect
 from pygame_gui.elements import UIImage
 
 import json
 from types import SimpleNamespace
 from pathlib import Path
 
+# New environemnts/screens that are loaded through the game manager should inherit this class
 class BaseEnvironment:
+    # When an environemnt using this class init's, it loads all relevant data from 'environments/data/{level_file}.json" to be used
     def __init__(self, level_file):
         root_dir = "game/environments/data/"
         env_path = f"{root_dir}{level_file}.json"
-        self.env_data = self._load_data(env_path)
+        self.env_data = self._load_json(env_path)
         if not self.env_data:
             print(f'Using default env data. Could not find env data: {level_file}')
             default_path = f"{root_dir}default.json"
@@ -33,7 +35,7 @@ class BaseEnvironment:
         # Per-frame updates (e.g., typing effects, animations).
         pass
     
-    # chatgpt made this for me cause i didnt have a clue, but it allows us to get a json file and use a.b.c to get variables from the file
+    # chatgpt made this for me cause i didnt have a clue, but it goes through each {} in the json and returns result to get added to the env_data
     def _dict_to_namespace(self, dictionary):
         if isinstance(dictionary, dict):
             return SimpleNamespace(**{k: self._dict_to_namespace(v) for k, v in dictionary.items()})
@@ -42,8 +44,8 @@ class BaseEnvironment:
         else:
             return dictionary
 
-    def _load_data(self,file_path):
-        # Load from file
+    # This turns a json into a.b.c variables that we can use to get values 
+    def _load_json(self,file_path):
         try:
             path = Path(file_path)
             with open(path, 'r', encoding='utf-8') as f:
@@ -53,19 +55,22 @@ class BaseEnvironment:
             return data_list
         except:
             return False
-    
-    def render_background(self):
-        display = self.game_manager.display
-        image_rect = self.background_img.get_rect()
-        image_rect.width = display.resolution[0]
-        image_rect.height = display.resolution[1]
-        UIImage(relative_rect=image_rect, image_surface=self.background_img, manager=display.ui_manager)
         
-    def reset(self, level_file = ""):
-        if level_file != "":
-            self.__init__(level_file)
-        else:
+    # Gets the resolution set in 'window/display.py' from the game manager
+    def render_background(self):
+        width = self.game_manager.display.resolution[0]
+        height = self.game_manager.display.resolution[1]
+        UIImage(relative_rect=Rect((0,0),(width,height)), image_surface=self.background_img, manager=self.ui_manager)
+        
+    # This is called when the screen is to be reset to recreate ui elements, it can also change the level from a level file 
+    # 
+    # Currently it resets when the game_manager needs first create all elements
+    # or when the environement resets within itself for eg in 'environments/game.py' at on_ui_event()
+    def reset(self, level_file = None):
+        if level_file == None:
             self.__init__()
+        else:
+            self.__init__(level_file)
         self.ui_manager.clear_and_reset()
         self.render_background()
         self.create_ui()

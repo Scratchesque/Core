@@ -29,7 +29,10 @@ class Player(Tile):
 
         self.animationcount = 0
         self.animations = {}
-        self.facing = 'idle'
+        self.state = 'idle'
+
+        self.is_jumping = False
+        self.jump_timer = 0
 
         self._set_animations()
 
@@ -39,7 +42,8 @@ class Player(Tile):
             "up":    [4, 5, 6, 7],
             "left":  [8, 9, 10, 11],
             "right": [12, 13, 14, 15],
-            "idle": [0, 1]
+            "idle": [0, 1],
+            "jump": [0]
         }
 
         animation_list = self._load_animations(sprite_col_start=1,
@@ -67,25 +71,62 @@ class Player(Tile):
 
         return frames
     
-    def update_facing_direction(self):
-        if self.vel.x == 0 and self.vel.y == 0:
-            self.facing = 'idle'
-        elif self.vel.x < 0:
-            self.facing = 'left'
-        elif self.vel.x > 0:
-            self.facing = 'right'
-        elif self.vel.y < 0:
-            self.facing = 'up'
-        elif self.vel.y > 0:
-            self.facing = 'down'
+    def do_action(self, action = ""):
+        match action:
+            case "up":
+                self.vel.y = -PLAYER_VEL
+                self.state = action
+            case "down":
+                self.vel.y = PLAYER_VEL
+                self.state = action
+            case "left":
+                self.vel.x = -PLAYER_VEL
+                self.state = action
+            case "right":
+                self.vel.x = PLAYER_VEL
+                self.state = action
+            case "jump":
+                if not self.is_jumping:
+                    self.is_jumping = True
+                    self.jump_timer = JUMP_DURATION
+                    self.state = action
+            case "idle":
+                self.vel.x = 0
+                self.vel.y = 0
+                self.state = action
+
+    def update_jump(self):
+        if not self.is_jumping:
+            return 0
+
+        self.jump_timer -= 1
+        #seems like only odd numbers work for the JUMP_DURATION, or else it goes further down than started from
+        half = JUMP_DURATION // 2
+
+        if self.jump_timer > half:
+            progress = (JUMP_DURATION - self.jump_timer) / half
+            offset = progress
+        else:
+            progress = self.jump_timer / half
+            offset = -progress
+
+        jump_offset = int(JUMP_HEIGHT * offset)
+
+        if self.jump_timer <= 0:
+            self.is_jumping = False
+            self.state = 'idle'
+            jump_offset = 0
+
+        self.rect.y -= jump_offset
 
     def update_velocity(self, vel):    
-        self.rect.x += vel.x
-        self.rect.y += vel.y
+        self.rect.x += int(vel.x)
+        self.rect.y += int(vel.y)
 
     def update_pos_collision(self, collisions):
-        if self.vel.x == 0 and self.vel.y == 0:
+        if self.vel.x == 0 and self.vel.y == 0 and not self.is_jumping:
             return
+        
         for collision in collisions:
             for sprite in self.map_tiles[collision]:
                 if self.rect.colliderect(sprite.rect):
@@ -97,18 +138,16 @@ class Player(Tile):
                         elif self.vel.x < 0:
                             self.rect.left = sprite.rect.right
                         self.vel.x = 0
-                        return
                     if overlap_y < overlap_x:
                         if self.vel.y > 0:
                             self.rect.bottom = sprite.rect.top
                         elif self.vel.y < 0:
                             self.rect.top = sprite.rect.bottom
                         self.vel.y = 0
-                        return
        
     def update_sprite_sheet(self):
         time_lag = 10
-        current_strip = self.animations[self.facing]
+        current_strip = self.animations[self.state]
 
         frame_index = (self.animationcount // time_lag) % len(current_strip)
         tile_number = current_strip[frame_index]
@@ -119,6 +158,6 @@ class Player(Tile):
         super().update(delta_time)
         self.update_velocity(self.vel)
         self.update_pos_collision(['water', 'tree'])
-        self.update_facing_direction()
+        self.update_jump()
         self.update_sprite_sheet()
          

@@ -1,7 +1,6 @@
 from pygame import Rect
 from pygame_gui.elements import UIPanel, UIButton
 from pygame_gui._constants import *
-from game.core.constants import PLAYER_VEL
 
 # This file should contain information about how we put in the code blocks
 class CodeBlocks(UIPanel):
@@ -37,21 +36,31 @@ class CodeBlocks(UIPanel):
             manager=self.ui_manager,
             container=self,
             object_id="#right")
+        
+        UIButton(relative_rect=Rect((50,150), (100, 50)),
+            text="Jump",
+            manager=self.ui_manager,
+            container=self,
+            object_id="#jump")
 
     def process_event(self, event):
         super().process_event(event)
         # here ive just used another way like object ids, to not save each button indivudually to their own self.xxxx
         if event.type == UI_BUTTON_START_PRESS:
             if event.ui_object_id == '#code_panel.#up':
-                self.player.vel.y = -PLAYER_VEL
+                self.player.do_action('up')
             if event.ui_object_id == '#code_panel.#down':
-                self.player.vel.y = PLAYER_VEL
+                self.player.do_action('down')
             if event.ui_object_id == '#code_panel.#left':
-                self.player.vel.x = -PLAYER_VEL
+                self.player.do_action('left')
             if event.ui_object_id == '#code_panel.#right':
-                self.player.vel.x = PLAYER_VEL
+                self.player.do_action('right')
+            if event.ui_object_id == '#code_panel.#jump':
+                self.player.do_action('jump')
 
         if event.type == UI_BUTTON_PRESSED:
-            self.player.vel.x = 0
-            self.player.vel.y = 0
+            # If else releaseing the button will preemtively change the state when jumping, this is temp for now untill we put in code blocks 
+            if event.ui_object_id != '#code_panel.#jump':
+                self.player.do_action('idle')
+            
             

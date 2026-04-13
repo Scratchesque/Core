@@ -13,8 +13,7 @@ def import_map_layout(path):
         return terrain_map
     
 # Gets a image and crops it at a tile to return to use for rendering
-def cut_graphics(path, tile):
-    surface = image.load(path).convert_alpha()
+def cut_graphics(surface):
 
     # IMG_TILE_SIZE is the size of each SproutLand asset, eg 16x16
     # So if we use another graphics that dont match 16x16 for the tiles, this needs to be changed
@@ -31,4 +30,4 @@ def cut_graphics(path, tile):
             new_surf.set_colorkey('black')
             cut_tiles.append(new_surf)
     
-    return cut_tiles[int(tile)]
+    return cut_tiles

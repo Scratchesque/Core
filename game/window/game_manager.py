@@ -16,14 +16,14 @@ class GameManager:
         self.change_env("Main Menu")
 
     def start(self):
-        # try:
-        self.load_level = False
-        self.env.game_manager = self
-        self.display.run(self.env)
-        # except Exception as e:
-            # print(f"Error: {e}")
-        # finally:
-        self.quit_load_level()
+        try:
+            self.load_level = False
+            self.env.game_manager = self
+            self.display.run(self.env)
+        except Exception as e:
+            print(f"Error: {e}")
+        finally:
+            self.quit_load_level()
 
     def change_env(self, env_title: str):
         if env_title == "QUIT":

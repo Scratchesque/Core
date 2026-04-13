@@ -33,9 +33,9 @@ class Board(UIPanel):
     def create_ui(self):
         # Gets the relevant information about each map file in the board data at the loaded json, then scales and renders each tile in each file
         for element_type, element_data in self.board_data.map.__dict__.items():
-            tiles = []
             csv_map = element_data[0]
             tile_img = element_data[1]
+            self.map_tiles[element_type] = []
             csv_layout = import_map_layout(csv_map)
             height = len(csv_layout)
             for row_index, row in enumerate(csv_layout):
@@ -48,9 +48,8 @@ class Board(UIPanel):
                             img_path=tile_img+".png", 
                             manager=self.ui_manager, 
                             container=self, 
-                            tile=val)
-                        tiles.append(tile)
-            self.map_tiles[element_type] = tiles
+                            tile=int(val))
+                        self.map_tiles[element_type].append(tile)
 
     def init_level(self):
         # Uses random sprites I found in the assets folder and sets their position based on the json loaded
@@ -62,8 +61,7 @@ class Board(UIPanel):
             container=self, 
             tile=20)
         self.player = Player(start_pos=self.board_data.start_pos.player, 
-            tiles_size=self.tiles_size, 
-            img_path='SproutLands/Characters/Free Chicken Sprites.png', 
+            tiles_size=self.tiles_size,
             map_tiles=self.map_tiles,
             manager=self.ui_manager, 
             container=self, 

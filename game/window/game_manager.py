@@ -3,7 +3,7 @@ import inspect
 import pkgutil
 
 import game.environments as environments_pkg
-from game.environments.base import BaseEnvironment
+from game.environments.base import BaseEnvironment, GameEnv
 from game.window.display import Display
 
 
@@ -52,7 +52,7 @@ class GameManager:
 
             module = importlib.import_module(f"{environments_pkg.__name__}.{module_name}")
             for _, cls in inspect.getmembers(module, inspect.isclass):
-                if cls is BaseEnvironment or not issubclass(cls, BaseEnvironment):
+                if cls is BaseEnvironment or cls is GameEnv or not issubclass(cls, BaseEnvironment):
                     continue
 
                 # Only load environment classes declared in this module/file.

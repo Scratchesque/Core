@@ -71,7 +71,7 @@ class Board(UIPanel):
     # With pygame_gui Since we passthrough the ui manager, it inherites UIPanel (or any element in pygame_gui.elements) and does its own initalisation which allows us to process events in each class
     def process_event(self, event):
         super().process_event(event)
-        if self.player.rect.colliderect(self.goal.rect):
+        if self.player.collision_check(self.goal):
             if self.completed_level == False:
                 self.completed_level = True
                 rect = Rect((SCREEN_WIDTH // 2, SCREEN_HEIGHT //2), (300, 300)) 

@@ -1,6 +1,10 @@
 from pygame import image, Rect
 from pygame_gui.elements import UIImage
 
+from game.app.board import Board
+from game.app.code_blocks import CodeBlocks
+from game.app.panels import  LevelText
+
 import json
 from types import SimpleNamespace
 from pathlib import Path
@@ -74,4 +78,35 @@ class BaseEnvironment:
         self.ui_manager.clear_and_reset()
         self.render_background()
         self.create_ui()
+ 
+# This contains all of the info that will be consistent accross each of the levels
+class GameEnv(BaseEnvironment):
+    # The BaseEnvironment in 'environments/base.py', init's the level file 'environments/data/start.json'
+    def __init__(self, level_file): # This file is where the env gets/loads inital data for the level
+        super().__init__(level_file)
 
+    def create_ui(self):
+        # panel_pos and panel_size are temporary values but can be changed freely to fit to screen how we'd like
+
+        # Takes data passed through and starts creating the tiles/player/goal and more in the future possibly
+        self.board = Board(
+            panel_pos=(50,50),
+            panel_size=(1200,980),
+            board_data=self.env_data.board, 
+            manager=self.ui_manager)
+
+        # A temporary placeholder of where our code blocks could be placed and initalised when finished programming
+        self.blocks = CodeBlocks(
+            panel_pos=(1250,50),
+            panel_size=(620, 980),
+            manager=self.ui_manager, 
+            player=self.board.player)
+        
+        # Setting level text from getting the env title
+        LevelText(
+            panel_pos=(0,0), 
+            panel_size= (100, 50),
+            text=self.title, 
+            manager=self.ui_manager)
+        
+        

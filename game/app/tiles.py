@@ -71,6 +71,13 @@ class Player(Tile):
 
         return frames
     
+    def collision_check(self, obj):
+        # or else they can just clip through to get to the goal check by jumping
+        if not self.is_jumping:
+            if self.rect.colliderect(obj.rect):
+                return True
+
+
     def do_action(self, action = ""):
         match action:
             case "up":

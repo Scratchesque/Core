@@ -46,7 +46,8 @@ class Player(Tile):
             "jump": [0]
         }
 
-        animation_list = tile_graphics(sprite_col_start=1,
+        animation_list = tile_graphics(img_surface=self.img, 
+                              sprite_col_start=1,
                               sprite_row_start=1,
                               sprite_gap=2)
         

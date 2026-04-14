@@ -3,21 +3,22 @@ import inspect
 import pkgutil
 
 import game.environments as environments_pkg
-from game.environments.base import BaseEnvironment
+from game.environments.base import BaseEnvironment, GameEnv
 from game.window.display import Display
 
 
+# This process is explained on trello under (Completed) 'Start getting the core of the program'
 class GameManager:
     def __init__(self):
         self.display = Display()
         self.envs_list = self._load_environments()
-        self.env = self.envs_list[0] # for initalising
+        self.env = self.envs_list[0] # for initalising prev_env
         self.change_env("Main Menu")
 
     def start(self):
         try:
             self.load_level = False
-            self.env.set_manager(self)
+            self.env.game_manager = self
             self.display.run(self.env)
         except Exception as e:
             print(f"Error: {e}")
@@ -51,7 +52,7 @@ class GameManager:
 
             module = importlib.import_module(f"{environments_pkg.__name__}.{module_name}")
             for _, cls in inspect.getmembers(module, inspect.isclass):
-                if cls is BaseEnvironment or not issubclass(cls, BaseEnvironment):
+                if cls is BaseEnvironment or cls is GameEnv or not issubclass(cls, BaseEnvironment):
                     continue
 
                 # Only load environment classes declared in this module/file.
@@ -70,4 +71,3 @@ class GameManager:
             self.start()
         else:
             self.display.exit_screen()
-

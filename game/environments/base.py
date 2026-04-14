@@ -1,23 +1,32 @@
-from pygame import image
+from pygame import image, Rect
 from pygame_gui.elements import UIImage
+from pygame_gui._constants import *
 
-import json
-from types import SimpleNamespace
-from pathlib import Path
+from game.app.board import Board
+from game.app.code_blocks import CodeBlocks
+from game.app.panels import  LevelText
+from game.core.json_support import load_json
 
+# New environemnts/screens that are loaded through the game manager should inherit this class
 class BaseEnvironment:
-    def __init__(self, title: str, background_file: str, theme_file: str | None = None,  level_file: str | None = None,):
-        self.title = title
+    # When an environemnt using this class init's, it loads all relevant data from 'environments/data/{level_file}.json" to be used
+    def __init__(self, level_file):
+        root_dir = "game/environments/data/"
+        env_path = f"{root_dir}{level_file}.json"
+        self.env_data = load_json(env_path)
+        if not self.env_data:
+            print(f'Using default env data. Could not find env data: {level_file}')
+            default_path = f"{root_dir}default.json"
+            self.env_data = load_json(default_path)
 
-        img_path = f'game/assets/{background_file}'
+        init_data = self.env_data.env.init
+
+        self.title = init_data.title
+        img_path = f'game/assets/{init_data.background}'
         self.background_img = image.load(img_path).convert()
-        
-        self.theme_path = f"game/themes/{theme_file}.json"
+        self.theme_path = f"game/environments/themes/{init_data.theme}.json"
 
-        level_path = f"game/levels/{level_file}.json"
-        self._load_data(level_path)
-
-    def create_ui(self, ui_manager):
+    def create_ui(self):
         pass
 
     def on_ui_event(self, event):
@@ -27,36 +36,52 @@ class BaseEnvironment:
     def update_frame(self, delta_time):
         # Per-frame updates (e.g., typing effects, animations).
         pass
-    
+     
+    # Gets the resolution set in 'window/display.py' from the game manager
     def render_background(self):
-        display = self.game_manager.display
-        image_rect = self.background_img.get_rect()
-        image_rect.width = display.resolution[0]
-        image_rect.height = display.resolution[1]
-        UIImage(relative_rect=image_rect, image_surface=self.background_img, manager=display.ui_manager)
-    
-    # chatgpt made this for me cause i didnt have a clue, but it allows us to get a json file and use a.b.c to get variables from the file
-    def _dict_to_namespace(self, dictionary):
-        if isinstance(dictionary, dict):
-            return SimpleNamespace(**{k: self._dict_to_namespace(v) for k, v in dictionary.items()})
-        elif isinstance(dictionary, list):
-            return [self._dict_to_namespace(item) for item in dictionary]
-        else:
-            return dictionary
+        width = self.game_manager.display.resolution[0]
+        height = self.game_manager.display.resolution[1]
+        UIImage(relative_rect=Rect((0,0),(width,height)), image_surface=self.background_img, manager=self.ui_manager)
+        
+    # This is called when the screen is to be reset to recreate ui elements, it can also change the level from a level file
+    def reset(self):
+        self.ui_manager.clear_and_reset()
+        self.render_background()
+        self.create_ui()
+ 
+# This contains all of the info that will be consistent accross each of the levels
+class GameEnv(BaseEnvironment):
+    # The BaseEnvironment in 'environments/base.py', init's the level file
+    def __init__(self, level_file): # This file is where the env gets/loads inital data for the level
+        super().__init__(level_file)
 
-    def _load_data(self,file_path):
-        # Load from file
-        try:
-            path = Path(file_path)
-            with open(path, 'r', encoding='utf-8') as f:
-                data = json.load(f)
-            
-            self.level_data = self._dict_to_namespace(data)
-        except:
-            # default file now
-            # this was setup before so if the file is wrong or misentry then theres no default data
-            self._load_data('game/levels/intro.json')
+    def create_ui(self):
+        # panel_pos and panel_size are temporary values but can be changed freely to fit to screen how we'd like
 
-    # Passes the game manager so that environmennts can switch to other environments
-    def set_manager(self, manager):
-        self.game_manager = manager
+        # Takes data passed through and starts creating the tiles/player/goal and more in the future possibly
+        self.board = Board(
+            panel_pos=(50,50),
+            panel_size=(1200,980),
+            board_data=self.env_data.board, 
+            manager=self.ui_manager)
+
+        # A temporary placeholder of where our code blocks could be placed and initalised when finished programming
+        self.blocks = CodeBlocks(
+            panel_pos=(1250,50),
+            panel_size=(620, 980),
+            manager=self.ui_manager, 
+            player=self.board.player)
+        
+        # Setting level text from getting the env title
+        LevelText(
+            panel_pos=(0,0), 
+            panel_size= (100, 50),
+            text=self.title, 
+            manager=self.ui_manager)
+        
+    def on_ui_event(self, event):
+        # proboaly better to have a custom event that is raised when wanting to go to the next level or similar
+        if event.type == UI_CONFIRMATION_DIALOG_CONFIRMED:
+            self.game_manager.change_env(self.env_data.env.next_env_title)
+        
+        

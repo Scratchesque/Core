@@ -40,5 +40,29 @@
       "name": "custom_font",
       "size": "14"
     }
+  },
+  "#dialouge_panel":{
+    "colours": {
+      "dark_bg": "White"
+    }
+  },
+  "#transparent_button": {
+    "colours": {
+      "normal_bg": "#00000000",
+      "normal_text": "White"
+    },
+    "misc": {
+      "border_width": "0",
+      "shadow_width": "0"
+    }
+  },
+  "#transparent_panel":{
+    "colours": {
+      "dark_bg": "#00000000"
+    },
+    "misc": {
+      "border_width": "0",
+      "shadow_width": "0"
+    }
   }
 }

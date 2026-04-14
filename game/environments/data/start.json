@@ -1,0 +1,28 @@
+{
+    "env":{
+        "init":{
+            "title": "Start",
+            "background": "menu/background.png",
+            "theme": "game"
+        },
+        "next_env_title": "Level 1"
+    },
+    "story": {
+        "intro_dialogue": "<b>Guide</b>: To complete this level, be built different!"
+    },
+    "board": {
+        "map":{
+            "water": ["level_1/water", "SproutLands/Tilesets/Water"],
+            "water_bounds": ["level_1/water_bounds", "SproutLands/Tilesets/Water"],
+            "terrain": ["level_1/terrain", "SproutLands/Tilesets/Grass"],
+            "tree": ["level_1/tree","SproutLands/Objects/Basic_Grass_Biom_things"],
+            "house": ["level_1/house", "SproutLands/Tilesets/Wooden_House_Walls_Tilset"],
+            "door": ["level_1/door", "SproutLands/Tilesets/Doors"],
+            "vegetation": ["level_1/vegetation", "SproutLands/Objects/Basic_Grass_Biom_things"]
+        },
+        "start_pos":{
+            "player":[3,2],
+            "goal":[7,4]
+        }
+    }
+}

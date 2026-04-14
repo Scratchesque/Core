@@ -1,65 +1,84 @@
-from pygame import image, Rect
-from pygame_gui.elements import UIImage
-from pygame_gui.windows import UIConfirmationDialog
-
+from pygame import Rect
+from pygame_gui.elements import UIPanel
+from pygame_gui.windows import UIConfirmationDialog 
+from game.core.csv_support import import_map_layout
 from game.core.constants import *
-from game.core.ui import UIFactory
-from game.app.elements import TiledElement
-from game.window.ui_windows import MovementWindow
+from game.app.tiles import Tile, Player
 
-class Board:
-    def __init__(self, board_pos, board_size, level_data, manager):
-        self.data = level_data
-        self.board_pos = board_pos
-        self.tiles_len = board_size/self.data.row_tiles_amm
-        self.row_tiles_amm = self.data.row_tiles_amm
-        self.manager = manager
+# This file renders the map from the board data in the json
+class Board(UIPanel):
+    def __init__(self, panel_pos, panel_size, board_data, manager):
+        # Starting_height is the panel's layer height
+        # For UIPanels you should either put all object that are supposed updated inside of the panels container
+        # or for example, use a UIPanel as a gui hud element like player health without a container 
+        super().__init__(Rect(panel_pos, panel_size), manager=manager, object_id="#transparent_panel", starting_height=1)
+        
+        # Load vars to be used accross the class
+        self.board_data = board_data
+        self.completed_level = False
+        self.tiles_size = None
+        self.map_tiles = {}
 
-        self.complete = False
-        self.movement_window = None
-
-        self.create_frame() 
+        # Render the tiles
+        self.create_ui()
         self.init_level()
 
-    def create_frame(self):
-        # just creating a grid , nothing extra yet like platforms or other things in the level
-        tile_img = image.load('game/assets/menu/button.png').convert_alpha()
-        tile_rect = tile_img.get_rect()
-        tile_rect.width = self.tiles_len
-        tile_rect.height = self.tiles_len
+    # Gets the size of this panel container, and divdes it by the ammount of tiles in the level to get the size of the tile 
+    def _scale_tiles(self, width, height):
+        if self.tiles_size == None:
+            x = self.get_relative_rect().size[0] // width
+            y = self.get_relative_rect().size[1] // height
+            self.tiles_size = [x,y]
 
-        for height in range(self.row_tiles_amm):
-            for length in range(self.row_tiles_amm):
-                tile_rect.x = self.board_pos[0] + self.tiles_len * length
-                tile_rect.y = self.board_pos[1] + self.tiles_len * height
-                UIImage(tile_rect, tile_img, self.manager)
+    def create_ui(self):
+        # Gets the relevant information about each map file in the board data at the loaded json, then scales and renders each tile in each file
+        for element_type, element_data in self.board_data.map.__dict__.items():
+            csv_map = element_data[0]
+            tile_img = element_data[1]
+            self.map_tiles[element_type] = []
+            csv_layout = import_map_layout(csv_map)
+            height = len(csv_layout)
+            for row_index, row in enumerate(csv_layout):
+                width = len(row)
+                self._scale_tiles(width,height)
+                for col_index, val in enumerate(row):
+                    if val != '-1':
+                        tile = Tile(start_pos=(col_index, row_index), 
+                            tiles_size=self.tiles_size,
+                            img_path=tile_img+".png", 
+                            manager=self.ui_manager, 
+                            container=self, 
+                            tile=int(val))
+                        self.map_tiles[element_type].append(tile)
 
     def init_level(self):
-        # creating the elements to be on the screen from 'elements.py'       
-        self.carrot = TiledElement(self.data.start_pos.carrot, self.tiles_len, self.board_pos, self.row_tiles_amm, 'levels/carrot.png', self.manager)
-        self.player = TiledElement(self.data.start_pos.player, self.tiles_len, self.board_pos, self.row_tiles_amm, 'levels/bunny.png', self.manager)
-
-        self.test_button = UIFactory.button(
-            (SCREEN_WIDTH -200, SCREEN_HEIGHT - 100),
-            (100, 50),
-            "Movement",
-            self.manager,
-            object_id="move",
-        )
-
-    def on_ui_event(self, event):
-        if self.test_button.on_click(event):
-            if self.movement_window is None or not self.movement_window.alive():
-                self.movement_window = MovementWindow(
-                Rect((SCREEN_WIDTH-500, 150), (250, 250)),
-                self.manager,
-                self.player
-            )
-
-        if self.carrot.collision_check(self.player):
-            if self.complete == False:
-                self.complete = True
+        # Uses random sprites I found in the assets folder and sets their position based on the json loaded
+        
+        self.goal = Tile(start_pos=self.board_data.start_pos.goal, 
+            tiles_size=self.tiles_size,
+            img_path='SproutLands/Objects/Basic Grass Biom things 1.png', 
+            manager=self.ui_manager, 
+            container=self, 
+            tile=20)
+        self.player = Player(start_pos=self.board_data.start_pos.player, 
+            tiles_size=self.tiles_size,
+            map_tiles=self.map_tiles,
+            manager=self.ui_manager, 
+            container=self, 
+            tile=0)
+        
+    # Having super().process_event(event) or super().update(delta_time) inside the panel eliminates the need to call these functions outside of this class
+    # With pygame_gui Since we passthrough the ui manager, it inherites UIPanel (or any element in pygame_gui.elements) and does its own initalisation which allows us to process events in each class
+    def process_event(self, event):
+        super().process_event(event)
+        if self.player.collision_check(self.goal):
+            if self.completed_level == False:
+                self.completed_level = True
                 rect = Rect((SCREEN_WIDTH // 2, SCREEN_HEIGHT //2), (300, 300)) 
-                UIConfirmationDialog(rect, "You Win!", self.manager)
-
-            
+                UIConfirmationDialog(rect=rect, 
+                    action_long_desc="You Win!", 
+                    manager=self.ui_manager)
+    
+    def update(self, delta_time):
+        super().update(delta_time)
+        

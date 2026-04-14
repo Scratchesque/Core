@@ -20,6 +20,8 @@ class Tile(UIImage):
 
 class Player(Tile):
     def __init__(self, start_pos, tiles_size, manager, map_tiles, container=None, tile=None):
+        self.shadow = PlayerShadow(start_pos, tiles_size, manager, container)
+
         # Ive put the img_path in here cause its not something that 'should' be changed on the fly as animations can break if changed as of now
         img_path='SproutLands/Characters/Basic Charakter Spritesheet.png'
         super().__init__(start_pos, tiles_size, img_path, manager, container, tile)
@@ -61,7 +63,7 @@ class Player(Tile):
                 self.animations[name].append(animation_list[frame])
     
     def collision_check(self, obj):
-        # or else they can just clip through to get to the goal check by jumping
+        # or else they can just clip through tiles
         if not self.is_jumping:
             if self.rect.colliderect(obj.rect):
                 return True
@@ -117,16 +119,18 @@ class Player(Tile):
             self.state = 'idle'
             self.vel = math.Vector2(0, 0)
 
-    def update_wall_collisions(self, vel, collisions):
-        if self.is_jumping:
-            return
+        # no point of checking for wall collisions if the player wont be moving so only update when player is moving
+        self.update_wall_collisions(['water', 'tree'])
+        # same with setting the new self.pos onto the screen
+        self.update_position()
 
-        if vel.x == 0 and vel.y == 0:
+    def update_wall_collisions(self, collisions):
+        if self.vel.x == 0 and self.vel.y == 0:
             return
 
         for collision in collisions:
             for sprite in self.map_tiles.get(collision, []):
-                if self.rect.colliderect(sprite.rect):
+                if self.collision_check(sprite):
                     self.pos = self.og_pos.copy()
                     self.vel = math.Vector2(0, 0)
        
@@ -139,12 +143,26 @@ class Player(Tile):
         self.set_image(self.sprite_list[tile_number])
         self.animationcount += 1
 
+    def update_position(self):
+        # this updates the position of the player tile and the created shadow tile, then depending if the player is jumping or not it changes the position
+        screen_x = int(self.pos.x * self.tiles_size.x)
+        screen_y = int(self.pos.y * self.tiles_size.y)
+        self.set_relative_position((screen_x, screen_y))
+        if not self.is_jumping:
+            self.shadow.set_relative_position((screen_x, screen_y))
+
     def update(self, delta_time):
         super().update(delta_time)
         self.update_sprite_sheet()
         self.update_movement()
-        self.update_wall_collisions(self.vel, ['water', 'tree'])
 
-        # Setting the new self.pos onto the screen
-        self.set_relative_position((int(self.pos.x * self.tiles_size.x), int(self.pos.y * self.tiles_size.y)))
-         
+
+class PlayerShadow(Tile):
+    def __init__(self, start_pos, tiles_size, manager, container):
+        # for now ive just made a png in 'photopea.com' as an oval shape
+        # later on if needs be i can change it so that its mathematically generated instead of loaded as a png but for now its fine
+        super().__init__(start_pos=start_pos,
+        tiles_size=tiles_size, 
+        img_path='levels/shadow.png', 
+        manager=manager,
+        container=container)

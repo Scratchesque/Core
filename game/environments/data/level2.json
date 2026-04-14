@@ -4,7 +4,8 @@
             "title": "Level 2",
             "background": "menu/background.png",
             "theme": "game"
-        }
+        },
+        "next_env_title": "Main Menu"
     },
     "story": {
         "intro_dialogue": "<b>Guide</b>: Same as before"

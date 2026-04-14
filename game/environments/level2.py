@@ -5,9 +5,9 @@ from game.core.constants import *
 
 # making each file seperate again cause i realise sometimes there will be different elements being rendered depending on the level, 
 # so like this should be easier to make changes on individual levels
-class Level1(GameEnv):
+class Level2(GameEnv):
     def __init__(self):
-        super().__init__(level_file="start")
+        super().__init__(level_file="level1")
 
     def create_ui(self):
         super().create_ui()

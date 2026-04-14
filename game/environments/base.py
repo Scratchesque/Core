@@ -1,5 +1,6 @@
 from pygame import image, Rect
 from pygame_gui.elements import UIImage
+from pygame_gui._constants import *
 
 from game.app.board import Board
 from game.app.code_blocks import CodeBlocks
@@ -66,15 +67,8 @@ class BaseEnvironment:
         height = self.game_manager.display.resolution[1]
         UIImage(relative_rect=Rect((0,0),(width,height)), image_surface=self.background_img, manager=self.ui_manager)
         
-    # This is called when the screen is to be reset to recreate ui elements, it can also change the level from a level file 
-    # 
-    # Currently it resets when the game_manager needs first create all elements
-    # or when the environement resets within itself for eg in 'environments/game.py' at on_ui_event()
-    def reset(self, level_file = None):
-        if level_file == None:
-            self.__init__()
-        else:
-            self.__init__(level_file)
+    # This is called when the screen is to be reset to recreate ui elements, it can also change the level from a level file
+    def reset(self):
         self.ui_manager.clear_and_reset()
         self.render_background()
         self.create_ui()
@@ -108,5 +102,10 @@ class GameEnv(BaseEnvironment):
             panel_size= (100, 50),
             text=self.title, 
             manager=self.ui_manager)
+        
+    def on_ui_event(self, event):
+        # proboaly better to have a custom event that is raised when wanting to go to the next level or similar
+        if event.type == UI_CONFIRMATION_DIALOG_CONFIRMED:
+            self.game_manager.change_env(self.env_data.env.next_env_title)
         
         

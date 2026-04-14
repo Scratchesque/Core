@@ -45,8 +45,7 @@ class CodeBlocks(UIPanel):
 
     def process_event(self, event):
         super().process_event(event)
-        # here ive just used another way like object ids, to not save each button indivudually to their own self.xxxx
-        if event.type == UI_BUTTON_START_PRESS:
+        if event.type == UI_BUTTON_PRESSED:
             if event.ui_object_id == '#code_panel.#up':
                 self.player.do_action('up')
             if event.ui_object_id == '#code_panel.#down':
@@ -57,10 +56,5 @@ class CodeBlocks(UIPanel):
                 self.player.do_action('right')
             if event.ui_object_id == '#code_panel.#jump':
                 self.player.do_action('jump')
-
-        if event.type == UI_BUTTON_PRESSED:
-            # If else releaseing the button will preemtively change the state when jumping, this is temp for now untill we put in code blocks 
-            if event.ui_object_id != '#code_panel.#jump':
-                self.player.do_action('idle')
             
             

@@ -25,14 +25,18 @@ class Player(Tile):
         super().__init__(start_pos, tiles_size, img_path, manager, container, tile)
 
         self.vel = math.Vector2(0,0)
+        self.pos = math.Vector2(start_pos)
+        self.tiles_size = math.Vector2(tiles_size)
+
         self.map_tiles = map_tiles
 
         self.animationcount = 0
         self.animations = {}
         self.state = 'idle'
 
+        self.move_timer = MOVEMENT_DURATION
+        self.is_moving = False
         self.is_jumping = False
-        self.jump_timer = 0
 
         self._set_animations()
 
@@ -55,7 +59,6 @@ class Player(Tile):
             self.animations[name] = []
             for frame in frames:
                 self.animations[name].append(animation_list[frame])
-
     
     def collision_check(self, obj):
         # or else they can just clip through to get to the goal check by jumping
@@ -63,80 +66,69 @@ class Player(Tile):
             if self.rect.colliderect(obj.rect):
                 return True
 
-
     def do_action(self, action = ""):
+        if self.is_moving:
+            return
+
+        self.og_pos = self.pos.copy()
+        self.move_timer = MOVEMENT_DURATION
+        self.is_moving = True
+
         match action:
-            case "up":
-                self.vel.y = -PLAYER_VEL
+            case "up" | "down" | "left" | "right":
+                if action == "up":
+                    self.vel.y = -PLAYER_VEL
+                elif action == "down":
+                    self.vel.y = PLAYER_VEL
+                elif action == "left":
+                    self.vel.x = -PLAYER_VEL
+                elif action == "right":
+                    self.vel.x = PLAYER_VEL
                 self.state = action
-            case "down":
-                self.vel.y = PLAYER_VEL
-                self.state = action
-            case "left":
-                self.vel.x = -PLAYER_VEL
-                self.state = action
-            case "right":
-                self.vel.x = PLAYER_VEL
-                self.state = action
+
             case "jump":
-                if not self.is_jumping:
-                    self.is_jumping = True
-                    self.jump_timer = JUMP_DURATION
-                    self.state = action
+                self.state = "jump"
+                self.is_jumping = True
+                self.vel.y = -PLAYER_VEL
+
             case "idle":
-                self.vel.x = 0
-                self.vel.y = 0
-                self.state = action
+                self.state = "idle"
+                self.is_moving = False
 
-    def update_jump(self):
-        if not self.is_jumping:
-            return 0
+    def update_movement(self):
+        if not self.is_moving:
+            return
 
-        self.jump_timer -= 1
-        #seems like only odd numbers work for the JUMP_DURATION, or else it goes further down than started from
-        half = JUMP_DURATION // 2
+        self.move_timer -= 1
+        progress = 1 - (self.move_timer / MOVEMENT_DURATION)
 
-        if self.jump_timer > half:
-            progress = (JUMP_DURATION - self.jump_timer) / half
-            offset = progress
-        else:
-            progress = self.jump_timer / half
-            offset = -progress
+        move_x = self.vel.x * progress
+        move_y = self.vel.y * progress
 
-        jump_offset = int(JUMP_HEIGHT * offset)
+        if self.is_jumping and self.move_timer < MOVEMENT_DURATION // 2:
+            move_y = self.vel.y - (move_y)
 
-        if self.jump_timer <= 0:
+        self.pos.x = self.og_pos.x + move_x
+        self.pos.y = self.og_pos.y + move_y
+
+        if self.move_timer <= 0:
+            self.is_moving = False
             self.is_jumping = False
             self.state = 'idle'
-            jump_offset = 0
+            self.vel = math.Vector2(0, 0)
 
-        self.rect.y -= jump_offset
-
-    def update_velocity(self, vel):    
-        self.rect.x += int(vel.x)
-        self.rect.y += int(vel.y)
-
-    def update_pos_collision(self, collisions):
-        if self.vel.x == 0 and self.vel.y == 0 and not self.is_jumping:
+    def update_wall_collisions(self, vel, collisions):
+        if self.is_jumping:
             return
-        
+
+        if vel.x == 0 and vel.y == 0:
+            return
+
         for collision in collisions:
-            for sprite in self.map_tiles[collision]:
+            for sprite in self.map_tiles.get(collision, []):
                 if self.rect.colliderect(sprite.rect):
-                    overlap_x = min(self.rect.right, sprite.rect.right) - max(self.rect.left, sprite.rect.left)
-                    overlap_y = min(self.rect.bottom, sprite.rect.bottom) - max(self.rect.top, sprite.rect.top)
-                    if overlap_x < overlap_y:
-                        if self.vel.x > 0:
-                            self.rect.right = sprite.rect.left
-                        elif self.vel.x < 0:
-                            self.rect.left = sprite.rect.right
-                        self.vel.x = 0
-                    if overlap_y < overlap_x:
-                        if self.vel.y > 0:
-                            self.rect.bottom = sprite.rect.top
-                        elif self.vel.y < 0:
-                            self.rect.top = sprite.rect.bottom
-                        self.vel.y = 0
+                    self.pos = self.og_pos.copy()
+                    self.vel = math.Vector2(0, 0)
        
     def update_sprite_sheet(self):
         time_lag = 10
@@ -149,8 +141,10 @@ class Player(Tile):
 
     def update(self, delta_time):
         super().update(delta_time)
-        self.update_velocity(self.vel)
-        self.update_pos_collision(['water', 'tree'])
-        self.update_jump()
         self.update_sprite_sheet()
+        self.update_movement()
+        self.update_wall_collisions(self.vel, ['water', 'tree'])
+
+        # Setting the new self.pos onto the screen
+        self.set_relative_position((int(self.pos.x * self.tiles_size.x), int(self.pos.y * self.tiles_size.y)))
          

@@ -5,10 +5,7 @@ from pygame_gui._constants import *
 from game.app.board import Board
 from game.app.code_blocks import CodeBlocks
 from game.app.panels import  LevelText
-
-import json
-from types import SimpleNamespace
-from pathlib import Path
+from game.core.json_support import load_json
 
 # New environemnts/screens that are loaded through the game manager should inherit this class
 class BaseEnvironment:
@@ -16,11 +13,11 @@ class BaseEnvironment:
     def __init__(self, level_file):
         root_dir = "game/environments/data/"
         env_path = f"{root_dir}{level_file}.json"
-        self.env_data = self._load_json(env_path)
+        self.env_data = load_json(env_path)
         if not self.env_data:
             print(f'Using default env data. Could not find env data: {level_file}')
             default_path = f"{root_dir}default.json"
-            self.env_data = self._load_data(default_path)
+            self.env_data = load_json(default_path)
 
         init_data = self.env_data.env.init
 
@@ -39,28 +36,7 @@ class BaseEnvironment:
     def update_frame(self, delta_time):
         # Per-frame updates (e.g., typing effects, animations).
         pass
-    
-    # chatgpt made this for me cause i didnt have a clue, but it goes through each {} in the json and returns result to get added to the env_data
-    def _dict_to_namespace(self, dictionary):
-        if isinstance(dictionary, dict):
-            return SimpleNamespace(**{k: self._dict_to_namespace(v) for k, v in dictionary.items()})
-        elif isinstance(dictionary, list):
-            return [self._dict_to_namespace(item) for item in dictionary]
-        else:
-            return dictionary
-
-    # This turns a json into a.b.c variables that we can use to get values 
-    def _load_json(self,file_path):
-        try:
-            path = Path(file_path)
-            with open(path, 'r', encoding='utf-8') as f:
-                data = json.load(f)
-            data_list = self._dict_to_namespace(data)
-            data_list.env.init # checks if init data exists
-            return data_list
-        except:
-            return False
-        
+     
     # Gets the resolution set in 'window/display.py' from the game manager
     def render_background(self):
         width = self.game_manager.display.resolution[0]
@@ -75,7 +51,7 @@ class BaseEnvironment:
  
 # This contains all of the info that will be consistent accross each of the levels
 class GameEnv(BaseEnvironment):
-    # The BaseEnvironment in 'environments/base.py', init's the level file 'environments/data/start.json'
+    # The BaseEnvironment in 'environments/base.py', init's the level file
     def __init__(self, level_file): # This file is where the env gets/loads inital data for the level
         super().__init__(level_file)
 

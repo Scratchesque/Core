@@ -93,17 +93,25 @@ class Player(Tile):
                 self.vel.y = -2 # jump height should be consistent
                 self.state = action
                 self.is_jumping = True
+    
+    def set_idle(self):
+        self.is_moving = False
+        self.is_jumping = False
+        self.state = 'idle'
+        self.vel = math.Vector2(0, 0)
 
     def update_movement(self):
         if not self.is_moving:
             return
 
+        # incremental timer when the player is moving
         self.move_timer -= 1
         progress = 1 - (self.move_timer / MOVEMENT_DURATION)
 
         move_x = self.vel.x * progress
         move_y = self.vel.y * progress
 
+        # without this if statement the player wouldnt come back down when jumping
         if self.is_jumping and self.move_timer < MOVEMENT_DURATION // 2:
             move_y = self.vel.y - (move_y)
 
@@ -111,35 +119,43 @@ class Player(Tile):
         self.pos.y = self.og_pos.y + move_y
 
         if self.move_timer <= 0:
-            self.is_moving = False
-            self.is_jumping = False
-            self.state = 'idle'
-            self.vel = math.Vector2(0, 0)
+            self.set_idle()
 
+        # this took me forever to realise but unless the position is updated on the screen before, the collisions dont work correctly
+        # in the future i will change collisions to use tile coordinates instead of checking if it is touching another sprite rect 
+        # cause that fixes the problem of using update position twice, if not when colliding on a jump it tps back, 
+        # this is a must have or else they get stuck ontop of the tile that they can jump over
+        self.update_position()
         # no point of checking for wall collisions if the player wont be moving so only update when player is moving
         self.update_tile_collisions()
-        # same with setting the new self.pos onto the screen
+        # updating the new calculated position for if they touch a collision with a tile from the func called before
         self.update_position()
 
     def update_tile_collisions(self):
         if self.vel.x == 0 and self.vel.y == 0:
+            # this code is for that if they are ontop of a tile that they shouldnt be, then tp them back
+            if not self.is_jumping:
+                for collision_name in self.jumpable_tiles:
+                    for sprite in self.map_tiles[collision_name]:
+                        if self.rect.colliderect(sprite.rect):
+                            self.pos = self.og_pos.copy()
+                            self.set_idle()
             return
 
         # theres still problems if the player is in a corner where they arent able to jump through
         # like on the start level, go up one and try to jump to the right 
         # not working cause the tile above is a boundary_tiles, but i dont think thats a big issue
         for collision in self.boundary_tiles:
+            # this is so that if they are jumping, they can go through tiles and skip those collisons
             if self.is_jumping and collision in self.jumpable_tiles:
                 continue
             for sprite in self.map_tiles[collision]:
                 if self.rect.colliderect(sprite.rect):
+                    # this is for jumping in place
                     if self.is_jumping and self.vel.x == 0:
                         continue
                     self.pos = self.og_pos.copy()
-                    self.is_moving = False
-                    self.is_jumping = False
-                    self.state = 'idle'
-                    self.vel = math.Vector2(0, 0)
+                    self.set_idle()
        
     def update_sprite_sheet(self):
         time_lag = 10

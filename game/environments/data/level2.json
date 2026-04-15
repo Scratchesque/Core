@@ -12,13 +12,13 @@
     },
     "board": {
         "map":{
-            "water": ["level_1/water", "SproutLands/Tilesets/Water"],
-            "water_bounds": ["level_1/water_bounds", "SproutLands/Tilesets/Water"],
-            "terrain": ["level_1/terrain", "SproutLands/Tilesets/Grass"],
-            "tree": ["level_1/tree","SproutLands/Objects/Basic_Grass_Biom_things"],
-            "house": ["level_1/house", "SproutLands/Tilesets/Wooden_House_Walls_Tilset"],
-            "door": ["level_1/door", "SproutLands/Tilesets/Doors"],
-            "vegetation": ["level_1/vegetation", "SproutLands/Objects/Basic_Grass_Biom_things"]
+            "water": ["Level_1/water", "SproutLands/Tilesets/Water"],
+            "water_bounds": ["Level_1/water_bounds", "SproutLands/Tilesets/Water"],
+            "terrain": ["Level_1/terrain", "SproutLands/Tilesets/Grass"],
+            "tree": ["Level_1/tree","SproutLands/Objects/Basic_Grass_Biom_things"],
+            "house": ["Level_1/house", "SproutLands/Tilesets/Wooden_House_Walls_Tilset"],
+            "door": ["Level_1/door", "SproutLands/Tilesets/Doors"],
+            "vegetation": ["Level_1/vegetation", "SproutLands/Objects/Basic_Grass_Biom_things"]
         },
         "start_pos":{
             "player":[7,12],

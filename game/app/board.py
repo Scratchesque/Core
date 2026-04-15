@@ -64,8 +64,7 @@ class Board(UIPanel):
             tiles_size=self.tiles_size,
             map_tiles=self.map_tiles,
             manager=self.ui_manager, 
-            container=self, 
-            tile=0)
+            container=self)
         
     # Having super().process_event(event) or super().update(delta_time) inside the panel eliminates the need to call these functions outside of this class
     # With pygame_gui Since we passthrough the ui manager, it inherites UIPanel (or any element in pygame_gui.elements) and does its own initalisation which allows us to process events in each class

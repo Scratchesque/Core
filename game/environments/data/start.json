@@ -21,7 +21,7 @@
             "vegetation": ["level_1/vegetation", "SproutLands/Objects/Basic_Grass_Biom_things"]
         },
         "start_pos":{
-            "player":[3,2],
+            "player":[3,3],
             "goal":[7,4]
         }
     }

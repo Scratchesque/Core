@@ -19,18 +19,24 @@ class Tile(UIImage):
         super().__init__(relative_rect=relative_rect, image_surface=loaded_image, manager=manager, container=container)
 
 class Player(Tile):
-    def __init__(self, start_pos, tiles_size, manager, map_tiles, container=None, tile=None):
-        self.shadow = PlayerShadow(start_pos, tiles_size, manager, container)
-
+    def __init__(self, start_pos, tiles_size, manager, map_tiles, container=None):
+        self.shadow = Tile(start_pos=start_pos,
+                           tiles_size=tiles_size,
+                           img_path='levels/shadow.png',
+                           manager=manager,
+                           container=container)
+        
         # Ive put the img_path in here cause its not something that 'should' be changed on the fly as animations can break if changed as of now
         img_path='SproutLands/Characters/Basic Charakter Spritesheet.png'
-        super().__init__(start_pos, tiles_size, img_path, manager, container, tile)
+        super().__init__(start_pos, tiles_size, img_path, manager, container, 0)
 
         self.vel = math.Vector2(0,0)
         self.pos = math.Vector2(start_pos)
         self.tiles_size = math.Vector2(tiles_size)
 
         self.map_tiles = map_tiles
+        self.jumpable_tiles = ['vegetation']
+        self.boundary_tiles = ['water', 'tree'] + self.jumpable_tiles
 
         self.animationcount = 0
         self.animations = {}
@@ -68,7 +74,7 @@ class Player(Tile):
             if self.rect.colliderect(obj.rect):
                 return True
 
-    def do_action(self, action = ""):
+    def do_action(self, action, x=0, y=0):
         if self.is_moving:
             return
 
@@ -78,24 +84,15 @@ class Player(Tile):
 
         match action:
             case "up" | "down" | "left" | "right":
-                if action == "up":
-                    self.vel.y = -PLAYER_VEL
-                elif action == "down":
-                    self.vel.y = PLAYER_VEL
-                elif action == "left":
-                    self.vel.x = -PLAYER_VEL
-                elif action == "right":
-                    self.vel.x = PLAYER_VEL
+                self.vel.y = y
+                self.vel.x = x
                 self.state = action
 
-            case "jump":
-                self.state = "jump"
+            case "jump": # the 'y' makes the jump look higher and higher, 'x' is for distance accross
+                self.vel.x = x
+                self.vel.y = -2 # jump height should be consistent
+                self.state = action
                 self.is_jumping = True
-                self.vel.y = -PLAYER_VEL
-
-            case "idle":
-                self.state = "idle"
-                self.is_moving = False
 
     def update_movement(self):
         if not self.is_moving:
@@ -120,18 +117,28 @@ class Player(Tile):
             self.vel = math.Vector2(0, 0)
 
         # no point of checking for wall collisions if the player wont be moving so only update when player is moving
-        self.update_wall_collisions(['water', 'tree'])
+        self.update_tile_collisions()
         # same with setting the new self.pos onto the screen
         self.update_position()
 
-    def update_wall_collisions(self, collisions):
+    def update_tile_collisions(self):
         if self.vel.x == 0 and self.vel.y == 0:
             return
 
-        for collision in collisions:
-            for sprite in self.map_tiles.get(collision, []):
-                if self.collision_check(sprite):
+        # theres still problems if the player is in a corner where they arent able to jump through
+        # like on the start level, go up one and try to jump to the right 
+        # not working cause the tile above is a boundary_tiles, but i dont think thats a big issue
+        for collision in self.boundary_tiles:
+            if self.is_jumping and collision in self.jumpable_tiles:
+                continue
+            for sprite in self.map_tiles[collision]:
+                if self.rect.colliderect(sprite.rect):
+                    if self.is_jumping and self.vel.x == 0:
+                        continue
                     self.pos = self.og_pos.copy()
+                    self.is_moving = False
+                    self.is_jumping = False
+                    self.state = 'idle'
                     self.vel = math.Vector2(0, 0)
        
     def update_sprite_sheet(self):
@@ -147,22 +154,15 @@ class Player(Tile):
         # this updates the position of the player tile and the created shadow tile, then depending if the player is jumping or not it changes the position
         screen_x = int(self.pos.x * self.tiles_size.x)
         screen_y = int(self.pos.y * self.tiles_size.y)
+
+        shadow_y = screen_y
+        if self.is_jumping:
+            shadow_y = int((self.og_pos.y)*self.tiles_size.y)
+
         self.set_relative_position((screen_x, screen_y))
-        if not self.is_jumping:
-            self.shadow.set_relative_position((screen_x, screen_y))
+        self.shadow.set_relative_position((screen_x, shadow_y))
 
     def update(self, delta_time):
         super().update(delta_time)
         self.update_sprite_sheet()
         self.update_movement()
-
-
-class PlayerShadow(Tile):
-    def __init__(self, start_pos, tiles_size, manager, container):
-        # for now ive just made a png in 'photopea.com' as an oval shape
-        # later on if needs be i can change it so that its mathematically generated instead of loaded as a png but for now its fine
-        super().__init__(start_pos=start_pos,
-        tiles_size=tiles_size, 
-        img_path='levels/shadow.png', 
-        manager=manager,
-        container=container)

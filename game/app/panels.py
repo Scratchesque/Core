@@ -1,6 +1,8 @@
+import pygame
 from pygame import image, Rect
 from pygame_gui.elements import UIImage, UIPanel, UILabel
 from game.core.ui import TypingTextBox, UIFactory
+from game.core.constants import DIALOGUE_SELECTED
 
 # The popup that comes up at the start of every game in 'environments/game.py'
 class DialoguePanel(UIPanel):
@@ -42,6 +44,8 @@ class DialoguePanel(UIPanel):
         if self.confirm.button.on_click(event):
             # Deletes this panel
             self.kill()
+            window_selected_event = pygame.event.Event(DIALOGUE_SELECTED)
+            pygame.event.post(window_selected_event)
 
     def update(self, delta_time):
         super().update(delta_time)

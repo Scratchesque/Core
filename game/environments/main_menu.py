@@ -1,6 +1,7 @@
 from game.core.constants import *
 from game.environments.base import BaseEnvironment
 from game.core.ui import UIFactory
+from game.app.panels import DialoguePanel
 
  
 class LevelSelect(BaseEnvironment):
@@ -10,32 +11,20 @@ class LevelSelect(BaseEnvironment):
 
     # This is called in 'base.py' at reset() 
     def create_ui(self):
-        # i can make a proper version of the main menu loading in some time, not a priority but it does need fixing
-        self.buttons = []  # this need to be reset unless every time the ui is created it adds more buttons to the list
-        # Temp for now but gets list of all envs   
-        self.levels = [env.title for env in self.game_manager.envs_list if env.title != self.title]
+        # we can change how all the elements look like
+        size = (500,500)
+        DialoguePanel(
+            panel_pos=(SCREEN_WIDTH // 2- size[0]//2, SCREEN_HEIGHT //2- size[1]//2),
+            panel_size=size,
+            text="Welcome to Rabbit Rush, your introduction to computer science.\nKevin the Bunny has lost his Carrots/Apples and abilities.\nIt's your goal to gain them back.\nLearn how to read and implement code to help Kevin reach his goal.",
+            manager=self.ui_manager)
 
-        # Then lists them on the screen
-        x = 500
-        for level in self.levels:
-            self.buttons.append(UIFactory.button_img(
-                pos=(x, SCREEN_HEIGHT // 2),
-                size=(300, 100),
-                image_path='game/assets/menu/button.png',
-                text=level,
-                manager=self.ui_manager,
-                object_id='#transparent_button'))
-            x += (350)
-
-        self.quit_button = UIFactory.button((850, 800), (300, 100), "Quit", self.ui_manager, object_id="quit")
+        self.quit_button = UIFactory.button((SCREEN_WIDTH // 2, SCREEN_HEIGHT-150), (300, 100), "Quit", self.ui_manager, object_id="quit", anchor='midbottom')
 
     def on_ui_event(self, event):
         # When a button is pressed for the environments, change to that title environemt
-        for x in range(len(self.buttons)):
-            if self.buttons[x].button.on_click(event):
-                title = self.levels[x]
-                self.game_manager.change_env(title)
-                print(f"Pressed {title}!")
+        if event.type == DIALOGUE_SELECTED:
+            self.game_manager.change_env("Start")
 
         # if quiting call quit in game manager
         quit_result = self.quit_button.on_click(event)

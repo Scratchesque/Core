@@ -56,7 +56,7 @@ class Board(UIPanel):
         
         self.goal = Tile(start_pos=self.board_data.start_pos.goal, 
             tiles_size=self.tiles_size,
-            img_path='SproutLands/Objects/Basic Grass Biom things 1.png', 
+            img_path='SproutLands/Objects/Basic_Grass_Biom_things.png', 
             manager=self.ui_manager, 
             container=self, 
             tile=20)

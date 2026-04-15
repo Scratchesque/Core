@@ -6,11 +6,11 @@
       "bold": "1",
       "italic": "0",
       "regular_resource": {
-        "package": "game.assets",
+        "package": "game.assets.fonts",
         "resource": "FiraCode-Regular.ttf"
       },
       "bold_resource": {
-        "package": "game.assets",
+        "package": "game.assets.fonts",
         "resource": "FiraCode-Bold.ttf"
       }
     }

@@ -1,4 +1,5 @@
 from game.core.constants import *
+from game.core.paths import resolve_project_path
 
 from csv import reader
 from pygame import image, Surface, Rect
@@ -6,7 +7,7 @@ from pygame import image, Surface, Rect
 # Loads level csv in 'environments/map/{map_path}.CSV' to be used  
 def import_map_layout(path):
     terrain_map = []
-    with open(f"game/environments/map/{path}.csv") as map:
+    with open(resolve_project_path(f"game/environments/map/{path}.csv"), encoding="utf-8") as map:
         level = reader(map,delimiter = ',')
         for row in level:
             terrain_map.append(list(row))

@@ -1,7 +1,8 @@
-from pygame import image, Rect, math
+from pygame import Rect, math
 from pygame_gui.elements import UIImage
 from game.core.csv_support import cut_graphics, tile_graphics
 from game.core.constants import *
+from game.core.images import load_image
 
 # The main class that each tile is using so that they can be rendered on the board map
 class Tile(UIImage):
@@ -9,7 +10,7 @@ class Tile(UIImage):
         relative_pos= (start_pos[0] * tiles_size[0], start_pos[1] * tiles_size[1])
         relative_rect = Rect(relative_pos, tiles_size)
         
-        self.img = image.load(f'game/assets/{img_path}').convert_alpha()
+        self.img = load_image(f'game/assets/{img_path}')
         if tile == None:
             loaded_image = self.img
         else:

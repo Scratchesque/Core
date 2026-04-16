@@ -1,7 +1,8 @@
-from pygame import Rect, image, transform
+from pygame import Rect, transform
 from pygame_gui.elements import UIButton, UIImage, UILabel, UITextBox
 from pygame_gui._constants import *
 from game.core.html_typing import truncate_html, visible_text_length
+from game.core.images import load_image
 
 # Making a button that can make it easy to check if itself has been pressed 
 class Button(UIButton):
@@ -51,16 +52,16 @@ class UIFactory:
     @staticmethod
     def image(pos, size, image_path, manager, object_id=None, container=None):
         # Image element for portraits/icons; scales to size if provided.
-        image = image.load(image_path).convert_alpha()
+        loaded_image = load_image(image_path)
         if size is not None:
-            image = transform.smoothscale(image, size)
-        rect = Rect(pos, image.get_size())
-        return UIImage(rect, image, manager, container=container, object_id=object_id)
+            loaded_image = transform.smoothscale(loaded_image, size)
+        rect = Rect(pos, loaded_image.get_size())
+        return UIImage(rect, loaded_image, manager, container=container, object_id=object_id)
     
     @staticmethod
     def button_img(pos,size,image_path,text,manager,object_id=None,container=None):
         # i tried just using buttons and adding a image to the theme.json, but auto scaling was having problems so this is the other fix i found
-        root_path = image.load(image_path).convert_alpha()
+        root_path = load_image(image_path)
         img = UIImage(Rect(pos, size), root_path, manager, container=container)
         button = Button(pos, size, text, manager, object_id, container=container)
 

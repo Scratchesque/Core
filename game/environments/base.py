@@ -1,11 +1,13 @@
-from pygame import image, Rect
+from pygame import Rect
 from pygame_gui.elements import UIImage
 from pygame_gui._constants import *
 
 from game.app.board import Board
 from game.app.code_blocks import CodeBlocks
 from game.app.panels import  LevelText
+from game.core.images import load_image
 from game.core.json_support import load_json
+from game.core.paths import resolve_project_path
 
 # New environemnts/screens that are loaded through the game manager should inherit this class
 class BaseEnvironment:
@@ -23,8 +25,8 @@ class BaseEnvironment:
 
         self.title = init_data.title
         img_path = f'game/assets/{init_data.background}'
-        self.background_img = image.load(img_path).convert()
-        self.theme_path = f"game/environments/themes/{init_data.theme}.json"
+        self.background_img = load_image(img_path)
+        self.theme_path = str(resolve_project_path(f"game/environments/themes/{init_data.theme}.json"))
 
     def create_ui(self):
         pass

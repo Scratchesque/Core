@@ -2,6 +2,7 @@ import pygame
 import pygame_gui
 
 from game.core.constants import *
+from game.core.paths import resolve_project_path
 from game.environments.base import BaseEnvironment
 
 
@@ -64,7 +65,7 @@ class Display:
             
     # Sets icon for window, at least 32x32
     def set_icon(self, path):
-        icon = pygame.image.load(path)
+        icon = pygame.image.load(resolve_project_path(path))
         pygame.display.set_icon(icon)
 
     def stop_game_loop(self):

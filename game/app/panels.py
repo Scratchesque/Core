@@ -1,6 +1,6 @@
-import pygame
-from pygame import image, Rect
+from pygame import Rect
 from pygame_gui.elements import UIImage, UIPanel, UILabel
+from game.core.images import load_image
 from game.core.ui import TypingTextBox, UIFactory
 from game.core.constants import DIALOGUE_SELECTED
 
@@ -60,7 +60,7 @@ class LevelText(UIPanel):
         super().__init__(Rect(panel_pos, panel_size), manager=manager, object_id="#transparent_panel", starting_height=4)
 
         # for some reason im having trouble using the theme.json aswell for this panel to set the image so ive just put the image as an element
-        img = image.load('game/assets/menu/button.png').convert_alpha()
+        img = load_image('game/assets/menu/button.png')
         UIImage(relative_rect=Rect((0,0), panel_size), 
             image_surface=img, 
             manager=self.ui_manager, 

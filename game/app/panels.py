@@ -1,3 +1,4 @@
+import pygame
 from pygame import Rect
 from pygame_gui.elements import UIImage, UIPanel, UILabel
 from game.core.images import load_image

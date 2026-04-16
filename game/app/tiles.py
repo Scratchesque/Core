@@ -85,12 +85,13 @@ class Player(Tile):
         if self.is_moving:
             return
 
-        self.og_pos = self.pos.copy()
-        self.move_timer = MOVEMENT_DURATION
-        self.is_moving = True
-
         match action:
             case "up" | "down" | "left" | "right" | "jump":
+                self.og_pos = self.pos.copy()
+                self.move_timer = MOVEMENT_DURATION
+                self.is_moving = True
+                self.state = action
+
                 self.vel.y = y
                 self.vel.x = x
                 if action == "jump":

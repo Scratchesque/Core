@@ -54,6 +54,20 @@ class CodeBlocks(UIPanel):
             manager=self.ui_manager,
             container=self,
             object_id="#jump_right")
+        
+        #Jumping up and down doesnt really look that good on the tile ui cause of the applying artifical jump calculations, left and right work much better
+        
+        UIButton(relative_rect=Rect((0,300), (200, 50)),
+            text="Jump Up",
+            manager=self.ui_manager,
+            container=self,
+            object_id="#jump_up")
+
+        UIButton(relative_rect=Rect((0,350), (200, 50)),
+            text="Jump Down",
+            manager=self.ui_manager,
+            container=self,
+            object_id="#jump_down")
 
     def process_event(self, event):
         super().process_event(event)
@@ -72,5 +86,9 @@ class CodeBlocks(UIPanel):
                 self.player.do_action('jump',x=-2)
             if event.ui_object_id == '#code_panel.#jump_right':
                 self.player.do_action('jump',x=2)
+            if event.ui_object_id == '#code_panel.#jump_up':
+                self.player.do_action('jump',y=-2)
+            if event.ui_object_id == '#code_panel.#jump_down':
+                self.player.do_action('jump',y=2)
             
             

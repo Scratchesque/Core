@@ -18,6 +18,15 @@ class Tile(UIImage):
 
         super().__init__(relative_rect=relative_rect, image_surface=loaded_image, manager=manager, container=container)
 
+        self.pos = math.Vector2(start_pos)
+    
+    @staticmethod
+    def collision_check(pos1, pos2):
+        x = abs(pos1.x - pos2.x) <= 0.9
+        y = abs(pos1.y - pos2.y) <= 0.9
+        if x and y:
+            return True
+
 class Player(Tile):
     def __init__(self, start_pos, tiles_size, manager, map_tiles, container=None):
         self.shadow = Tile(start_pos=start_pos,
@@ -31,7 +40,6 @@ class Player(Tile):
         super().__init__(start_pos, tiles_size, img_path, manager, container, 0)
 
         self.vel = math.Vector2(0,0)
-        self.pos = math.Vector2(start_pos)
         self.tiles_size = math.Vector2(tiles_size)
 
         self.map_tiles = map_tiles
@@ -68,11 +76,10 @@ class Player(Tile):
             for frame in frames:
                 self.animations[name].append(animation_list[frame])
     
-    def collision_check(self, obj):
+    def goal_check(self, obj):
         # or else they can just clip through tiles
         if not self.is_jumping:
-            if self.rect.colliderect(obj.rect):
-                return True
+            return self.collision_check(self.pos, obj.pos)
 
     def do_action(self, action, x=0, y=0):
         if self.is_moving:
@@ -83,16 +90,11 @@ class Player(Tile):
         self.is_moving = True
 
         match action:
-            case "up" | "down" | "left" | "right":
+            case "up" | "down" | "left" | "right" | "jump":
                 self.vel.y = y
                 self.vel.x = x
-                self.state = action
-
-            case "jump": # the 'y' makes the jump look higher and higher, 'x' is for distance accross
-                self.vel.x = x
-                self.vel.y = -2 # jump height should be consistent
-                self.state = action
-                self.is_jumping = True
+                if action == "jump":
+                    self.is_jumping = True
     
     def set_idle(self):
         self.is_moving = False
@@ -100,20 +102,33 @@ class Player(Tile):
         self.state = 'idle'
         self.vel = math.Vector2(0, 0)
 
+    def _apply_jump(self):
+        
+        if self.is_jumping:
+            # if the jump height is the same as the ammount to move up/down by then it doesnt look like they are jumping
+            # because the calculations are so simple, when jumping while moving up or down, it acctually looks like just moving rapidly
+            # the fix is chaning the jump height to be variable with the self.vel.y but idk how to do that without complex calcs
+            jump_height = -3
+            artificial_y = jump_height * self.progress
+            if self.move_timer >= MOVEMENT_DURATION // 2:
+                return artificial_y
+            else:
+                return jump_height - artificial_y
+            
+        # if not jumping, then no change    
+        return 0
+
     def update_movement(self):
         if not self.is_moving:
             return
 
-        # incremental timer when the player is moving
         self.move_timer -= 1
-        progress = 1 - (self.move_timer / MOVEMENT_DURATION)
+        self.progress = 1 - (self.move_timer / MOVEMENT_DURATION)
 
-        move_x = self.vel.x * progress
-        move_y = self.vel.y * progress
-
-        # without this if statement the player wouldnt come back down when jumping
-        if self.is_jumping and self.move_timer < MOVEMENT_DURATION // 2:
-            move_y = self.vel.y - (move_y)
+        move_x = self.vel.x * self.progress
+        move_y = self.vel.y * self.progress
+        
+        move_y += self._apply_jump()
 
         self.pos.x = self.og_pos.x + move_x
         self.pos.y = self.og_pos.y + move_y
@@ -121,14 +136,7 @@ class Player(Tile):
         if self.move_timer <= 0:
             self.set_idle()
 
-        # this took me forever to realise but unless the position is updated on the screen before, the collisions dont work correctly
-        # in the future i will change collisions to use tile coordinates instead of checking if it is touching another sprite rect 
-        # cause that fixes the problem of using update position twice, if not when colliding on a jump it tps back, 
-        # this is a must have or else they get stuck ontop of the tile that they can jump over
-        self.update_position()
-        # no point of checking for wall collisions if the player wont be moving so only update when player is moving
         self.update_tile_collisions()
-        # updating the new calculated position for if they touch a collision with a tile from the func called before
         self.update_position()
 
     def update_tile_collisions(self):
@@ -137,23 +145,20 @@ class Player(Tile):
             if not self.is_jumping:
                 for collision_name in self.jumpable_tiles:
                     for sprite in self.map_tiles[collision_name]:
-                        if self.rect.colliderect(sprite.rect):
+                        if self.collision_check(self.pos, sprite.pos):
                             self.pos = self.og_pos.copy()
                             self.set_idle()
             return
 
-        # theres still problems if the player is in a corner where they arent able to jump through
-        # like on the start level, go up one and try to jump to the right 
-        # not working cause the tile above is a boundary_tiles, but i dont think thats a big issue
         for collision in self.boundary_tiles:
             # this is so that if they are jumping, they can go through tiles and skip those collisons
             if self.is_jumping and collision in self.jumpable_tiles:
                 continue
             for sprite in self.map_tiles[collision]:
-                if self.rect.colliderect(sprite.rect):
-                    # this is for jumping in place
-                    if self.is_jumping and self.vel.x == 0:
-                        continue
+                # so that collision works while jumping, remove the artifical jump height added when checking for collisions
+                collision_pos = self.pos.copy()
+                collision_pos.y -= self._apply_jump()
+                if self.collision_check(collision_pos, sprite.pos):
                     self.pos = self.og_pos.copy()
                     self.set_idle()
        

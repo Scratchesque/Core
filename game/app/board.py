@@ -56,7 +56,7 @@ class Board(UIPanel):
         
         self.goal = Tile(start_pos=self.board_data.start_pos.goal, 
             tiles_size=self.tiles_size,
-            img_path='SproutLands/Objects/Basic Grass Biom things 1.png', 
+            img_path='SproutLands/Objects/Basic_Grass_Biom_things.png', 
             manager=self.ui_manager, 
             container=self, 
             tile=20)
@@ -64,14 +64,13 @@ class Board(UIPanel):
             tiles_size=self.tiles_size,
             map_tiles=self.map_tiles,
             manager=self.ui_manager, 
-            container=self, 
-            tile=0)
+            container=self)
         
     # Having super().process_event(event) or super().update(delta_time) inside the panel eliminates the need to call these functions outside of this class
     # With pygame_gui Since we passthrough the ui manager, it inherites UIPanel (or any element in pygame_gui.elements) and does its own initalisation which allows us to process events in each class
     def process_event(self, event):
         super().process_event(event)
-        if self.player.collision_check(self.goal):
+        if self.player.goal_check(self.goal):
             if self.completed_level == False:
                 self.completed_level = True
                 rect = Rect((SCREEN_WIDTH // 2, SCREEN_HEIGHT //2), (300, 300)) 

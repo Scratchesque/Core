@@ -43,18 +43,52 @@ class CodeBlocks(UIPanel):
             container=self,
             object_id="#jump")
 
+        UIButton(relative_rect=Rect((0,200), (200, 50)),
+            text="Jump Left",
+            manager=self.ui_manager,
+            container=self,
+            object_id="#jump_left")
+
+        UIButton(relative_rect=Rect((0,250), (200, 50)),
+            text="Jump Right",
+            manager=self.ui_manager,
+            container=self,
+            object_id="#jump_right")
+        
+        #Jumping up and down doesnt really look that good on the tile ui cause of the applying artifical jump calculations, left and right work much better
+        
+        UIButton(relative_rect=Rect((0,300), (200, 50)),
+            text="Jump Up",
+            manager=self.ui_manager,
+            container=self,
+            object_id="#jump_up")
+
+        UIButton(relative_rect=Rect((0,350), (200, 50)),
+            text="Jump Down",
+            manager=self.ui_manager,
+            container=self,
+            object_id="#jump_down")
+
     def process_event(self, event):
         super().process_event(event)
         if event.type == UI_BUTTON_PRESSED:
             if event.ui_object_id == '#code_panel.#up':
-                self.player.do_action('up')
+                self.player.do_action('up', y=-1)
             if event.ui_object_id == '#code_panel.#down':
-                self.player.do_action('down')
+                self.player.do_action('down',y=1)
             if event.ui_object_id == '#code_panel.#left':
-                self.player.do_action('left')
+                self.player.do_action('left',x=-1)
             if event.ui_object_id == '#code_panel.#right':
-                self.player.do_action('right')
+                self.player.do_action('right',x=1)
             if event.ui_object_id == '#code_panel.#jump':
                 self.player.do_action('jump')
+            if event.ui_object_id == '#code_panel.#jump_left':
+                self.player.do_action('jump',x=-2)
+            if event.ui_object_id == '#code_panel.#jump_right':
+                self.player.do_action('jump',x=2)
+            if event.ui_object_id == '#code_panel.#jump_up':
+                self.player.do_action('jump',y=-2)
+            if event.ui_object_id == '#code_panel.#jump_down':
+                self.player.do_action('jump',y=2)
             
             

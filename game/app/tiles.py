@@ -1,4 +1,4 @@
-from pygame import Rect, math
+from pygame import Rect, math, transform
 from pygame_gui.elements import UIImage
 from game.core.csv_support import cut_graphics, tile_graphics
 from game.core.constants import *
@@ -6,10 +6,16 @@ from game.core.images import load_image
 
 # The main class that each tile is using so that they can be rendered on the board map
 class Tile(UIImage):
-    def __init__(self, start_pos, tiles_size, img_path, manager, container=None, tile=None):
-        relative_pos= (start_pos[0] * tiles_size[0], start_pos[1] * tiles_size[1])
+    def __init__(self, start_pos, tiles_size, img_path, manager, container=None, tile=None, board_offset=(0, 0)):
+        self.tiles_size = (int(tiles_size[0]), int(tiles_size[1]))
+        self.board_offset = (int(board_offset[0]), int(board_offset[1]))
+
+        relative_pos = (
+            self.board_offset[0] + start_pos[0] * self.tiles_size[0],
+            self.board_offset[1] + start_pos[1] * self.tiles_size[1],
+        )
         relative_rect = Rect(relative_pos, tiles_size)
-        
+
         self.img = load_image(f'game/assets/{img_path}')
         if tile == None:
             loaded_image = self.img
@@ -17,9 +23,16 @@ class Tile(UIImage):
             self.sprite_list = cut_graphics(self.img)
             loaded_image = self.sprite_list[tile]
 
+        self.base_image = loaded_image
         super().__init__(relative_rect=relative_rect, image_surface=loaded_image, manager=manager, container=container)
+        self.set_image(self.base_image)
 
         self.pos = math.Vector2(start_pos)
+
+    def set_image(self, image_surface, image_is_alpha_premultiplied=False):
+        self.base_image = image_surface
+        scaled_image = transform.scale(image_surface, self.tiles_size)
+        super().set_image(scaled_image, image_is_alpha_premultiplied)
     
     @staticmethod
     def collision_check(pos1, pos2):
@@ -29,19 +42,21 @@ class Tile(UIImage):
             return True
 
 class Player(Tile):
-    def __init__(self, start_pos, tiles_size, manager, map_tiles, container=None):
+    def __init__(self, start_pos, tiles_size, manager, map_tiles, container=None, board_offset=(0, 0)):
         self.shadow = Tile(start_pos=start_pos,
                            tiles_size=tiles_size,
                            img_path='levels/shadow.png',
                            manager=manager,
-                           container=container)
+                           container=container,
+                           board_offset=board_offset)
         
         # Ive put the img_path in here cause its not something that 'should' be changed on the fly as animations can break if changed as of now
         img_path='SproutLands/Characters/Basic Charakter Spritesheet.png'
-        super().__init__(start_pos, tiles_size, img_path, manager, container, 0)
+        super().__init__(start_pos, tiles_size, img_path, manager, container, 0, board_offset)
 
         self.vel = math.Vector2(0,0)
         self.tiles_size = math.Vector2(tiles_size)
+        self.board_offset = math.Vector2(board_offset)
 
         self.map_tiles = map_tiles
         self.jumpable_tiles = ['vegetation']
@@ -175,12 +190,12 @@ class Player(Tile):
 
     def update_position(self):
         # this updates the position of the player tile and the created shadow tile, then depending if the player is jumping or not it changes the position
-        screen_x = int(self.pos.x * self.tiles_size.x)
-        screen_y = int(self.pos.y * self.tiles_size.y)
+        screen_x = int(self.board_offset.x + self.pos.x * self.tiles_size.x)
+        screen_y = int(self.board_offset.y + self.pos.y * self.tiles_size.y)
 
         shadow_y = screen_y
         if self.is_jumping:
-            shadow_y = int((self.og_pos.y)*self.tiles_size.y)
+            shadow_y = int(self.board_offset.y + (self.og_pos.y)*self.tiles_size.y)
 
         self.set_relative_position((screen_x, screen_y))
         self.shadow.set_relative_position((screen_x, shadow_y))

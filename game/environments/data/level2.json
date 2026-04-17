@@ -10,6 +10,19 @@
     "story": {
         "intro_dialogue": "<b>Guide</b>: Same as before"
     },
+    "systems": {
+        "allowed_blocks": [
+            "up",
+            "down",
+            "left",
+            "right",
+            "jump",
+            "jump_left",
+            "jump_right",
+            "jump_up",
+            "jump_down"
+        ]
+    },
     "board": {
         "map":{
             "water": ["Level_1/water", "SproutLands/Tilesets/Water"],

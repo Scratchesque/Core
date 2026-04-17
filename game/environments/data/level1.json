@@ -10,6 +10,9 @@
     "story": {
         "intro_dialogue": "<b>Guide</b>: This one is really hard"
     },
+    "systems": {
+        "allowed_blocks": ["up", "down", "left", "right"]
+    },
     "board": {
         "map":{
             "water": ["Level_1/water", "SproutLands/Tilesets/Water"],

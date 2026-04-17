@@ -11,12 +11,13 @@ class Board(UIPanel):
         # Starting_height is the panel's layer height
         # For UIPanels you should either put all object that are supposed updated inside of the panels container
         # or for example, use a UIPanel as a gui hud element like player health without a container 
-        super().__init__(Rect(panel_pos, panel_size), manager=manager, object_id="#transparent_panel", starting_height=1)
+        super().__init__(Rect(panel_pos, panel_size), manager=manager, object_id="#game_panel", starting_height=1)
         
         # Load vars to be used accross the class
         self.board_data = board_data
         self.completed_level = False
         self.tiles_size = None
+        self.board_offset = (0, 0)
         self.map_tiles = {}
 
         # Render the tiles
@@ -26,9 +27,20 @@ class Board(UIPanel):
     # Gets the size of this panel container, and divdes it by the ammount of tiles in the level to get the size of the tile 
     def _scale_tiles(self, width, height):
         if self.tiles_size == None:
-            x = self.get_relative_rect().size[0] // width
-            y = self.get_relative_rect().size[1] // height
-            self.tiles_size = [x,y]
+            panel_width, panel_height = self.get_relative_rect().size
+            max_scale_x = panel_width // (width * IMG_TILE_SIZE)
+            max_scale_y = panel_height // (height * IMG_TILE_SIZE)
+            scale = max(1, min(max_scale_x, max_scale_y))
+            tile_size = IMG_TILE_SIZE * scale
+
+            board_width = width * tile_size
+            board_height = height * tile_size
+
+            offset_x = (panel_width - board_width) // 2
+            offset_y = (panel_height - board_height) // 2
+
+            self.tiles_size = [tile_size, tile_size]
+            self.board_offset = (offset_x, offset_y)
 
     def create_ui(self):
         # Gets the relevant information about each map file in the board data at the loaded json, then scales and renders each tile in each file
@@ -48,7 +60,8 @@ class Board(UIPanel):
                             img_path=tile_img+".png", 
                             manager=self.ui_manager, 
                             container=self, 
-                            tile=int(val))
+                            tile=int(val),
+                            board_offset=self.board_offset)
                         self.map_tiles[element_type].append(tile)
 
     def init_level(self):
@@ -59,12 +72,14 @@ class Board(UIPanel):
             img_path='SproutLands/Objects/Basic_Grass_Biom_things.png', 
             manager=self.ui_manager, 
             container=self, 
-            tile=20)
+            tile=20,
+            board_offset=self.board_offset)
         self.player = Player(start_pos=self.board_data.start_pos.player, 
             tiles_size=self.tiles_size,
             map_tiles=self.map_tiles,
             manager=self.ui_manager, 
-            container=self)
+            container=self,
+            board_offset=self.board_offset)
         
     # Having super().process_event(event) or super().update(delta_time) inside the panel eliminates the need to call these functions outside of this class
     # With pygame_gui Since we passthrough the ui manager, it inherites UIPanel (or any element in pygame_gui.elements) and does its own initalisation which allows us to process events in each class

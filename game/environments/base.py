@@ -1,5 +1,5 @@
 from pygame import Rect
-from pygame_gui.elements import UIImage
+from pygame_gui.elements import UIImage, UIPanel
 from pygame_gui._constants import *
 
 from game.app.board import Board
@@ -8,6 +8,8 @@ from game.app.panels import  LevelText
 from game.core.images import load_image
 from game.core.json_support import load_json
 from game.core.paths import resolve_project_path
+from game.core.constants import IMG_TILE_SIZE, SCREEN_HEIGHT, SCREEN_WIDTH
+from game.core.csv_support import import_map_layout
 
 # New environemnts/screens that are loaded through the game manager should inherit this class
 class BaseEnvironment:
@@ -53,26 +55,80 @@ class BaseEnvironment:
  
 # This contains all of the info that will be consistent accross each of the levels
 class GameEnv(BaseEnvironment):
+    BOARD_PANEL_PADDING = 28
+    BOARD_PANEL_MIN_SCALE = 1
+    PANEL_SHADOW_SPREAD = 10
+
     # The BaseEnvironment in 'environments/base.py', init's the level file
     def __init__(self, level_file): # This file is where the env gets/loads inital data for the level
         super().__init__(level_file)
 
+    def get_board_grid_size(self):
+        for map_layer in self.env_data.board.map.__dict__.values():
+            csv_layout = import_map_layout(map_layer[0])
+            if csv_layout:
+                return len(csv_layout[0]), len(csv_layout)
+        raise RuntimeError("Board map data is empty.")
+
+    def get_board_panel_size(self, max_width, max_height):
+        grid_width, grid_height = self.get_board_grid_size()
+        max_scale_x = max_width // (grid_width * IMG_TILE_SIZE)
+        max_scale_y = max_height // (grid_height * IMG_TILE_SIZE)
+        tile_scale = max(self.BOARD_PANEL_MIN_SCALE, min(max_scale_x, max_scale_y))
+
+        board_width = grid_width * IMG_TILE_SIZE * tile_scale
+        board_height = grid_height * IMG_TILE_SIZE * tile_scale
+        return (
+            board_width + (self.BOARD_PANEL_PADDING * 2),
+            board_height + (self.BOARD_PANEL_PADDING * 2),
+        )
+
+    def create_shadow_panel(self, panel_pos, panel_size):
+        shadow_rect = Rect(
+            (panel_pos[0] - self.PANEL_SHADOW_SPREAD, panel_pos[1] - self.PANEL_SHADOW_SPREAD),
+            (
+                panel_size[0] + (self.PANEL_SHADOW_SPREAD * 2),
+                panel_size[1] + (self.PANEL_SHADOW_SPREAD * 2),
+            ),
+        )
+        UIPanel(
+            relative_rect=shadow_rect,
+            manager=self.ui_manager,
+            object_id="#panel_shadow",
+            starting_height=0,
+        )
+
     def create_ui(self):
-        # panel_pos and panel_size are temporary values but can be changed freely to fit to screen how we'd like
+        outer_margin = 40
+        panel_gap = 20
+        available_width = SCREEN_WIDTH - (outer_margin * 2) - panel_gap
+        available_height = SCREEN_HEIGHT - (outer_margin * 2)
+
+        blocks_width = 600
+        board_max_width = available_width - blocks_width
+        board_size = self.get_board_panel_size(board_max_width, available_height)
+        board_pos = (outer_margin, outer_margin + ((available_height - board_size[1]) // 2))
+        blocks_pos = (SCREEN_WIDTH - outer_margin - blocks_width, outer_margin)
+        blocks_size = (blocks_width, available_height)
+
+        self.create_shadow_panel(board_pos, board_size)
+        self.create_shadow_panel(blocks_pos, blocks_size)
 
         # Takes data passed through and starts creating the tiles/player/goal and more in the future possibly
         self.board = Board(
-            panel_pos=(50,50),
-            panel_size=(1200,980),
+            panel_pos=board_pos,
+            panel_size=board_size,
             board_data=self.env_data.board, 
             manager=self.ui_manager)
 
         # A temporary placeholder of where our code blocks could be placed and initalised when finished programming
         self.blocks = CodeBlocks(
-            panel_pos=(1250,50),
-            panel_size=(620, 980),
+            panel_pos=blocks_pos,
+            panel_size=blocks_size,
             manager=self.ui_manager, 
-            player=self.board.player)
+            player=self.board.player,
+            allowed_blocks=self.get_allowed_blocks(),
+            reset_level=self.reset)
         
         # Setting level text from getting the env title
         LevelText(
@@ -85,5 +141,11 @@ class GameEnv(BaseEnvironment):
         # proboaly better to have a custom event that is raised when wanting to go to the next level or similar
         if event.type == UI_CONFIRMATION_DIALOG_CONFIRMED:
             self.game_manager.change_env(self.env_data.env.next_env_title)
+
+    def get_allowed_blocks(self):
+        systems_data = getattr(self.env_data, "systems", None)
+        if systems_data is None:
+            return None
+        return getattr(systems_data, "allowed_blocks", None)
         
         

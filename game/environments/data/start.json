@@ -10,6 +10,9 @@
     "story": {
         "intro_dialogue": "<b>Guide</b>: To complete this level, be built different!"
     },
+    "systems": {
+        "allowed_blocks": ["down", "right"]
+    },
     "board": {
         "map":{
             "water": ["Level_1/water", "SproutLands/Tilesets/Water"],

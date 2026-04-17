@@ -112,7 +112,7 @@ class GameEnv(BaseEnvironment):
             relative_rect=shadow_rect,
             manager=self.ui_manager,
             object_id="#panel_shadow",
-            starting_height=0,
+            starting_height=1,
         )
 
     def create_ui(self):

@@ -3,8 +3,8 @@ import inspect
 import pkgutil
 
 import game.environments as environments_pkg
-from game.core.player_data import PlayerData
 from game.environments.base import BaseEnvironment, GameEnv
+from game.support.player_data import PlayerData
 from game.window.display import Display
 
 
@@ -21,7 +21,6 @@ class GameManager:
     def start(self):
         try:
             self.load_level = False
-            self.env.game_manager = self
             self.display.run(self.env)
         except Exception as e:
             print(f"Error: {e}")
@@ -65,7 +64,9 @@ class GameManager:
                 if cls.__module__ != module.__name__:
                     continue
                 
-                environments.append(cls())
+                env = cls()
+                env.game_manager = self
+                environments.append(env)
 
         if not environments:
             raise RuntimeError("No environments found in game/environments.")

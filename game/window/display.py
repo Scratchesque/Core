@@ -1,13 +1,15 @@
 import pygame
 import pygame_gui
 
-from game.core.constants import *
+from game.core.constants import SCREEN_WIDTH, SCREEN_HEIGHT
 from game.core.paths import resolve_project_path
 from game.environments.base import BaseEnvironment
 
 
 # The main window rendered on the screen
 class Display:
+    FPS = 60
+
     # Starts rendering the environment selected
     def __init__(self):
         pygame.init()
@@ -32,7 +34,7 @@ class Display:
         delta_time = 0
 
         while self.running:
-            delta_time = clock.tick(FPS) / 1000
+            delta_time = clock.tick(self.FPS) / 1000
 
             # Process user input / events
             self.process_events()

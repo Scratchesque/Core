@@ -1,11 +1,10 @@
-import pygame
 from pygame import MOUSEBUTTONDOWN, MOUSEBUTTONUP, MOUSEMOTION, Rect
 from pygame.math import Vector2
 from pygame_gui.elements import UIButton, UILabel, UIPanel, UITextBox
 from pygame_gui._constants import UI_BUTTON_PRESSED, UI_BUTTON_START_PRESS
 
 from game.app.block_registry import get_block_library
-from game.core.constants import RESET_ENV_REQUESTED
+from game.core.events import *
 
 
 class ScriptBlock:

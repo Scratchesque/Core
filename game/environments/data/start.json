@@ -7,9 +7,6 @@
             "next_env": "Level 1"
         }
     },
-    "story": {
-        "intro_dialogue": "<b>Guide</b>: To complete this level, be built different!"
-    },
     "systems": {
         "allowed_blocks": ["down", "right"]
     },

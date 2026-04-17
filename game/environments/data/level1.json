@@ -7,9 +7,6 @@
             "next_env": "Level 2"
         }
     },
-    "story": {
-        "intro_dialogue": "<b>Guide</b>: This one is really hard"
-    },
     "systems": {
         "allowed_blocks": ["up", "down", "left", "right"]
     },

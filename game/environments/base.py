@@ -1,17 +1,16 @@
-import pygame
 from pygame import Rect
 from pygame_gui.elements import UIImage, UIPanel
-from pygame_gui._constants import *
 
 from game.app.board import Board
 from game.app.code_blocks import CodeBlocks
 from game.app.panels import ConfirmationPanel, LevelText
 from game.core.images import load_image
-from game.core.json_support import load_json
 from game.core.paths import resolve_project_path
-from game.core.ui import UIFactory
-from game.core.constants import IMG_TILE_SIZE, LEVEL_COMPLETED, MENU_ENV_CONFIRMED, MENU_ENV_REQUESTED, NEXT_ENV_CONFIRMED, RESET_ENV_CONFIRMED, RESET_ENV_REQUESTED, SCREEN_HEIGHT, SCREEN_WIDTH
-from game.core.csv_support import import_map_layout
+from game.core.constants import SCREEN_WIDTH, SCREEN_HEIGHT
+from game.core.events import *
+from game.support.files import import_map_layout, load_json
+from game.support.ui import UIFactory
+
 
 # New environemnts/screens that are loaded through the game manager should inherit this class
 class BaseEnvironment:

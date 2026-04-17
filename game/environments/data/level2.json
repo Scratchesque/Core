@@ -7,9 +7,6 @@
             "next_env": "QUIT"
         }
     },
-    "story": {
-        "intro_dialogue": "<b>Guide</b>: Same as before"
-    },
     "systems": {
         "allowed_blocks": [
             "up",

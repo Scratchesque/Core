@@ -1,8 +1,10 @@
 from pygame import Rect, math, transform
 from pygame_gui.elements import UIImage
-from game.core.csv_support import cut_graphics, tile_graphics
+
 from game.core.constants import *
 from game.core.images import load_image
+from game.support.graphics import cut_graphics, tile_graphics
+
 
 # The main class that each tile is using so that they can be rendered on the board map
 class Tile(UIImage):
@@ -20,7 +22,7 @@ class Tile(UIImage):
         if tile == None:
             loaded_image = self.img
         else:
-            self.sprite_list = cut_graphics(self.img)
+            self.sprite_list = tile_graphics(self.img)
             loaded_image = self.sprite_list[tile]
 
         self.base_image = loaded_image
@@ -67,7 +69,7 @@ class Player(Tile):
         self.animations = {}
         self.state = 'idle'
 
-        self.move_timer = MOVEMENT_DURATION
+        self.move_timer = 0
         self.is_moving = False
         self.is_jumping = False
 
@@ -83,7 +85,7 @@ class Player(Tile):
             "jump": [0]
         }
 
-        animation_list = tile_graphics(img_surface=self.img, 
+        animation_list = cut_graphics(img_surface=self.img, 
                               sprite_col_start=1,
                               sprite_row_start=1,
                               sprite_gap=2)

@@ -1,5 +1,5 @@
 from game.core.constants import SCREEN_HEIGHT, SCREEN_WIDTH
-from game.core.ui import UIFactory
+from game.support.ui import UIFactory
 from game.environments.base import BaseEnvironment
 
 

@@ -1,8 +1,10 @@
 from pygame import Rect, transform
 from pygame_gui.elements import UIButton, UIImage, UILabel, UITextBox
-from pygame_gui._constants import *
-from game.core.html_typing import truncate_html, visible_text_length
+from pygame_gui._constants import UI_BUTTON_PRESSED
+
 from game.core.images import load_image
+from game.support.html_typing import truncate_html, visible_text_length
+
 
 # Making a button that can make it easy to check if itself has been pressed 
 class Button(UIButton):
@@ -17,13 +19,11 @@ class Button(UIButton):
             rect.topleft = pos
         super().__init__(rect, text, manager, container=container, object_id=object_id)
 
-    # Example custom method
     def on_click(self, event):
         if event.type == UI_BUTTON_PRESSED:
             if event.ui_element == self:
                 return True
         return False
-
 
 class ImageButton:
     def __init__(self, image, button):
@@ -119,8 +119,3 @@ class TypingTextBox(UITextBox):
             partial_html = truncate_html(self.full_text, self.visible_chars)
             self.set_text(partial_html)
 
-    def url_click(self, event):
-        if event.type == UI_TEXT_BOX_LINK_CLICKED:
-            if event.ui_element == self:
-                return True
-        return False

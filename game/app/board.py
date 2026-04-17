@@ -1,9 +1,12 @@
 from pygame import Rect
 from pygame_gui.elements import UIPanel
-from pygame_gui.windows import UIConfirmationDialog 
-from game.core.csv_support import import_map_layout
-from game.core.constants import *
+from pygame_gui.windows import UIMessageWindow
+
 from game.app.tiles import Tile, Player
+from game.core.constants import *
+from game.core.events import *
+from game.support.files import import_map_layout
+
 
 # This file renders the map from the board data in the json
 class Board(UIPanel):
@@ -105,14 +108,12 @@ class Board(UIPanel):
     def process_event(self, event):
         super().process_event(event)
         if self.player.goal_check(self.goal):
-            if self.completed_level == False:
-                self.completed_level = True
-                rect = Rect((SCREEN_WIDTH // 2, SCREEN_HEIGHT //2), (300, 300)) 
-                UIConfirmationDialog(rect=rect, 
-                    action_long_desc="You Win!", 
-                    manager=self.ui_manager)
-                level_complete_event = pygame.event.Event(LEVEL_COMPLETED)
-                pygame.event.post(level_complete_event)
+            rect = Rect((SCREEN_WIDTH // 2, SCREEN_HEIGHT //2), (300, 300)) 
+            UIMessageWindow(rect=rect, 
+                html_message="You Win!", 
+                manager=self.ui_manager)
+            level_complete_event = pygame.event.Event(LEVEL_COMPLETED)
+            pygame.event.post(level_complete_event)
     
     def update(self, delta_time):
         super().update(delta_time)

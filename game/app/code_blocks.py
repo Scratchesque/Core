@@ -386,7 +386,11 @@ class CodeBlocks(UIPanel):
 
         if not drop_rect.collidepoint(block_center) and not drop_rect.colliderect(dragged_rect):
             return None
-
+        
+        # no adding to script if the mouse has not been put in the script panel 
+        if not self.script_lane.panel_container.rect.collidepoint(mouse_pos):
+            return None
+        
         lane_top = drop_rect.y
         lane_bottom = min(
             drop_rect.bottom - self.slot_size[1],
@@ -526,8 +530,9 @@ class CodeBlocks(UIPanel):
             spec = self.palette_button_to_spec[event.ui_element]
             self.palette_drag_source = event.ui_element
             mouse_pos = getattr(event, "mouse_pos", event.ui_element.get_abs_rect().center)
-            new_block = self.create_script_block(spec, self.panel_local_pos(mouse_pos))
-            self.start_drag(new_block, mouse_pos, was_new=True)
+            if self.dragged_block is None:
+                new_block = self.create_script_block(spec, self.panel_local_pos(mouse_pos))
+                self.start_drag(new_block, mouse_pos, was_new=True)
             return
 
         if event.type != UI_BUTTON_PRESSED:

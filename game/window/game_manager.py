@@ -3,13 +3,16 @@ import inspect
 import pkgutil
 
 import game.environments as environments_pkg
+from game.core.player_data import PlayerData
 from game.environments.base import BaseEnvironment, GameEnv
 from game.window.display import Display
 
 
 # This process is explained on trello under (Completed) 'Start getting the core of the program'
 class GameManager:
-    def __init__(self):
+    def __init__(self, debug=False):
+        self.debug = debug
+        self.player_data = PlayerData()
         self.display = Display()
         self.envs_list = self._load_environments()
         self.env = self.envs_list[0] # for initalising prev_env
@@ -41,6 +44,9 @@ class GameManager:
                     self.prev_env = self.env 
                     self.env = env
                     self.load_level = True
+
+    def mark_level_completed(self, level_name, next_level_name=None):
+        self.player_data.complete_level(level_name, next_level_name)
                     
     def _load_environments(self):
         environments = []

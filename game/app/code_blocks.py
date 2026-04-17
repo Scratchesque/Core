@@ -5,7 +5,7 @@ from pygame_gui.elements import UIButton, UILabel, UIPanel, UITextBox
 from pygame_gui._constants import UI_BUTTON_PRESSED, UI_BUTTON_START_PRESS
 
 from game.app.block_registry import get_block_library
-from game.core.constants import RESET_ENV_CONFIRMED
+from game.core.constants import RESET_ENV_REQUESTED
 
 
 class ScriptBlock:
@@ -204,8 +204,10 @@ class CodeBlocks(UIPanel):
             starting_height=1,
         )
 
+        lane_text_width = self.script_area_rect.width - (self.LANE_PADDING_X * 2)
+
         UILabel(
-            relative_rect=Rect((self.LANE_PADDING_X, 12), (240, 30)),
+            relative_rect=Rect((self.LANE_PADDING_X, 12), (lane_text_width, 30)),
             text="Script Lane",
             manager=self.ui_manager,
             container=self.script_lane,
@@ -213,8 +215,8 @@ class CodeBlocks(UIPanel):
         )
 
         UILabel(
-            relative_rect=Rect((self.LANE_PADDING_X, 42), (320, 24)),
-            text="Drag here. Use the x button on a block to remove it.",
+            relative_rect=Rect((self.LANE_PADDING_X, 42), (lane_text_width, 24)),
+            text="Drag blocks here. Use x to remove one.",
             manager=self.ui_manager,
             container=self.script_lane,
             object_id="#lane_hint",
@@ -472,7 +474,7 @@ class CodeBlocks(UIPanel):
         self.refresh_status()
 
     def reset_current_level(self):
-        reset_event = pygame.event.Event(RESET_ENV_CONFIRMED)
+        reset_event = pygame.event.Event(RESET_ENV_REQUESTED)
         pygame.event.post(reset_event)
 
     def run_next_step(self):

@@ -1,3 +1,4 @@
+import pygame
 from pygame import Rect
 from pygame_gui.elements import UIPanel
 from pygame_gui.windows import UIConfirmationDialog 
@@ -92,6 +93,8 @@ class Board(UIPanel):
                 UIConfirmationDialog(rect=rect, 
                     action_long_desc="You Win!", 
                     manager=self.ui_manager)
+                level_complete_event = pygame.event.Event(LEVEL_COMPLETED)
+                pygame.event.post(level_complete_event)
     
     def update(self, delta_time):
         super().update(delta_time)

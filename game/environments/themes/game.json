@@ -218,5 +218,110 @@
     "colours": {
       "normal_text": "#666666"
     }
+  },
+  "#confirm_panel": {
+    "colours": {
+      "dark_bg": "#FFF6D8",
+      "normal_border": "#D1B97A"
+    },
+    "misc": {
+      "shape": "rounded_rectangle",
+      "shape_corner_radius": "18",
+      "border_width": "3",
+      "shadow_width": "0"
+    }
+  },
+  "#confirm_title": {
+    "parent": "label",
+    "font": {
+      "name": "custom_font",
+      "size": "22",
+      "bold": "1",
+      "regular_resource": {
+        "package": "game.assets",
+        "resource": "FiraCode-Regular.ttf"
+      },
+      "bold_resource": {
+        "package": "game.assets",
+        "resource": "FiraCode-Bold.ttf"
+      }
+    },
+    "colours": {
+      "normal_text": "#2E2E2E"
+    }
+  },
+  "#confirm_body": {
+    "parent": "label",
+    "font": {
+      "name": "custom_font",
+      "size": "18",
+      "bold": "0",
+      "regular_resource": {
+        "package": "game.assets",
+        "resource": "FiraCode-Regular.ttf"
+      }
+    },
+    "colours": {
+      "normal_text": "#4A3A1C"
+    }
+  },
+  "#confirm_cancel_button": {
+    "font": {
+      "name": "custom_font",
+      "size": "18",
+      "bold": "1",
+      "regular_resource": {
+        "package": "game.assets",
+        "resource": "FiraCode-Regular.ttf"
+      },
+      "bold_resource": {
+        "package": "game.assets",
+        "resource": "FiraCode-Bold.ttf"
+      }
+    },
+    "colours": {
+      "normal_bg": "#00000000",
+      "hovered_bg": "#00000000",
+      "active_bg": "#00000000",
+      "normal_border": "#00000000",
+      "hovered_border": "#00000000",
+      "active_border": "#00000000",
+      "normal_text": "#4B3513",
+      "hovered_text": "#2F2412",
+      "active_text": "#2F2412"
+    },
+    "misc": {
+      "border_width": "0",
+      "shadow_width": "0"
+    }
+  },
+  "#confirm_accept_button": {
+    "font": {
+      "name": "custom_font",
+      "size": "18",
+      "bold": "1",
+      "regular_resource": {
+        "package": "game.assets",
+        "resource": "FiraCode-Regular.ttf"
+      },
+      "bold_resource": {
+        "package": "game.assets",
+        "resource": "FiraCode-Bold.ttf"
+      }
+    },
+    "colours": {
+      "normal_bg": "#00000000",
+      "hovered_bg": "#00000000",
+      "active_bg": "#00000000",
+      "normal_border": "#00000000",
+      "hovered_border": "#00000000",
+      "active_border": "#00000000",
+      "normal_text": "#FFF8F5",
+      "hovered_text": "#FFE9DE",
+      "active_text": "#FFD7C6"
+    },
+    "misc": {
+      "border_width": "0"
+    }
   }
 }

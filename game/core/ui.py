@@ -24,6 +24,19 @@ class Button(UIButton):
                 return True
         return False
 
+
+class ImageButton:
+    def __init__(self, image, button):
+        self.image = image
+        self.button = button
+
+    def on_click(self, event):
+        return self.button.on_click(event)
+
+    def kill(self):
+        self.image.kill()
+        self.button.kill()
+
 # An easy way of accessing different ui elements that can do different things in one place
 class UIFactory:
     @staticmethod
@@ -50,28 +63,36 @@ class UIFactory:
         )
 
     @staticmethod
-    def image(pos, size, image_path, manager, object_id=None, container=None):
+    def image(pos, size, image_path, manager, object_id=None, container=None, anchor=None):
         # Image element for portraits/icons; scales to size if provided.
         loaded_image = load_image(image_path)
         if size is not None:
             loaded_image = transform.smoothscale(loaded_image, size)
-        rect = Rect(pos, loaded_image.get_size())
+        rect = Rect((0, 0), loaded_image.get_size())
+        if anchor is not None:
+            setattr(rect, anchor, pos)
+        else:
+            rect.topleft = pos
         return UIImage(rect, loaded_image, manager, container=container, object_id=object_id)
     
     @staticmethod
-    def button_img(pos,size,image_path,text,manager,object_id=None,container=None):
-        # i tried just using buttons and adding a image to the theme.json, but auto scaling was having problems so this is the other fix i found
-        root_path = load_image(image_path)
-        img = UIImage(Rect(pos, size), root_path, manager, container=container)
-        button = Button(pos, size, text, manager, object_id, container=container)
+    def button_img(pos, size, image_path, text, manager, object_id=None, center=False, anchor=None, container=None):
+        # Image-backed button with smooth scaling and a transparent text/click layer.
+        root_image = load_image(image_path)
+        scaled_image = transform.smoothscale(root_image, size)
 
-        # maybe temp, maybe not, untill/if theres a need to fix 
-        class ButtonImg:
-            def __init__(self, image, button):
-                self.image = image
-                self.button = button
+        rect = Rect((0, 0), size)
+        if anchor is not None:
+            setattr(rect, anchor, pos)
+        elif center:
+            rect.center = pos
+        else:
+            rect.topleft = pos
 
-        return ButtonImg(img, button)
+        img = UIImage(rect, scaled_image, manager, container=container)
+        button = Button(rect.topleft, size, text, manager, object_id=object_id, container=container)
+
+        return ImageButton(img, button)
 
 
 class TypingTextBox(UITextBox):

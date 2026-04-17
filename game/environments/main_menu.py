@@ -1,50 +1,96 @@
-from game.core.constants import *
-from game.environments.base import BaseEnvironment
+from game.core.constants import SCREEN_HEIGHT, SCREEN_WIDTH
 from game.core.ui import UIFactory
-from game.app.panels import DialoguePanel
+from game.environments.base import BaseEnvironment
 
- 
+
 class LevelSelect(BaseEnvironment):
-    # The BaseEnvironment in 'environments/base.py', init's the level file 'environments/data/menu.json'
-    def __init__(self, level_file="menu"): # This file is where the env gets/loads inital data for the level
-        super().__init__(level_file)
-        self.panel_texts = [
-            "Welcome to Rabbit Rush, your introduction to computer science.\nKevin the Bunny has lost his Carrots/Apples and abilities.\nIt's your goal to gain them back.\nLearn how to read and implement code to help Kevin reach his goal.",
-            "How to play:\nDrag and drop the function you want Kevin to execute, your goal is to get Kevin to reach his lost carrot/apple.",
-            "Level types:\nThere are two types of levels:\n1. Introduction Levels: introduce “abilities” act as where users learn fundamentals of coding\n2. Practical Levels: users put what they have learned in practice."
-        ]
+    LOGO_SIZE = (760, 270)
+    SUBTITLE_SIZE = (520, 32)
+    BUTTON_SIZE = (360, 84)
+    BUTTON_GAP = 20
 
-    # This is called in 'base.py' at reset() 
+    def __init__(self, level_file="menu"):
+        super().__init__(level_file)
+        self.level_buttons = []
+        self.quit_button = None
+
     def create_ui(self):
-        # we can change how all the elements look like
-        self.dialouge_pos = 0
-        self.generate_dialouge()
-        
-        self.quit_button = UIFactory.button((SCREEN_WIDTH // 2, SCREEN_HEIGHT-100), (300, 100), "Quit", self.ui_manager, object_id="quit", anchor='midbottom')
+        self.level_buttons = []
+
+        UIFactory.image(
+            pos=(SCREEN_WIDTH // 2, 150),
+            size=self.LOGO_SIZE,
+            image_path="game/assets/menu/logo.png",
+            manager=self.ui_manager,
+            object_id="#menu_logo",
+            anchor="midtop",
+        )
+        UIFactory.label(
+            pos=(SCREEN_WIDTH // 2, 400),
+            size=self.SUBTITLE_SIZE,
+            text="Pick a level and start hopping.",
+            manager=self.ui_manager,
+            object_id="#menu_subtitle",
+            anchor="center",
+        )
+
+        playable_envs = self._get_playable_envs()
+        total_height = (len(playable_envs) * self.BUTTON_SIZE[1]) + (
+            max(0, len(playable_envs) - 1) * self.BUTTON_GAP
+        )
+        start_y = max(420, (SCREEN_HEIGHT - total_height) // 2 + 100)
+
+        for index, env in enumerate(playable_envs):
+            button_y = start_y + (index * (self.BUTTON_SIZE[1] + self.BUTTON_GAP))
+            is_unlocked = self.game_manager.player_data.is_unlocked(env.title)
+            button_text = env.title if is_unlocked else f"Locked: {env.title}"
+            button = UIFactory.button_img(
+                pos=(SCREEN_WIDTH // 2, button_y),
+                size=self.BUTTON_SIZE,
+                image_path="game/assets/menu/button.png" if is_unlocked else "game/assets/menu/lock_button.png",
+                text=button_text,
+                manager=self.ui_manager,
+                object_id="#menu_image_button" if is_unlocked else "#menu_locked_image_button",
+                anchor="midtop",
+            )
+            self.level_buttons.append((button, env.title, is_unlocked))
+
+        self.quit_button = UIFactory.button_img(
+            pos=(SCREEN_WIDTH // 2, SCREEN_HEIGHT - 80),
+            size=(260, 72),
+            image_path="game/assets/menu/button.png",
+            text="Quit",
+            manager=self.ui_manager,
+            object_id="#menu_quit_image_button",
+            anchor="midbottom",
+        )
 
     def on_ui_event(self, event):
         super().on_ui_event(event)
-        # After all dialouges have been gone through, call the next env event in base.py
-        if event.type == DIALOGUE_SELECTED:
-            if self.dialouge_pos < len(self.panel_texts):
-                self.generate_dialouge()
-            else:
-                select_event = pygame.event.Event(NEXT_ENV_CONFIRMED)
-                pygame.event.post(select_event)
 
-        quit_result = self.quit_button.on_click(event)
-        if quit_result:
+        for button, env_title, is_unlocked in self.level_buttons:
+            if is_unlocked and button.on_click(event):
+                self.game_manager.change_env(env_title)
+                return
+
+        if self.quit_button and self.quit_button.on_click(event):
             self.game_manager.change_env("QUIT")
-
-    def generate_dialouge(self):
-        size = (500,600)
-        DialoguePanel(
-            panel_pos=(SCREEN_WIDTH // 2- size[0]//2, SCREEN_HEIGHT //2- size[1]//2),
-            panel_size=size,
-            text=self.panel_texts[self.dialouge_pos],
-            manager=self.ui_manager)
-
-        self.dialouge_pos += 1
 
     def update_frame(self, delta_time):
         pass
+
+    def _get_playable_envs(self):
+        playable_envs = [
+            env for env in self.game_manager.envs_list if env.title != self.title
+        ]
+
+        def env_sort_key(env):
+            if env.title == "Start":
+                return (0, 0)
+            if env.title.startswith("Level "):
+                suffix = env.title.removeprefix("Level ")
+                if suffix.isdigit():
+                    return (1, int(suffix))
+            return (2, env.title)
+
+        return sorted(playable_envs, key=env_sort_key)

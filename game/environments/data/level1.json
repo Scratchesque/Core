@@ -21,11 +21,8 @@
             "tree": ["Level_1/tree","SproutLands/Objects/Basic_Grass_Biom_things"],
             "house": ["Level_1/house", "SproutLands/Tilesets/Wooden_House_Walls_Tilset"],
             "door": ["Level_1/door", "SproutLands/Tilesets/Doors"],
-            "vegetation": ["Level_1/vegetation", "SproutLands/Objects/Basic_Grass_Biom_things"]
-        },
-        "start_pos":{
-            "player":[3,12],
-            "goal":[7,12]
+            "vegetation": ["Level_1/vegetation", "SproutLands/Objects/Basic_Grass_Biom_things"],
+            "start_pos": "Level_1/start_pos"
         }
     }
 }

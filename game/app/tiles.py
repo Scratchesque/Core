@@ -59,8 +59,9 @@ class Player(Tile):
         self.board_offset = math.Vector2(board_offset)
 
         self.map_tiles = map_tiles
+        # var below are temp set, in future possibly it loads from the board envdata
         self.jumpable_tiles = ['vegetation']
-        self.boundary_tiles = ['water', 'tree'] + self.jumpable_tiles
+        self.boundary_tiles = ['water', 'tree', 'npc'] + self.jumpable_tiles
 
         self.animationcount = 0
         self.animations = {}
@@ -122,10 +123,7 @@ class Player(Tile):
     def _apply_jump(self):
         
         if self.is_jumping:
-            # if the jump height is the same as the ammount to move up/down by then it doesnt look like they are jumping
-            # because the calculations are so simple, when jumping while moving up or down, it acctually looks like just moving rapidly
-            # the fix is chaning the jump height to be variable with the self.vel.y but idk how to do that without complex calcs
-            jump_height = -3
+            jump_height = min(-2, -2 + self.vel.y)
             artificial_y = jump_height * self.progress
             if self.move_timer >= MOVEMENT_DURATION // 2:
                 return artificial_y
@@ -193,9 +191,9 @@ class Player(Tile):
         screen_x = int(self.board_offset.x + self.pos.x * self.tiles_size.x)
         screen_y = int(self.board_offset.y + self.pos.y * self.tiles_size.y)
 
-        shadow_y = screen_y
-        if self.is_jumping:
-            shadow_y = int(self.board_offset.y + (self.og_pos.y)*self.tiles_size.y)
+        # this fixes shadow problems when jumping up
+        shadow_pos = self.pos.y - self._apply_jump()
+        shadow_y = int(self.board_offset.y + shadow_pos * self.tiles_size.y)
 
         self.set_relative_position((screen_x, screen_y))
         self.shadow.set_relative_position((screen_x, shadow_y))

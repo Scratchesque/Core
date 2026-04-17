@@ -1,4 +1,3 @@
-import pygame
 from pygame import Rect
 from pygame_gui.elements import UIPanel
 from pygame_gui.windows import UIConfirmationDialog 
@@ -23,7 +22,6 @@ class Board(UIPanel):
 
         # Render the tiles
         self.create_ui()
-        self.init_level()
 
     # Gets the size of this panel container, and divdes it by the ammount of tiles in the level to get the size of the tile 
     def _scale_tiles(self, width, height):
@@ -47,6 +45,8 @@ class Board(UIPanel):
         # Gets the relevant information about each map file in the board data at the loaded json, then scales and renders each tile in each file
         for element_type, element_data in self.board_data.map.__dict__.items():
             csv_map = element_data[0]
+            if element_type == 'start_pos':
+                csv_map = element_data
             tile_img = element_data[1]
             self.map_tiles[element_type] = []
             csv_layout = import_map_layout(csv_map)
@@ -56,31 +56,49 @@ class Board(UIPanel):
                 self._scale_tiles(width,height)
                 for col_index, val in enumerate(row):
                     if val != '-1':
-                        tile = Tile(start_pos=(col_index, row_index), 
-                            tiles_size=self.tiles_size,
-                            img_path=tile_img+".png", 
-                            manager=self.ui_manager, 
-                            container=self, 
-                            tile=int(val),
-                            board_offset=self.board_offset)
-                        self.map_tiles[element_type].append(tile)
+                        tile = self.make_tile(col_index, row_index, val, tile_img)
+                        # only apply tiles that are part of the map
+                        if element_type != 'start_pos':
+                            self.map_tiles[element_type].append(tile)
 
-    def init_level(self):
-        # Uses random sprites I found in the assets folder and sets their position based on the json loaded
-        
-        self.goal = Tile(start_pos=self.board_data.start_pos.goal, 
-            tiles_size=self.tiles_size,
-            img_path='SproutLands/Objects/Basic_Grass_Biom_things.png', 
-            manager=self.ui_manager, 
-            container=self, 
-            tile=20,
-            board_offset=self.board_offset)
-        self.player = Player(start_pos=self.board_data.start_pos.player, 
-            tiles_size=self.tiles_size,
-            map_tiles=self.map_tiles,
-            manager=self.ui_manager, 
-            container=self,
-            board_offset=self.board_offset)
+    def make_tile(self, x, y, val, tile_img):
+        match val:
+            case 'g': #Goal
+                self.goal = Tile(start_pos=(x, y), 
+                    tiles_size=self.tiles_size,
+                    img_path='levels/carrot.webp', 
+                    manager=self.ui_manager, 
+                    container=self,
+                    board_offset=self.board_offset)
+            case 'p': # Player
+                self.player = Player(start_pos=(x, y), 
+                    tiles_size=self.tiles_size,
+                    map_tiles=self.map_tiles,
+                    manager=self.ui_manager, 
+                    container=self,
+                    board_offset=self.board_offset)
+                # if the goal tile is made before the player, the player is placed underneath it
+                # so that the player is always above the goal/npc tiles, chaange the layer
+                self.player.change_layer(3)
+            case 'n': #NPC (future implementation of its own class and dialouge etc.)
+                # need a better tileset tho for the npc
+                self.npc = Tile(start_pos=(x, y), 
+                    tiles_size=self.tiles_size,
+                    img_path='SproutLands/Characters/Free Chicken Sprites.png', 
+                    manager=self.ui_manager, 
+                    container=self,
+                    board_offset=self.board_offset,
+                    tile=0)
+                # for collision for player to not go over npc 
+                self.map_tiles['npc'] = [self.npc]
+            case _:
+                return Tile(start_pos=(x, y), 
+                    tiles_size=self.tiles_size,
+                    img_path=tile_img+".png", 
+                    manager=self.ui_manager, 
+                    container=self, 
+                    tile=int(val),
+                    board_offset=self.board_offset)
         
     # Having super().process_event(event) or super().update(delta_time) inside the panel eliminates the need to call these functions outside of this class
     # With pygame_gui Since we passthrough the ui manager, it inherites UIPanel (or any element in pygame_gui.elements) and does its own initalisation which allows us to process events in each class

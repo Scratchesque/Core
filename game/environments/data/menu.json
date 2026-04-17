@@ -3,7 +3,8 @@
         "init":{
             "title": "Main Menu",
             "background": "menu/background.png",
-            "theme": "main_menu"
+            "theme": "main_menu",
+            "next_env": "Start"
         }
     }
 }

@@ -23,12 +23,14 @@ class LevelSelect(BaseEnvironment):
         self.quit_button = UIFactory.button((SCREEN_WIDTH // 2, SCREEN_HEIGHT-100), (300, 100), "Quit", self.ui_manager, object_id="quit", anchor='midbottom')
 
     def on_ui_event(self, event):
-        # When a button is pressed for the environments, change to that title environemt
+        super().on_ui_event(event)
+        # After all dialouges have been gone through, call the next env event in base.py
         if event.type == DIALOGUE_SELECTED:
             if self.dialouge_pos < len(self.panel_texts):
                 self.generate_dialouge()
             else:
-                self.game_manager.change_env("Start")
+                select_event = pygame.event.Event(NEXT_ENV_CONFIRMED)
+                pygame.event.post(select_event)
 
         quit_result = self.quit_button.on_click(event)
         if quit_result:

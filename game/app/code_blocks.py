@@ -1,9 +1,11 @@
+import pygame
 from pygame import MOUSEBUTTONDOWN, MOUSEBUTTONUP, MOUSEMOTION, Rect
 from pygame.math import Vector2
 from pygame_gui.elements import UIButton, UILabel, UIPanel, UITextBox
 from pygame_gui._constants import UI_BUTTON_PRESSED, UI_BUTTON_START_PRESS
 
 from game.app.block_registry import get_block_library
+from game.core.constants import RESET_ENV_CONFIRMED
 
 
 class ScriptBlock:
@@ -67,7 +69,7 @@ class CodeBlocks(UIPanel):
     PALETTE_FALLBACK_MIN_WIDTH = 116
     LANE_MIN_WIDTH = 220
 
-    def __init__(self, panel_pos, panel_size, manager, player, allowed_blocks=None, reset_level=None):
+    def __init__(self, panel_pos, panel_size, manager, player, allowed_blocks=None):
         super().__init__(
             Rect(panel_pos, panel_size),
             manager=manager,
@@ -76,7 +78,6 @@ class CodeBlocks(UIPanel):
         )
 
         self.player = player
-        self.reset_level = reset_level
         self.block_library = get_block_library(allowed_blocks)
         self.program_blocks = []
         self.next_step_index = 0
@@ -471,8 +472,8 @@ class CodeBlocks(UIPanel):
         self.refresh_status()
 
     def reset_current_level(self):
-        if self.reset_level is not None:
-            self.reset_level()
+        reset_event = pygame.event.Event(RESET_ENV_CONFIRMED)
+        pygame.event.post(reset_event)
 
     def run_next_step(self):
         if not self.is_running or self.player.is_moving:

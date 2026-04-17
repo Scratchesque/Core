@@ -3,7 +3,8 @@
         "init":{
             "title":"DEFAULT",
             "background": "menu/background.png",
-            "theme": "game"
+            "theme": "game",
+            "next_env": "QUIT"
         }
     }
 }

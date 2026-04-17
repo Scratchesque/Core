@@ -1,6 +1,8 @@
 # How big the screen will be accross environments
 import pygame
 DIALOGUE_SELECTED = pygame.event.custom_type()
+NEXT_ENV_CONFIRMED = pygame.event.custom_type()
+RESET_ENV_CONFIRMED = pygame.event.custom_type()
 SCREEN_WIDTH = 1920
 SCREEN_HEIGHT = 1080
 FPS = 60

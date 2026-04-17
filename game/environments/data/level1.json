@@ -3,9 +3,9 @@
         "init":{
             "title": "Level 1",
             "background": "menu/background.png",
-            "theme": "game"
-        },
-        "next_env_title": "Level 2"
+            "theme": "game",
+            "next_env": "Level 2"
+        }
     },
     "story": {
         "intro_dialogue": "<b>Guide</b>: This one is really hard"

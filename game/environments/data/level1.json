@@ -21,5 +21,11 @@
             "vegetation": ["Level_1/vegetation", "SproutLands/Objects/Basic_Grass_Biom_things"],
             "start_pos": "Level_1/start_pos"
         }
+    },
+    "player":{
+        "bounds": {
+            "blocked":["water","tree"],
+            "jumpable": ["vegetation"]
+        }
     }
 }

@@ -1,10 +1,11 @@
 from pygame import Rect, math, transform
-from pygame_gui.elements import UIImage
+from pygame_gui.elements import UIImage, UIScreenSpaceHealthBar
+from pygame_gui.windows import UIMessageWindow
 
 from game.core.constants import *
+from game.core.events import *
 from game.core.images import load_image
 from game.support.graphics import cut_graphics, tile_graphics
-
 
 # The main class that each tile is using so that they can be rendered on the board map
 class Tile(UIImage):
@@ -44,7 +45,7 @@ class Tile(UIImage):
             return True
 
 class Player(Tile):
-    def __init__(self, start_pos, tiles_size, manager, map_tiles, container=None, board_offset=(0, 0)):
+    def __init__(self, start_pos, tiles_size, map_tiles, player_data, manager, container=None, board_offset=(0, 0)):
         self.shadow = Tile(start_pos=start_pos,
                            tiles_size=tiles_size,
                            img_path='levels/shadow.png',
@@ -61,10 +62,15 @@ class Player(Tile):
         self.board_offset = math.Vector2(board_offset)
 
         self.map_tiles = map_tiles
-        # var below are temp set, in future possibly it loads from the board envdata
-        self.jumpable_tiles = ['vegetation']
-        self.boundary_tiles = ['water', 'tree', 'npc'] + self.jumpable_tiles
 
+        self.jumpable_tiles = []
+        self.boundary_tiles = ['npc']
+
+        self.current_health = 1
+        self.move_cost = 0
+
+        self._load_player_data(player_data, manager)
+        
         self.animationcount = 0
         self.animations = {}
         self.state = 'idle'
@@ -94,6 +100,39 @@ class Player(Tile):
             self.animations[name] = []
             for frame in frames:
                 self.animations[name].append(animation_list[frame])
+
+    def _load_player_data(self, player_data, manager):
+        map_bounds = player_data.bounds
+
+        if hasattr(map_bounds, "jumpable"):
+            self.jumpable_tiles = map_bounds.jumpable
+        self.boundary_tiles += map_bounds.blocked + self.jumpable_tiles
+        
+        # set up the energy bar if it is present in the env data json
+        if hasattr(player_data, "energy"):
+            player_energy = player_data.energy
+            self.health_capacity = player_energy.health
+            self.current_health = player_energy.health
+            self.move_cost = 1
+
+            UIScreenSpaceHealthBar(relative_rect=Rect((50,50),(75,25)),
+                        sprite_to_monitor=self,
+                        manager=manager,
+                        object_id='#energy_bar',
+                        container=self.ui_container)
+    
+    # right now the only way to get the health lower is through this function that is called in code blocks
+    # so that you can change the energy per level, you can set values from the env data json 
+    def deplete_energy(self):
+        self.current_health -= self.move_cost
+        if self.current_health <= 0:
+            info_size = (250,160)
+            info_pos = (SCREEN_WIDTH//2-info_size[0]//2, SCREEN_HEIGHT//2-info_size[1]//2)
+            UIMessageWindow(rect=Rect(info_pos, info_size), 
+                    html_message="You ran out of energy, try again!", 
+                    manager=self.ui_manager)            
+            reset_event = pygame.event.Event(RESET_ENV_CONFIRMED)
+            pygame.event.post(reset_event)
     
     def goal_check(self, obj):
         # or else they can just clip through tiles

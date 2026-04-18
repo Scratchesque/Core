@@ -484,9 +484,11 @@ class CodeBlocks(UIPanel):
         if not self.is_running or self.player.is_moving:
             return
 
+        # cause we want the player health to decrease after the set of blocks, decrease player health at the end 
         if self.next_step_index >= len(self.program_blocks):
             self.is_running = False
             self.next_step_index = 0
+            self.player.deplete_energy()
             self.refresh_status()
             return
 

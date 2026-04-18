@@ -137,7 +137,7 @@ class GameEnv(BaseEnvironment):
         self.board = Board(
             panel_pos=board_pos,
             panel_size=board_size,
-            board_data=self.env_data.board, 
+            env_data=self.env_data, 
             manager=self.ui_manager)
 
         # A temporary placeholder of where our code blocks could be placed and initalised when finished programming

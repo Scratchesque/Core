@@ -10,14 +10,14 @@ from game.support.files import import_map_layout
 
 # This file renders the map from the board data in the json
 class Board(UIPanel):
-    def __init__(self, panel_pos, panel_size, board_data, manager):
+    def __init__(self, panel_pos, panel_size, env_data, manager):
         # Starting_height is the panel's layer height
         # For UIPanels you should either put all object that are supposed updated inside of the panels container
         # or for example, use a UIPanel as a gui hud element like player health without a container 
         super().__init__(Rect(panel_pos, panel_size), manager=manager, object_id="#game_panel", starting_height=1)
         
         # Load vars to be used accross the class
-        self.board_data = board_data
+        self.env_data = env_data
         self.completed_level = False
         self.tiles_size = None
         self.board_offset = (0, 0)
@@ -46,7 +46,7 @@ class Board(UIPanel):
 
     def create_ui(self):
         # Gets the relevant information about each map file in the board data at the loaded json, then scales and renders each tile in each file
-        for element_type, element_data in self.board_data.map.__dict__.items():
+        for element_type, element_data in self.env_data.board.map.__dict__.items():
             csv_map = element_data[0]
             if element_type == 'start_pos':
                 csv_map = element_data
@@ -77,7 +77,8 @@ class Board(UIPanel):
                 self.player = Player(start_pos=(x, y), 
                     tiles_size=self.tiles_size,
                     map_tiles=self.map_tiles,
-                    manager=self.ui_manager, 
+                    player_data=self.env_data.player,
+                    manager=self.ui_manager,
                     container=self,
                     board_offset=self.board_offset)
                 # if the goal tile is made before the player, the player is placed underneath it

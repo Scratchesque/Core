@@ -323,5 +323,15 @@
     "misc": {
       "border_width": "0"
     }
+  },
+  "#energy_bar": {
+    "colours": {
+      "normal_text": "#FFFFFF",
+      "filled_bar": "#0091fb,#2060A0,90",
+      "unfilled_bar": "#FF5050"
+    },
+    "misc": {
+      "shadow_width": "1"
+    }
   }
 }

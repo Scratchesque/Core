@@ -107,13 +107,15 @@ class Board(UIPanel):
     # With pygame_gui Since we passthrough the ui manager, it inherites UIPanel (or any element in pygame_gui.elements) and does its own initalisation which allows us to process events in each class
     def process_event(self, event):
         super().process_event(event)
-        if self.player.goal_check(self.goal):
-            rect = Rect((SCREEN_WIDTH // 2, SCREEN_HEIGHT //2), (300, 300)) 
-            UIMessageWindow(rect=rect, 
-                html_message="You Win!", 
-                manager=self.ui_manager)
-            level_complete_event = pygame.event.Event(LEVEL_COMPLETED)
-            pygame.event.post(level_complete_event)
+        if self.completed_level == False:
+            if self.player.goal_check(self.goal):
+                self.completed_level = True
+                rect = Rect((SCREEN_WIDTH // 2, SCREEN_HEIGHT //2), (300, 300)) 
+                UIMessageWindow(rect=rect, 
+                    html_message="You Win!", 
+                    manager=self.ui_manager)
+                level_complete_event = pygame.event.Event(LEVEL_COMPLETED)
+                pygame.event.post(level_complete_event)
     
     def update(self, delta_time):
         super().update(delta_time)

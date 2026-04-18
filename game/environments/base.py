@@ -6,7 +6,7 @@ from game.app.code_blocks import CodeBlocks
 from game.app.panels import ConfirmationPanel, LevelText
 from game.core.images import load_image
 from game.core.paths import resolve_project_path
-from game.core.constants import SCREEN_WIDTH, SCREEN_HEIGHT
+from game.core.constants import *
 from game.core.events import *
 from game.support.files import import_map_layout, load_json
 from game.support.ui import UIFactory

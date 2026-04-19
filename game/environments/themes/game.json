@@ -41,11 +41,6 @@
       "size": "14"
     }
   },
-  "#dialouge_panel":{
-    "colours": {
-      "dark_bg": "White"
-    }
-  },
   "#transparent_button": {
     "colours": {
       "normal_bg": "#00000000",
@@ -262,7 +257,9 @@
       }
     },
     "colours": {
-      "normal_text": "#4A3A1C"
+      "normal_text": "#4A3A1C",
+      "dark_bg": "#00000000",
+      "normal_border": "#00000000"
     }
   },
   "#confirm_cancel_button": {
@@ -332,6 +329,49 @@
     },
     "misc": {
       "shadow_width": "1"
+    }
+  },
+  "#speech_body":{
+    "font": {
+      "name": "custom_font",
+      "size": "12",
+      "regular_resource": {
+        "package": "game.assets.fonts",
+        "resource": "FiraCode-Regular.ttf"
+      }
+    },
+    "colours":{
+      "normal_text":"#000000",      
+      "dark_bg": "#00000000",
+      "normal_border": "#00000000"
+    },
+    "misc":{
+      "shadow_width": "0"
+    }
+  },
+  "#speech_button":{
+    "font": {
+      "name": "custom_font",
+      "size": "10",
+      "bold": "1",
+      "bold_resource": {
+        "package": "game.assets.fonts",
+        "resource": "FiraCode-Bold.ttf"
+      }
+    },
+    "colours": {
+      "normal_bg": "#00000000",
+      "hovered_bg": "#00000000",
+      "active_bg": "#00000000",
+      "normal_border": "#FFFFFF",
+      "hovered_border": "#00000000",
+      "active_border": "#00000000",
+      "normal_text": "#000000",
+      "active_text": "#FFD7C6"
+    },
+    "misc":{
+      "shadow_width": "1",
+      "text_horiz_alignment_padding":"0"
     }
   }
 }

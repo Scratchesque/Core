@@ -1,12 +1,14 @@
 from game.core.constants import SCREEN_HEIGHT, SCREEN_WIDTH
 from game.support.ui import UIFactory
 from game.environments.base import BaseEnvironment
+from game.app.panels import DialoguePanel
 
 
 class LevelSelect(BaseEnvironment):
     LOGO_SIZE = (760, 270)
     SUBTITLE_SIZE = (520, 32)
     BUTTON_SIZE = (360, 84)
+    INTRO_SIZE = (1000, 300)
     BUTTON_GAP = 20
 
     def __init__(self, level_file="menu"):
@@ -40,9 +42,11 @@ class LevelSelect(BaseEnvironment):
         )
         start_y = max(420, (SCREEN_HEIGHT - total_height) // 2 + 100)
 
+        total_unlocked = 0
         for index, env in enumerate(playable_envs):
             button_y = start_y + (index * (self.BUTTON_SIZE[1] + self.BUTTON_GAP))
             is_unlocked = self.game_manager.player_data.is_unlocked(env.title)
+            total_unlocked+=1 if is_unlocked else 0
             button_text = env.title if is_unlocked else f"Locked: {env.title}"
             button = UIFactory.button_img(
                 pos=(SCREEN_WIDTH // 2, button_y),
@@ -54,6 +58,17 @@ class LevelSelect(BaseEnvironment):
                 anchor="midtop",
             )
             self.level_buttons.append((button, env.title, is_unlocked))
+
+        
+        if total_unlocked == 1:
+            # only start level unlocked
+            DialoguePanel(
+                panel_pos=((SCREEN_WIDTH - self.INTRO_SIZE[0])//2, (SCREEN_HEIGHT - self.INTRO_SIZE[1])//2+ 100),
+                panel_size=self.INTRO_SIZE,
+                title="Welcome to Rabbit Rush your introduction to computer science!",
+                message='''Kevin the Bunny has lost his Carrots and abilities. It's your goal to gain them back. 
+Learn how to read and implement code to help Kevin reach his goal.''',
+                manager=self.ui_manager)
 
         self.quit_button = UIFactory.button_img(
             pos=(SCREEN_WIDTH // 2, SCREEN_HEIGHT - 80),

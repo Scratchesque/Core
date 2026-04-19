@@ -1,8 +1,8 @@
 from pygame import Rect
 from pygame_gui.elements import UIPanel
-from pygame_gui.windows import UIMessageWindow
 
-from game.app.tiles import Tile, Player
+from game.app.panels import MessagePanel
+from game.app.tiles import Tile, Player, NPC
 from game.core.constants import *
 from game.core.events import *
 from game.support.files import import_map_layout
@@ -46,7 +46,7 @@ class Board(UIPanel):
 
     def create_ui(self):
         # Gets the relevant information about each map file in the board data at the loaded json, then scales and renders each tile in each file
-        for element_type, element_data in self.env_data.board.map.__dict__.items():
+        for element_type, element_data in self.env_data.map.__dict__.items():
             csv_map = element_data[0]
             if element_type == 'start_pos':
                 csv_map = element_data
@@ -86,13 +86,12 @@ class Board(UIPanel):
                 self.player.change_layer(3)
             case 'n': #NPC (future implementation of its own class and dialouge etc.)
                 # need a better tileset tho for the npc
-                self.npc = Tile(start_pos=(x, y), 
+                self.npc = NPC(start_pos=(x, y), 
                     tiles_size=self.tiles_size,
-                    img_path='SproutLands/Characters/Free Chicken Sprites.png', 
+                    npc_data=self.env_data.npc,
                     manager=self.ui_manager, 
                     container=self,
-                    board_offset=self.board_offset,
-                    tile=0)
+                    board_offset=self.board_offset)
                 # for collision for player to not go over npc 
                 self.map_tiles['npc'] = [self.npc]
             case _:
@@ -111,9 +110,12 @@ class Board(UIPanel):
         if self.completed_level == False:
             if self.player.goal_check(self.goal):
                 self.completed_level = True
-                rect = Rect((SCREEN_WIDTH // 2, SCREEN_HEIGHT //2), (300, 300)) 
-                UIMessageWindow(rect=rect, 
-                    html_message="You Win!", 
+                info_size = (275,160)
+                info_pos = ((SCREEN_WIDTH-info_size[0])//2), ((SCREEN_HEIGHT-info_size[1])//2)
+                MessagePanel(panel_pos=info_pos,
+                    panel_size=info_size,
+                    title="You Win!",
+                    message="Loading next level...",
                     manager=self.ui_manager)
                 level_complete_event = pygame.event.Event(LEVEL_COMPLETED)
                 pygame.event.post(level_complete_event)

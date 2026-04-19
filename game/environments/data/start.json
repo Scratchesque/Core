@@ -10,21 +10,20 @@
     "systems": {
         "allowed_blocks": ["down", "right"]
     },
-    "board": {
-        "map":{
-            "water": ["Level_1/water", "SproutLands/Tilesets/Water"],
-            "water_bounds": ["Level_1/water_bounds", "SproutLands/Tilesets/Water"],
-            "terrain": ["Level_1/terrain", "SproutLands/Tilesets/Grass"],
-            "tree": ["Level_1/tree","SproutLands/Objects/Basic_Grass_Biom_things"],
-            "house": ["Level_1/house", "SproutLands/Tilesets/Wooden_House_Walls_Tilset"],
-            "door": ["Level_1/door", "SproutLands/Tilesets/Doors"],
-            "vegetation": ["Level_1/vegetation", "SproutLands/Objects/Basic_Grass_Biom_things"],
-            "start_pos": "Start_Level/start_pos"
-        }
+    "map":{
+        "water": ["Level_1/water", "SproutLands/Tilesets/Water"],
+        "water_bounds": ["Level_1/water_bounds", "SproutLands/Tilesets/Water"],
+        "terrain": ["Level_1/terrain", "SproutLands/Tilesets/Grass"],
+        "tree": ["Level_1/tree","SproutLands/Objects/Basic_Grass_Biom_things"],
+        "house": ["Level_1/house", "SproutLands/Tilesets/Wooden_House_Walls_Tilset"],
+        "door": ["Level_1/door", "SproutLands/Tilesets/Doors"],
+        "vegetation": ["Level_1/vegetation", "SproutLands/Objects/Basic_Grass_Biom_things"],
+        "start_pos": "Start_Level/start_pos"
     },
     "player":{
         "bounds": {
             "blocked":["water","tree"]
         }
-    }
+    },
+    "npc": ["Drag and drop the function you want Kevin to execute" , "Your goal is to get Kevin to reach his lost carrot."]
 }

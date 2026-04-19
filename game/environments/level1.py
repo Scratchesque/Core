@@ -9,13 +9,7 @@ class Level1(GameEnv):
 
     def create_ui(self):
         super().create_ui()
-        # Here we will make each level different to teach the user about each new thing individually (for now)
-        size = (300, 300)
-        self.dialogue_panel = DialoguePanel(
-            (SCREEN_WIDTH // 2- size[0]//2, SCREEN_HEIGHT //2- size[1]//2),
-            size,
-            "<b>Guide</b>: To complete this level, be built different!",
-            self.ui_manager)
+        # Here we will make each level different to teach the user about each new thing individually (maybe?)
         
 
     def on_ui_event(self, event):

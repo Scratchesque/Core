@@ -20,17 +20,15 @@
             "jump_down"
         ]
     },
-    "board": {
-        "map":{
-            "water": ["Level_1/water", "SproutLands/Tilesets/Water"],
-            "water_bounds": ["Level_1/water_bounds", "SproutLands/Tilesets/Water"],
-            "terrain": ["Level_1/terrain", "SproutLands/Tilesets/Grass"],
-            "tree": ["Level_1/tree","SproutLands/Objects/Basic_Grass_Biom_things"],
-            "house": ["Level_1/house", "SproutLands/Tilesets/Wooden_House_Walls_Tilset"],
-            "door": ["Level_1/door", "SproutLands/Tilesets/Doors"],
-            "vegetation": ["Level_1/vegetation", "SproutLands/Objects/Basic_Grass_Biom_things"],
-            "start_pos": "Level_2/start_pos"
-        }
+    "map":{
+        "water": ["Level_1/water", "SproutLands/Tilesets/Water"],
+        "water_bounds": ["Level_1/water_bounds", "SproutLands/Tilesets/Water"],
+        "terrain": ["Level_1/terrain", "SproutLands/Tilesets/Grass"],
+        "tree": ["Level_1/tree","SproutLands/Objects/Basic_Grass_Biom_things"],
+        "house": ["Level_1/house", "SproutLands/Tilesets/Wooden_House_Walls_Tilset"],
+        "door": ["Level_1/door", "SproutLands/Tilesets/Doors"],
+        "vegetation": ["Level_1/vegetation", "SproutLands/Objects/Basic_Grass_Biom_things"],
+        "start_pos": "Level_2/start_pos"
     },
     "player":{
         "bounds": {
@@ -40,5 +38,6 @@
         "energy": {
             "health": 5
         }
-    }
+    },
+    "npc": ["Be careful theres energy now!" , "Kevin has just refound the taste for Carrots, he wants more, so much so, that he can smell it in the distance."]
 }

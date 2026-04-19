@@ -6,52 +6,134 @@ from game.core.images import load_image
 from game.support.ui import TypingTextBox, UIFactory
 
 
-# The popup that comes up at the start of every game in 'environments/game.py'
 class DialoguePanel(UIPanel):
-    def __init__(self, panel_pos, panel_size, text, manager):
-        # Setting the starting height to 5 here since it should be above any other ui panels to be rendered
-        super().__init__(Rect(panel_pos, panel_size), manager=manager, object_id="#dialouge_panel", starting_height=5)
+    def __init__(self, panel_pos, panel_size, title, message, manager):
+        super().__init__(Rect(panel_pos, panel_size), manager=manager, object_id="#confirm_panel", starting_height=5)
         
-        self.create_ui(text, panel_size)
+        self.create_ui(title, message, panel_size)
 
-    def create_ui(self, text, panel_size):
-        # this is prlly not the best for now of setting pos/size but its only as a temp measure untill we decide how we want to talk to the user to look like
-        padding = 10
-        ui_size = (panel_size[0]-padding*2, panel_size[1]//3-padding*2) 
+    def create_ui(self, title, message, panel_size):
+        padding = 24
+        button_size = (160, 54)
 
-        # Renders the typing text box that updates the typing every frame
-        text_pos = (padding,padding)
+        UILabel(
+            relative_rect=Rect((padding, 22), (panel_size[0] - (padding * 2), 36)),
+            text=title,
+            manager=self.ui_manager,
+            container=self,
+            object_id="#confirm_title",
+        )
+
         self.text_box = TypingTextBox(
-            pos=text_pos,
-            size=ui_size,
-            html_text=text,
+            pos=(padding, 78),
+            size=((panel_size[0] - padding * 2), (panel_size[1] -  padding * 2 - 125)),
+            html_text=message,
             manager=self.ui_manager,
             container=self,
-            object_id="#dialogue",
-            typing_speed=30,)
-
-        # Confirmation button to exit the panel
-        conf_pos = (padding, panel_size[1] - ui_size[1] - padding)
-        self.confirm = UIFactory.button_img(
-            pos=conf_pos, 
-            size=ui_size, 
-            image_path="game/assets/menu/button.png", 
-            text="Confirm", 
+            object_id="#confirm_body")
+        
+        self.confirm_button = UIFactory.button_img(
+            pos=((panel_size[0] - button_size[0]) // 2, panel_size[1] - 78),
+            size=button_size,
+            image_path="game/assets/menu/button.png",
+            text="Confirm",
             manager=self.ui_manager,
             container=self,
-            object_id="#transparent_button")
+            object_id="#confirm_accept_button",
+        )
 
     def process_event(self, event):
         super().process_event(event)
-        if self.confirm.button.on_click(event):
-            # Deletes this panel
+        if self.confirm_button.on_click(event):
             self.kill()
 
     def update(self, delta_time):
         super().update(delta_time)
-        # Moving the scrolling text 
         self.text_box.update_typing(delta_time)
-        pass
+
+class MessagePanel(UIPanel):
+    def __init__(self, panel_pos, panel_size, title, message, manager):
+        super().__init__(
+            Rect(panel_pos, panel_size),
+            manager=manager,
+            object_id="#confirm_panel",
+            starting_height=6,
+        )
+        self.create_ui(title, message, panel_size)
+
+    def create_ui(self, title, message, panel_size):
+        padding = 24
+
+        UILabel(
+            relative_rect=Rect((padding, 22), (panel_size[0] - (padding * 2), 36)),
+            text=title,
+            manager=self.ui_manager,
+            container=self,
+            object_id="#confirm_title",
+        )
+
+        UILabel(
+            relative_rect=Rect((padding, 78), (panel_size[0] - (padding * 2), 52)),
+            text=message,
+            manager=self.ui_manager,
+            container=self,
+            object_id="#confirm_body",
+        )
+
+
+class SpeechPanel(UIPanel):
+    def __init__(self, panel_pos, panel_size, message_list, manager):
+        super().__init__(
+            Rect(panel_pos, panel_size),
+            manager=manager,
+            object_id="#transparent_panel",
+            starting_height=4,
+        )
+        self.message_list = message_list
+        self.message_index = 0
+        self.create_ui(panel_size)
+
+    def create_ui(self, panel_size):
+        padding = 13
+        button_diff = 65
+
+        UIFactory.image(
+            pos=(0,0),
+            size=panel_size,
+            image_path="game/assets/levels/speech.png",
+            manager=self.ui_manager,
+            container=self
+        )
+
+        self.text_box = TypingTextBox(
+            pos=(padding, padding+5),
+            size=(panel_size[0] - padding * 2, panel_size[1]- padding- 5 - button_diff),
+            html_text=self.message_list[0],
+            manager=self.ui_manager,
+            container=self,
+            object_id="#speech_body")
+
+        self.next_button = UIFactory.button(
+            pos=(panel_size[0]-button_diff,panel_size[1]-button_diff),
+            size=(35,25),
+            text="OK",
+            manager=self.ui_manager,
+            container=self,
+            object_id="#speech_button",
+        )
+
+    def process_event(self, event):
+        super().process_event(event)
+        if self.next_button.on_click(event):
+            self.message_index += 1
+            if self.message_index >= len(self.message_list):
+                self.message_index = 0
+            self.text_box.set_full_text(self.message_list[self.message_index])
+            # pass
+
+    def update(self, delta_time):
+        super().update(delta_time)
+        self.text_box.update_typing(delta_time)
 
 
 class ConfirmationPanel(UIPanel):

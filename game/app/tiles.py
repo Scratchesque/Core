@@ -1,7 +1,7 @@
 from pygame import Rect, math, transform
 from pygame_gui.elements import UIImage, UIScreenSpaceHealthBar
-from pygame_gui.windows import UIMessageWindow
 
+from game.app.panels import MessagePanel, SpeechPanel
 from game.core.constants import *
 from game.core.events import *
 from game.core.images import load_image
@@ -44,6 +44,22 @@ class Tile(UIImage):
         if x and y:
             return True
 
+class NPC(Tile):
+    def __init__(self, start_pos, tiles_size, npc_data, manager, container=None, board_offset=(0, 0)):
+        img_path = 'SproutLands/Characters/Free Chicken Sprites.png'
+        super().__init__(start_pos, tiles_size, img_path, manager, container, 0, board_offset)
+        
+        relative_pos = self.get_relative_rect().topright
+
+        pos_x = self.board_offset[0] + relative_pos[0]
+        pos_y = self.board_offset[1] + relative_pos[1] + 20
+
+        SpeechPanel(panel_pos=(pos_x,pos_y),
+                    panel_size=(230,150),
+                    message_list=npc_data,
+                    manager=self.ui_manager)
+
+
 class Player(Tile):
     def __init__(self, start_pos, tiles_size, map_tiles, player_data, manager, container=None, board_offset=(0, 0)):
         self.shadow = Tile(start_pos=start_pos,
@@ -69,7 +85,7 @@ class Player(Tile):
         self.current_health = 1
         self.move_cost = 0
 
-        self._load_player_data(player_data, manager)
+        self._load_player_data(player_data)
         
         self.animationcount = 0
         self.animations = {}
@@ -101,7 +117,7 @@ class Player(Tile):
             for frame in frames:
                 self.animations[name].append(animation_list[frame])
 
-    def _load_player_data(self, player_data, manager):
+    def _load_player_data(self, player_data):
         map_bounds = player_data.bounds
 
         if hasattr(map_bounds, "jumpable"):
@@ -117,7 +133,7 @@ class Player(Tile):
 
             UIScreenSpaceHealthBar(relative_rect=Rect((50,50),(75,25)),
                         sprite_to_monitor=self,
-                        manager=manager,
+                        manager=self.ui_manager,
                         object_id='#energy_bar',
                         container=self.ui_container)
     
@@ -126,11 +142,13 @@ class Player(Tile):
     def deplete_energy(self):
         self.current_health -= self.move_cost
         if self.current_health <= 0:
-            info_size = (250,160)
-            info_pos = (SCREEN_WIDTH//2-info_size[0]//2, SCREEN_HEIGHT//2-info_size[1]//2)
-            UIMessageWindow(rect=Rect(info_pos, info_size), 
-                    html_message="You ran out of energy, try again!", 
-                    manager=self.ui_manager)            
+            info_size = (275,160)
+            info_pos = ((SCREEN_WIDTH-info_size[0])//2), ((SCREEN_HEIGHT-info_size[1])//2)
+            MessagePanel(panel_pos=info_pos,
+                panel_size=info_size,
+                title="Level Reset!",
+                message="No energy remaining",
+                manager=self.ui_manager)
             reset_event = pygame.event.Event(RESET_ENV_CONFIRMED)
             pygame.event.post(reset_event)
     

@@ -73,14 +73,14 @@ class GameEnv(BaseEnvironment):
     BLOCKS_PANEL_WIDTH_RATIO = 0.39
     DEBUG_MENU_BUTTON_MARGIN = 18
     DEBUG_MENU_BUTTON_SIZE = (120, 44)
-    CONFIRM_PANEL_SIZE = (520, 220)
+    CONFIRM_PANEL_SIZE = (550, 220)
 
     # The BaseEnvironment in 'environments/base.py', init's the level file
     def __init__(self, level_file): # This file is where the env gets/loads inital data for the level
         super().__init__(level_file)
 
     def get_board_grid_size(self):
-        for map_layer in self.env_data.board.map.__dict__.values():
+        for map_layer in self.env_data.map.__dict__.values():
             csv_layout = import_map_layout(map_layer[0])
             if csv_layout:
                 return len(csv_layout[0]), len(csv_layout)

@@ -1,4 +1,4 @@
-from pygame import Rect, math, transform
+from pygame import Rect, math, transform, MOUSEBUTTONUP
 from pygame_gui.elements import UIImage, UIScreenSpaceHealthBar
 
 from game.app.panels import MessagePanel, SpeechPanel
@@ -50,15 +50,25 @@ class NPC(Tile):
         super().__init__(start_pos, tiles_size, img_path, manager, container, 0, board_offset)
         
         relative_pos = self.get_relative_rect().topright
+        self.bubble_x = self.board_offset[0] + relative_pos[0]
+        self.bubble_y = self.board_offset[1] + relative_pos[1] + 20
 
-        pos_x = self.board_offset[0] + relative_pos[0]
-        pos_y = self.board_offset[1] + relative_pos[1] + 20
-
-        SpeechPanel(panel_pos=(pos_x,pos_y),
-                    panel_size=(230,150),
-                    message_list=npc_data,
-                    manager=self.ui_manager)
-
+        self.message_list = npc_data
+        self.create_speech()
+        
+    def create_speech(self):
+        self.speech_bubble = SpeechPanel(
+            panel_pos=(self.bubble_x,self.bubble_y),
+            panel_size=(230,150),
+            message_list=self.message_list,
+            manager=self.ui_manager
+        )
+        
+    def process_event(self, event):
+        super().process_event(event)
+        if event.type == MOUSEBUTTONUP and event.button == 1:
+            if self.rect.collidepoint(event.pos):
+                self.speech_bubble.kill() if self.speech_bubble.alive() else self.create_speech()
 
 class Player(Tile):
     def __init__(self, start_pos, tiles_size, map_tiles, player_data, manager, container=None, board_offset=(0, 0)):

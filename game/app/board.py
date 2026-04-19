@@ -8,13 +8,18 @@ from game.core.events import *
 from game.support.files import import_map_layout
 
 
-# This file renders the map from the board data in the json
+# This file renders the map along with player/npc/goal tiles
 class Board(UIPanel):
     def __init__(self, panel_pos, panel_size, env_data, manager):
         # Starting_height is the panel's layer height
         # For UIPanels you should either put all object that are supposed updated inside of the panels container
         # or for example, use a UIPanel as a gui hud element like player health without a container 
-        super().__init__(Rect(panel_pos, panel_size), manager=manager, object_id="#game_panel", starting_height=1)
+        super().__init__(
+            Rect(panel_pos, panel_size), 
+            manager=manager, 
+            object_id="#game_panel", 
+            starting_height=1
+        )
         
         # Load vars to be used accross the class
         self.env_data = env_data
@@ -45,7 +50,6 @@ class Board(UIPanel):
             self.board_offset = (offset_x, offset_y)
 
     def create_ui(self):
-        # Gets the relevant information about each map file in the board data at the loaded json, then scales and renders each tile in each file
         for element_type, element_data in self.env_data.map.__dict__.items():
             csv_map = element_data[0]
             if element_type == 'start_pos':
@@ -60,13 +64,12 @@ class Board(UIPanel):
                 for col_index, val in enumerate(row):
                     if val != '-1':
                         tile = self.make_tile(col_index, row_index, val, tile_img)
-                        # only apply tiles that are part of the map
                         if element_type != 'start_pos':
                             self.map_tiles[element_type].append(tile)
 
     def make_tile(self, x, y, val, tile_img):
         match val:
-            case 'g': #Goal
+            case 'g': # Goal
                 self.goal = Tile(start_pos=(x, y), 
                     tiles_size=self.tiles_size,
                     img_path='levels/carrot.webp', 
@@ -81,18 +84,14 @@ class Board(UIPanel):
                     manager=self.ui_manager,
                     container=self,
                     board_offset=self.board_offset)
-                # if the goal tile is made before the player, the player is placed underneath it
-                # so that the player is always above the goal/npc tiles, chaange the layer
                 self.player.change_layer(3)
-            case 'n': #NPC (future implementation of its own class and dialouge etc.)
-                # need a better tileset tho for the npc
+            case 'n': # NPC
                 self.npc = NPC(start_pos=(x, y), 
                     tiles_size=self.tiles_size,
                     npc_data=self.env_data.npc,
                     manager=self.ui_manager, 
                     container=self,
                     board_offset=self.board_offset)
-                # for collision for player to not go over npc 
                 self.map_tiles['npc'] = [self.npc]
             case _:
                 return Tile(start_pos=(x, y), 

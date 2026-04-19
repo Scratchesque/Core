@@ -130,8 +130,10 @@
     },
     "misc": {
       "shape": "rounded_rectangle",
-      "shape_corner_radius": "12",
-      "border_width": "2"
+      "shape_corner_radius": "9",
+      "border_width": "1",
+      "text_horiz_alignment_padding":"0",
+      "text_vert_alignment_padding":"0"
     }
   },
   "#run_button": {
@@ -373,5 +375,14 @@
       "shadow_width": "1",
       "text_horiz_alignment_padding":"0"
     }
+  },
+  "#pause_menu":{
+    "prototype":"#confirm_panel"
+  },
+  "#pause_menu.button":{
+    "prototype": "#motion_block"
+  },
+  "#pause_menu.label":{
+    "prototype": "#lane_title"
   }
 }

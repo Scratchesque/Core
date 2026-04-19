@@ -1,7 +1,8 @@
-import pygame
 from pygame import Rect
 from pygame_gui.elements import UIImage, UIPanel, UILabel
 
+from game.core.constants import SCREEN_WIDTH, SCREEN_HEIGHT 
+from game.core.events import *
 from game.core.images import load_image
 from game.support.ui import TypingTextBox, UIFactory
 
@@ -128,8 +129,9 @@ class SpeechPanel(UIPanel):
             self.message_index += 1
             if self.message_index >= len(self.message_list):
                 self.message_index = 0
+                self.kill()
+                return
             self.text_box.set_full_text(self.message_list[self.message_index])
-            # pass
 
     def update(self, delta_time):
         super().update(delta_time)
@@ -221,3 +223,65 @@ class LevelText(UIPanel):
             manager=self.ui_manager,
             container=self)
         
+class PauseMenu(UIPanel):
+    def __init__(self, panel_size, manager, open_confirmation_panel):
+
+        self.open_confirmation_panel = open_confirmation_panel
+        
+        panel_pos = (
+            (SCREEN_WIDTH-panel_size[0])//2, 
+            (SCREEN_HEIGHT-panel_size[1])//2
+        )
+        super().__init__(
+            Rect(panel_pos, panel_size), 
+            manager=manager, 
+            object_id="#pause_menu", 
+            starting_height=10
+        )
+        
+        self.create_ui(panel_size)
+
+    def create_ui(self, panel_size):
+        padding_x = 20
+        padding_y = 10
+        size_x  = panel_size[0] - padding_x * 2
+        label_size = (size_x, 75)
+        button_size = (size_x, 54)
+        button_y = label_size[1] + padding_y * 2
+        button_gap = button_size[1] + padding_y 
+
+        UILabel(
+            relative_rect=Rect((padding_x, 0), label_size),
+            text="Menu",
+            manager=self.ui_manager,
+            container=self,
+            object_id="#pause_title",
+        )
+
+        self.back_button = UIFactory.button(
+            pos=(padding_x, button_y),
+            size=button_size,
+            text="Back",
+            manager=self.ui_manager,
+            container=self
+        )
+        self.quit_button = UIFactory.button(
+            pos=(padding_x, button_y + button_gap),
+            size=button_size,
+            text="Quit",
+            manager=self.ui_manager,
+            container=self
+        )
+
+    def process_event(self, event):
+        super().process_event(event)
+        if self.back_button.on_click(event):
+            back_event = pygame.event.Event(PREV_ENV_REQUESTED)
+            pygame.event.post(back_event)
+            self.kill()
+            return
+        if self.quit_button.on_click(event):
+            quit_event = pygame.event.Event(QUIT_EMV_REQUESTED)
+            pygame.event.post(quit_event)
+            self.kill()
+            return

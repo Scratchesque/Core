@@ -1,9 +1,9 @@
-from pygame import Rect
+from pygame import Rect, KEYUP, K_ESCAPE
 from pygame_gui.elements import UIImage, UIPanel
 
 from game.app.board import Board
 from game.app.code_blocks import CodeBlocks
-from game.app.panels import ConfirmationPanel, LevelText
+from game.app.panels import ConfirmationPanel, LevelText, PauseMenu
 from game.core.images import load_image
 from game.core.paths import resolve_project_path
 from game.core.constants import *
@@ -25,7 +25,6 @@ class BaseEnvironment:
             self.env_data = load_json(default_path)
 
         init_data = self.env_data.env.init
-
         self.title = init_data.title
         img_path = f'game/assets/{init_data.background}'
         self.background_img = load_image(img_path)
@@ -35,6 +34,10 @@ class BaseEnvironment:
         pass
 
     def on_ui_event(self, event):
+        if event.type == PREV_ENV_CONFIRMED:
+            self.game_manager.change_env('BACK')
+        if event.type == QUIT_EMV_CONFIRMED:
+            self.game_manager.change_env('QUIT')
         if event.type == NEXT_ENV_CONFIRMED:
             self.game_manager.change_env(self.env_data.env.init.next_env)
         if event.type == RESET_ENV_CONFIRMED:
@@ -166,10 +169,40 @@ class GameEnv(BaseEnvironment):
                 object_id="#edit_button",
                 anchor="bottomleft",
             )
+
+        square_size = 30
+        self.pause_button = UIFactory.button_img(
+            pos=(SCREEN_WIDTH-square_size-5, 5),
+            size=(square_size,square_size),
+            text="",
+            image_path='game/assets/levels/hamburger_icon.png',
+            manager=self.ui_manager,
+            object_id="#transparent_button"
+        )
+        self.pause_menu = None
         
     def on_ui_event(self, event):
         # using the ui super event from base.py to check for next/reset env 
         super().on_ui_event(event)
+        if (event.type == KEYUP and event.key == K_ESCAPE) or self.pause_button.on_click(event):
+            if self.pause_menu is None or not self.pause_menu.alive():
+                self.pause_menu = PauseMenu((200,250), self.ui_manager, self.open_confirmation_panel)
+            else:
+                self.pause_menu.kill()
+        if event.type == PREV_ENV_REQUESTED:
+            self.open_confirmation_panel(
+                title="Go back?",
+                message="Leave this level and go back a page.",
+                confirm_event_type=PREV_ENV_CONFIRMED,
+            )
+            return
+        if event.type == QUIT_EMV_REQUESTED:
+            self.open_confirmation_panel(
+                title="Quit game?",
+                message="Exit the program on this level.",
+                confirm_event_type=QUIT_EMV_CONFIRMED,
+            )
+            return
         if event.type == RESET_ENV_REQUESTED:
             self.open_confirmation_panel(
                 title="Reset level?",

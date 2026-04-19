@@ -295,7 +295,7 @@ class CodeBlocks(UIPanel):
                 ),
                 (ScriptBlock.REMOVE_BUTTON_SIZE, ScriptBlock.REMOVE_BUTTON_SIZE),
             ),
-            text="x",
+            text="X",
             manager=self.ui_manager,
             container=self,
             object_id="#remove_block_button",

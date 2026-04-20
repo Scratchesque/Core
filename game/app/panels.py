@@ -93,28 +93,29 @@ class SpeechPanel(UIPanel):
         self.create_ui(panel_size)
 
     def create_ui(self, panel_size):
-        padding = 13
-        button_diff = 65
+        padding = 10
+        button_size = (35,25)
+        button_diff = 30
 
         UIFactory.image(
             pos=(0,0),
             size=panel_size,
-            image_path="game/assets/levels/speech.png",
+            image_path="game/assets/SproutLands/UI/Dialouge/dialog box big.png",
             manager=self.ui_manager,
             container=self
         )
 
         self.text_box = TypingTextBox(
-            pos=(padding, padding+5),
-            size=(panel_size[0] - padding * 2, panel_size[1]- padding- 5 - button_diff),
+            pos=(padding, padding),
+            size=(panel_size[0] - padding * 2 - button_diff, panel_size[1]- padding * 2),
             html_text=self.message_list[0],
             manager=self.ui_manager,
             container=self,
             object_id="#speech_body")
 
         self.next_button = UIFactory.button(
-            pos=(panel_size[0]-button_diff,panel_size[1]-button_diff),
-            size=(35,25),
+            pos=(panel_size[0]-button_size[0]-padding/2,panel_size[1]-button_size[1]-padding),
+            size=button_size,
             text="OK",
             manager=self.ui_manager,
             container=self,

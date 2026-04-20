@@ -15,6 +15,15 @@
       }
     }
   },
+  "#pixel_font":{
+    "font": {
+      "name": "SproutLands",
+      "regular_resource": {
+        "package": "game.assets.fonts",
+        "resource": "SproutLands-PixelFont.ttf"
+      }
+    }
+  },
   "button": {
     "colours": {
       "normal_border": "White",
@@ -334,13 +343,9 @@
     }
   },
   "#speech_body":{
-    "font": {
-      "name": "custom_font",
-      "size": "12",
-      "regular_resource": {
-        "package": "game.assets.fonts",
-        "resource": "FiraCode-Regular.ttf"
-      }
+    "prototype": "#pixel_font",
+    "font":{
+      "size":"14"
     },
     "colours":{
       "normal_text":"#000000",      
@@ -352,26 +357,22 @@
     }
   },
   "#speech_button":{
-    "font": {
-      "name": "custom_font",
-      "size": "10",
-      "bold": "1",
-      "bold_resource": {
-        "package": "game.assets.fonts",
-        "resource": "FiraCode-Bold.ttf"
-      }
+    "prototype": "#pixel_font",
+    "font":{
+      "size":"12"
     },
     "colours": {
       "normal_bg": "#00000000",
       "hovered_bg": "#00000000",
       "active_bg": "#00000000",
-      "normal_border": "#FFFFFF",
+      "normal_border": "#2F2F2F",
       "hovered_border": "#00000000",
       "active_border": "#00000000",
       "normal_text": "#000000",
       "active_text": "#FFD7C6"
     },
     "misc":{
+      "shape_corner_radius":"5",
       "shadow_width": "1",
       "text_horiz_alignment_padding":"0"
     }

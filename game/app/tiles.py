@@ -85,9 +85,8 @@ class NPC(Tile):
         img_path = 'SproutLands/Characters/Free Chicken Sprites.png'
         super().__init__(start_pos, tiles_size, img_path, manager, container, 0, board_offset)
         
-        relative_pos = self.get_relative_rect().topright
-        self.bubble_x = self.board_offset[0] + relative_pos[0]
-        self.bubble_y = self.board_offset[1] + relative_pos[1] + 20
+        self.bubble_x = self.rect.x + tiles_size[0]
+        self.bubble_y = self.rect.y - tiles_size[1]
 
         self.message_list = npc_data
         self.create_speech()
@@ -101,7 +100,7 @@ class NPC(Tile):
     def create_speech(self):
         self.speech_bubble = SpeechPanel(
             panel_pos=(self.bubble_x,self.bubble_y),
-            panel_size=(230,150),
+            panel_size=(250,80),
             message_list=self.message_list,
             manager=self.ui_manager
         )

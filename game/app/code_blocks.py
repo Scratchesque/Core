@@ -506,8 +506,6 @@ class CodeBlocks(UIPanel):
         self.refresh_status()
 
     def process_event(self, event):
-        super().process_event(event)
-
         if self.is_running:
             return
 
@@ -569,8 +567,6 @@ class CodeBlocks(UIPanel):
             return
 
     def update(self, delta_time):
-        super().update(delta_time)
-
         for block in self.program_blocks:
             if block is not self.dragged_block:
                 block.update()

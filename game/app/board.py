@@ -102,10 +102,11 @@ class Board(UIPanel):
                     tile=int(val),
                     board_offset=self.board_offset)
         
-    # Having super().process_event(event) or super().update(delta_time) inside the panel eliminates the need to call these functions outside of this class
-    # With pygame_gui Since we passthrough the ui manager, it inherites UIPanel (or any element in pygame_gui.elements) and does its own initalisation which allows us to process events in each class
-    def process_event(self, event):
-        super().process_event(event)
+    # i was wrong, we dont need to acctually call super unless you want to use the relavant method in the inheriting class itself
+    # just use update/process_event or any other methods from the inheriting class if it uses pygame_gui to override what it does, it still gets called
+
+    # also goal checks should be carried out on every frame, not when ui events happen
+    def update(self, time_delta):
         if self.completed_level == False:
             if self.player.goal_check(self.goal):
                 self.completed_level = True
@@ -118,7 +119,17 @@ class Board(UIPanel):
                     manager=self.ui_manager)
                 level_complete_event = pygame.event.Event(LEVEL_COMPLETED)
                 pygame.event.post(level_complete_event)
-    
-    def update(self, delta_time):
-        super().update(delta_time)
+                return
+        
+            if self.player.current_health <= 0:
+                info_size = (275,160)
+                info_pos = ((SCREEN_WIDTH-info_size[0])//2), ((SCREEN_HEIGHT-info_size[1])//2)
+                MessagePanel(panel_pos=info_pos,
+                    panel_size=info_size,
+                    title="Level Reset!",
+                    message="No energy remaining",
+                    manager=self.ui_manager)
+                reset_event = pygame.event.Event(RESET_ENV_CONFIRMED)
+                pygame.event.post(reset_event)
+                return
         

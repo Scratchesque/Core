@@ -44,12 +44,10 @@ class DialoguePanel(UIPanel):
         )
 
     def process_event(self, event):
-        super().process_event(event)
         if self.confirm_button.on_click(event):
             self.kill()
 
     def update(self, delta_time):
-        super().update(delta_time)
         self.text_box.update_typing(delta_time)
 
 class MessagePanel(UIPanel):
@@ -124,7 +122,6 @@ class SpeechPanel(UIPanel):
         )
 
     def process_event(self, event):
-        super().process_event(event)
         if self.next_button.on_click(event):
             self.message_index += 1
             if self.message_index >= len(self.message_list):
@@ -134,7 +131,6 @@ class SpeechPanel(UIPanel):
             self.text_box.set_full_text(self.message_list[self.message_index])
 
     def update(self, delta_time):
-        super().update(delta_time)
         self.text_box.update_typing(delta_time)
 
 
@@ -193,7 +189,6 @@ class ConfirmationPanel(UIPanel):
         )
 
     def process_event(self, event):
-        super().process_event(event)
         if self.cancel_button.on_click(event):
             self.kill()
             return
@@ -202,8 +197,6 @@ class ConfirmationPanel(UIPanel):
             confirm_event = pygame.event.Event(self.confirm_event_type)
             pygame.event.post(confirm_event)
 
-    def update(self, delta_time):
-        super().update(delta_time)
 
 # Making the level text a ui panel so that it can change heights and not be lost in the rendering order
 class LevelText(UIPanel):
@@ -274,7 +267,6 @@ class PauseMenu(UIPanel):
         )
 
     def process_event(self, event):
-        super().process_event(event)
         if self.back_button.on_click(event):
             back_event = pygame.event.Event(PREV_ENV_REQUESTED)
             pygame.event.post(back_event)

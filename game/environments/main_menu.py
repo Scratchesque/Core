@@ -91,9 +91,6 @@ Learn how to read and implement code to help Kevin reach his goal.''',
         if self.quit_button and self.quit_button.on_click(event):
             self.game_manager.change_env("QUIT")
 
-    def update_frame(self, delta_time):
-        pass
-
     def _get_playable_envs(self):
         playable_envs = [
             env for env in self.game_manager.envs_list if env.title != self.title

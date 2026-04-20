@@ -182,7 +182,7 @@ class GameEnv(BaseEnvironment):
         self.pause_menu = None
         
     def on_ui_event(self, event):
-        # using the ui super event from base.py to check for next/reset env 
+        # here we need super cause this is our own implementation that is called from display.py and needs calls from the BaseEnvironment class 
         super().on_ui_event(event)
         if (event.type == KEYUP and event.key == K_ESCAPE) or self.pause_button.on_click(event):
             if self.pause_menu is None or not self.pause_menu.alive():

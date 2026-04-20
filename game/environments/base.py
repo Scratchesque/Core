@@ -64,6 +64,7 @@ class BaseEnvironment:
     # This is called when the screen is to be reset to recreate ui elements, it can also change the level from a level file
     def reset(self):
         self.ui_manager.clear_and_reset()
+        self.game_manager.display.create_cursor()
         self.render_background()
         self.create_ui()
  

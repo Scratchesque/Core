@@ -30,16 +30,7 @@ class Display:
         env.ui_manager = pygame_gui.UIManager(self.resolution, theme_path=env.theme_path)
 
         env.reset()
-        
-        self.cursor = pygame_gui.elements.UIImage(
-            relative_rect=pygame.Rect(
-                (0,0),
-                (self.CURSOR_SIZE,self.CURSOR_SIZE)
-            ),
-            image_surface=self.cursor_img,
-            manager=env.ui_manager
-        )
-        self.cursor.change_layer(20)
+
         pygame.mouse.set_visible(False)
         
         self.main_loop()
@@ -83,10 +74,20 @@ class Display:
 
             # If events from the environment function gets false then return
             self.env.on_ui_event(event)
+
+    def create_cursor(self):
+        self.cursor = pygame_gui.elements.UIImage(
+            relative_rect=pygame.Rect(
+                (0,0),
+                (self.CURSOR_SIZE,self.CURSOR_SIZE)
+            ),
+            image_surface=self.cursor_img,
+            manager=self.env.ui_manager
+        )
+        self.cursor.change_layer(50)
  
     def update_cursor(self):
         pos = pygame.mouse.get_pos()
-        # offset cursor from image as it can cause problems when hovering elements
         self.cursor.set_position((pos[0]+1,pos[1]+1))
 
     # Sets icon for window, at least 32x32

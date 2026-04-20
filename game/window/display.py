@@ -1,6 +1,7 @@
 import pygame
 import pygame_gui
 
+from game.core.images import load_image
 from game.core.constants import SCREEN_WIDTH, SCREEN_HEIGHT
 from game.core.paths import resolve_project_path
 from game.environments.base import BaseEnvironment
@@ -9,6 +10,7 @@ from game.environments.base import BaseEnvironment
 # The main window rendered on the screen
 class Display:
     FPS = 60
+    CURSOR_SIZE = 25
 
     # Starts rendering the environment selected
     def __init__(self):
@@ -16,6 +18,9 @@ class Display:
         self.resolution = (SCREEN_WIDTH, SCREEN_HEIGHT)
         self.screen = pygame.display.set_mode(self.resolution, pygame.FULLSCREEN)
         self.surface = pygame.Surface(self.resolution)
+        # Can only see this when alt tabbing though
+        self.set_icon("game/assets/levels/carrot.webp")
+        self.cursor_img = load_image('game/assets/SproutLands/UI/Mouse/Triangle Mouse icon 1.png')
 
     def run(self, env: BaseEnvironment):
         pygame.display.set_caption(env.title)
@@ -26,6 +31,17 @@ class Display:
 
         env.reset()
         
+        self.cursor = pygame_gui.elements.UIImage(
+            relative_rect=pygame.Rect(
+                (0,0),
+                (self.CURSOR_SIZE,self.CURSOR_SIZE)
+            ),
+            image_surface=self.cursor_img,
+            manager=env.ui_manager
+        )
+        self.cursor.change_layer(20)
+        pygame.mouse.set_visible(False)
+        
         self.main_loop()
 
     # The main window loop for rendering the environment
@@ -35,6 +51,9 @@ class Display:
 
         while self.running:
             delta_time = clock.tick(self.FPS) / 1000
+
+            # Set position of image cursor where mouse is
+            self.update_cursor()
 
             # Process user input / events
             self.process_events()
@@ -64,7 +83,12 @@ class Display:
 
             # If events from the environment function gets false then return
             self.env.on_ui_event(event)
-            
+ 
+    def update_cursor(self):
+        pos = pygame.mouse.get_pos()
+        # offset cursor from image as it can cause problems when hovering elements
+        self.cursor.set_position((pos[0]+1,pos[1]+1))
+
     # Sets icon for window, at least 32x32
     def set_icon(self, path):
         icon = pygame.image.load(resolve_project_path(path))

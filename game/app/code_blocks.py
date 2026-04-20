@@ -525,14 +525,21 @@ class CodeBlocks(UIPanel):
                 self.start_drag(block, mouse_pos, was_new=False)
                 return
 
-        if event.type == UI_BUTTON_START_PRESS and event.ui_element in self.palette_button_to_spec:
-            spec = self.palette_button_to_spec[event.ui_element]
-            self.palette_drag_source = event.ui_element
-            mouse_pos = getattr(event, "mouse_pos", event.ui_element.get_abs_rect().center)
-            if self.dragged_block is None:
-                new_block = self.create_script_block(spec, self.panel_local_pos(mouse_pos))
-                self.start_drag(new_block, mouse_pos, was_new=True)
-            return
+        if event.type == UI_BUTTON_START_PRESS:
+            if event.ui_element in self.palette_button_to_spec:
+                spec = self.palette_button_to_spec[event.ui_element]
+                self.palette_drag_source = event.ui_element
+                mouse_pos = getattr(event, "mouse_pos", event.ui_element.get_abs_rect().center)
+                if self.dragged_block is None:
+                    new_block = self.create_script_block(spec, self.panel_local_pos(mouse_pos))
+                    self.start_drag(new_block, mouse_pos, was_new=True)
+                return
+            if event.ui_element in self.script_button_to_block:
+                block = self.script_button_to_block[event.ui_element]
+                mouse_pos = getattr(event, "mouse_pos", event.ui_element.get_abs_rect().topleft)
+                if self.dragged_block is None:
+                    self.start_drag(block, mouse_pos, was_new=False)
+                return
 
         if event.type != UI_BUTTON_PRESSED:
             return

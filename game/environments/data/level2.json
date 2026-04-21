@@ -17,7 +17,8 @@
             "jump_left",
             "jump_right",
             "jump_up",
-            "jump_down"
+            "jump_down",
+            "loop"
         ]
     },
     "map":{

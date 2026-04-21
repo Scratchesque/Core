@@ -5,21 +5,23 @@ from dataclasses import dataclass
 class BlockSpec:
     id: str
     label: str
+    object_id: str
     action: str
     x: int = 0
     y: int = 0
 
 
 DEFAULT_BLOCK_LIBRARY = (
-    BlockSpec("up", "Move Up", "up", y=-1),
-    BlockSpec("down", "Move Down", "down", y=1),
-    BlockSpec("left", "Move Left", "left", x=-1),
-    BlockSpec("right", "Move Right", "right", x=1),
-    BlockSpec("jump", "Jump", "jump"),
-    BlockSpec("jump_left", "Jump Left", "jump", x=-2),
-    BlockSpec("jump_right", "Jump Right", "jump", x=2),
-    BlockSpec("jump_up", "Jump Up", "jump", y=-2),
-    BlockSpec("jump_down", "Jump Down", "jump", y=2),
+    BlockSpec("up", "Move Up", "#motion_block", "up", y=-1),
+    BlockSpec("down", "Move Down", "#motion_block", "down", y=1),
+    BlockSpec("left", "Move Left", "#motion_block", "left", x=-1),
+    BlockSpec("right", "Move Right", "#motion_block", "right", x=1),
+    BlockSpec("jump", "Jump", "#motion_block", "jump"),
+    BlockSpec("jump_left", "Jump Left", "#motion_block", "jump", x=-2),
+    BlockSpec("jump_right", "Jump Right", "#motion_block", "jump", x=2),
+    BlockSpec("jump_up", "Jump Up", "#motion_block", "jump", y=-2),
+    BlockSpec("jump_down", "Jump Down", "#motion_block", "jump", y=2),
+    BlockSpec("loop","Loop", "#loop_block","")
 )
 
 

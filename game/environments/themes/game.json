@@ -145,6 +145,30 @@
       "text_vert_alignment_padding":"0"
     }
   },
+  "#loop_block": {
+    "colours": {
+      "normal_bg": "#c20017",
+      "hovered_bg": "#ad0216",
+      "normal_text": "#FFFFFF"
+    },
+    "misc": {
+      "shape": "rounded_rectangle",
+      "shape_corner_radius": "14",
+      "border_width": "0"
+    }
+  },
+  "#loop_count_btn":{
+    "prototype":"#remove_block_button",
+    "colours":{
+      "normal_text":"#000000"
+    }
+  },
+  "#loop_count_txt":{
+    "prototype":"#loop_count_btn",
+    "colours":{
+      "normal_text":"#ffffff"
+    }
+  },
   "#run_button": {
     "colours": {
       "normal_bg": "#59C059",

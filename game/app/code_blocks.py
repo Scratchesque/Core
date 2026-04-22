@@ -7,17 +7,50 @@ from game.app.block_registry import get_block_library
 from game.core.events import *
 
 
-class ScriptBlock:
+class ScriptBlock(UIPanel):
     REMOVE_BUTTON_SIZE = 24
     REMOVE_BUTTON_OFFSET = 6
+    SCRIPT_BLOCK_LAYER = 6
 
-    def __init__(self, spec, button, remove_button, position):
+    def __init__(self, position, size, manager, container, spec):
+        super().__init__(Rect((0,0),(0,0)), 0, manager)
+        self.container = container
         self.spec = spec
-        self.button = button
-        self.remove_button = remove_button
+        self.size = Vector2(size)
         self.position = Vector2(position)
         self.target_position = Vector2(position)
         self.parent_block = None
+
+        self.create_ui()
+
+    def create_ui(self):
+        self.button = UIButton(
+            relative_rect=Rect(self.position, self.size),
+            text=self.spec.label,
+            manager=self.ui_manager,
+            container=self.container,
+            object_id=self.spec.object_id,
+            starting_height=self.SCRIPT_BLOCK_LAYER,
+        )
+        self.remove_button = UIButton(
+            relative_rect=Rect(
+                (
+                    self.position.x + self.size.x - self.REMOVE_BUTTON_SIZE - self.REMOVE_BUTTON_OFFSET,
+                    self.position.y + self.REMOVE_BUTTON_OFFSET,
+                ),
+                (self.REMOVE_BUTTON_SIZE, self.REMOVE_BUTTON_SIZE),
+            ),
+            text="X",
+            manager=self.ui_manager,
+            container=self.container,
+            object_id="#remove_block_button",
+            starting_height=self.SCRIPT_BLOCK_LAYER + 1,
+        )
+
+    def process_event(self, event):
+        if event.type == UI_BUTTON_PRESSED:
+            if event.ui_element == self.remove_button:
+                self.container.remove_script_block(self)
 
     def sync_controls(self):
         x = int(self.position.x)
@@ -38,7 +71,7 @@ class ScriptBlock:
         self.target_position = Vector2(pos)
         self.sync_controls()
 
-    def update(self):
+    def update(self, delta_time):
         if self.position.distance_squared_to(self.target_position) < 1:
             self.position = self.target_position.copy()
         else:
@@ -46,6 +79,7 @@ class ScriptBlock:
         self.sync_controls()
 
     def kill(self):
+        super().kill()
         self.button.kill()
         self.remove_button.kill()
 
@@ -54,29 +88,57 @@ class LoopBlock(ScriptBlock):
     CHILD_INDENT_X = 24
     MIN_REPEAT = 1
     MAX_REPEAT = 4
+    CHILD_SLOT_SPACING = 55
 
-    def __init__(self, spec, button, remove_button, dec_button, inc_button, count_label, footer_panel, 
-                 position, slot_size, slot_spacing, repeat_count=2):
-        super().__init__(spec, button, remove_button, position)
-        self.slot_size = slot_size
-        self.slot_spacing = slot_spacing
+    def __init__(self, position, size, manager, container, spec):
 
-        self.dec_button = dec_button
-        self.inc_button = inc_button
-        self.count_label = count_label
-        self.footer_panel = footer_panel
-
-        self.children_blocks: list[ScriptBlock] = []
-        self.repeat_count = repeat_count
+        self.children_blocks = []
+        self.repeat_count = 2
         self.position = Vector2(position)
         self.target_position = Vector2(position)
 
+        super().__init__(position, size, manager, container, spec)
+        
+    def create_ui(self):
+        super().create_ui()
+
+        self.dec_button = UIButton(
+            relative_rect=Rect((self.position.x + 110, self.position.y + 8), (24, 24)),
+            text="−",
+            manager=self.ui_manager,
+            container=self.container,
+            object_id="#loop_count_btn",
+            starting_height=self.SCRIPT_BLOCK_LAYER + 1,
+        )
+        self.inc_button = UIButton(
+            relative_rect=Rect((self.position.x + 166, self.position.y + 8), (24, 24)),
+            text="+",
+            manager=self.ui_manager,
+            container=self.container,
+            object_id="#loop_count_btn",
+            starting_height=self.SCRIPT_BLOCK_LAYER + 1,
+        )
+        self.footer_panel = UIPanel(
+            relative_rect=Rect((self.position.x, self.position.y + self.size.y), (self.size.x, self.FOOTER_HEIGHT)),
+            manager=self.ui_manager,
+            container=self.container,
+            starting_height=self.SCRIPT_BLOCK_LAYER,
+        )
+        self.count_label = UILabel(
+            relative_rect=Rect((self.position.x + 136, self.position.y + 10), (28, 20)),
+            text=str(self.repeat_count),
+            manager=self.ui_manager,
+            container=self.container,
+            object_id="#loop_count_txt"
+        )
+        self.count_label.change_layer(self.SCRIPT_BLOCK_LAYER + 1)
+
     def total_height(self):
-        child_area = len(self.children_blocks) * self.slot_spacing if self.children_blocks else self.slot_spacing
-        return self.slot_size[1] + child_area + self.FOOTER_HEIGHT
+        child_area = len(self.children_blocks) * self.CHILD_SLOT_SPACING if self.children_blocks else self.CHILD_SLOT_SPACING
+        return self.size.y + child_area + self.FOOTER_HEIGHT
 
     def child_slot_y(self, child_index):
-        return self.slot_size[1] + child_index * self.slot_spacing
+        return self.size.y + child_index * self.CHILD_SLOT_SPACING
 
     def update_count(self, ammount):
         self.repeat_count += ammount
@@ -85,6 +147,7 @@ class LoopBlock(ScriptBlock):
         elif self.repeat_count < self.MIN_REPEAT:
             self.repeat_count = self.MIN_REPEAT
         self.count_label.set_text(str(self.repeat_count))
+        self.container.refresh_status()
 
     def sync_controls(self):
         super().sync_controls()
@@ -108,10 +171,18 @@ class LoopBlock(ScriptBlock):
             cy = y + self.child_slot_y(i)
             child.set_target((child_x, cy))
 
-    def update(self):
-        super().update()
+    def process_event(self, event):
+        super().process_event(event)
+        if event.type == UI_BUTTON_PRESSED:
+            if event.ui_element == self.dec_button:
+                self.update_count(-1)
+            if event.ui_element == self.inc_button:
+                self.update_count(1)
+
+    def update(self, delta_time):
+        super().update(delta_time)
         for child in self.children_blocks:
-            child.update()
+            child.update(delta_time)
 
     def kill(self):
         super().kill()
@@ -126,7 +197,6 @@ class LoopBlock(ScriptBlock):
 class CodeBlocks(UIPanel):
     PROGRAM_LIMIT = 8
     LOOP_CHILD_LIMIT = 4
-    SCRIPT_BLOCK_LAYER = 6
     PANEL_PADDING = 18
     SECTION_GAP = 16
     PALETTE_BUTTON_HEIGHT = 50
@@ -154,23 +224,18 @@ class CodeBlocks(UIPanel):
         self.player = player
         self.block_library = get_block_library(allowed_blocks)
         self.program_blocks = []
+        self._exec_steps: list = []
         self.next_step_index = 0
         self.is_running = False
         self.dragged_block = None
         self.drag_offset = Vector2()
         self.drag_original_index = None
+        self.drag_original_loop = None
         self.drag_was_new = False
         self.panel_size = panel_size
         self.palette_button_to_spec = {}
         self.script_button_to_block = {}
-        self.remove_button_to_block = {}
         self.palette_drag_source = None
-
-        self.drag_original_loop = None
-        self.remove_button_to_loop = {}
-        self.loop_dec_to_loop = {}
-        self.loop_inc_to_loop = {}
-        self._exec_steps: list = []
 
         self.configure_layout()
 
@@ -377,127 +442,30 @@ class CodeBlocks(UIPanel):
         return steps
 
     def create_script_block(self, spec, pos):
-        button = UIButton(
-            relative_rect=Rect(pos, self.slot_size),
-            text=spec.label,
-            manager=self.ui_manager,
-            container=self,
-            object_id="#motion_block",
-            starting_height=self.SCRIPT_BLOCK_LAYER,
+        args = dict(
+            position=pos, 
+            size=self.slot_size, 
+            manager=self.ui_manager, 
+            container=self, 
+            spec=spec
         )
-        remove_button = UIButton(
-            relative_rect=Rect(
-                (
-                    pos[0] + self.slot_size[0] - ScriptBlock.REMOVE_BUTTON_SIZE - ScriptBlock.REMOVE_BUTTON_OFFSET,
-                    pos[1] + ScriptBlock.REMOVE_BUTTON_OFFSET,
-                ),
-                (ScriptBlock.REMOVE_BUTTON_SIZE, ScriptBlock.REMOVE_BUTTON_SIZE),
-            ),
-            text="X",
-            manager=self.ui_manager,
-            container=self,
-            object_id="#remove_block_button",
-            starting_height=self.SCRIPT_BLOCK_LAYER + 1,
-        )
-        block = ScriptBlock(spec, button, remove_button, pos)
-        self.script_button_to_block[button] = block
-        self.remove_button_to_block[remove_button] = block
+        if spec.id == 'loop':
+            block = LoopBlock(**args)
+        else:
+            block = ScriptBlock(**args)
+        self.script_button_to_block[block.button] = block
         return block
 
     def destroy_script_block(self, block):
         self.script_button_to_block.pop(block.button, None)
-        self.remove_button_to_block.pop(block.remove_button, None)
+        if isinstance(block, LoopBlock):
+            for child in block.children_blocks:
+                self.script_button_to_block.pop(child.button, None)
         block.kill()
-
-    def create_loop_block(self, spec, pos, repeat_count=2):
-        button = UIButton(
-            relative_rect=Rect(pos, self.slot_size),
-            text=spec.label,
-            manager=self.ui_manager,
-            container=self,
-            object_id="#loop_block",
-            starting_height=self.SCRIPT_BLOCK_LAYER,
-        )
-        remove_button = UIButton(
-            relative_rect=Rect(
-                (
-                    pos[0] + self.slot_size[0] - ScriptBlock.REMOVE_BUTTON_SIZE - ScriptBlock.REMOVE_BUTTON_OFFSET,
-                    pos[1] + ScriptBlock.REMOVE_BUTTON_OFFSET,
-                ),
-                (ScriptBlock.REMOVE_BUTTON_SIZE, ScriptBlock.REMOVE_BUTTON_SIZE),
-            ),
-            text="X",
-            manager=self.ui_manager,
-            container=self,
-            object_id="#remove_block_button",
-            starting_height=self.SCRIPT_BLOCK_LAYER + 1,
-        )
-        dec_button = UIButton(
-            relative_rect=Rect((pos[0] + 110, pos[1] + 8), (24, 24)),
-            text="−",
-            manager=self.ui_manager,
-            container=self,
-            object_id="#loop_count_btn",
-            starting_height=self.SCRIPT_BLOCK_LAYER + 1,
-        )
-        inc_button = UIButton(
-            relative_rect=Rect((pos[0] + 166, pos[1] + 8), (24, 24)),
-            text="+",
-            manager=self.ui_manager,
-            container=self,
-            object_id="#loop_count_btn",
-            starting_height=self.SCRIPT_BLOCK_LAYER + 1,
-        )
-        footer_panel = UIPanel(
-            relative_rect=Rect((pos[0], pos[1] + self.slot_size[1]), (self.slot_size[0], LoopBlock.FOOTER_HEIGHT)),
-            manager=self.ui_manager,
-            container=self,
-            starting_height=self.SCRIPT_BLOCK_LAYER,
-        )
-        count_label = UILabel(
-            relative_rect=Rect((pos[0] + 136, pos[1] + 10), (28, 20)),
-            text=str(repeat_count),
-            manager=self.ui_manager,
-            container=self,
-            object_id="#loop_count_txt"
-        )
-        count_label.change_layer(self.SCRIPT_BLOCK_LAYER + 1)
-
-        loop = LoopBlock(
-            spec, button, remove_button, dec_button, inc_button,
-            count_label, footer_panel, pos, self.slot_size, self.slot_spacing,repeat_count,
-        )
-
-        self.script_button_to_block[button] = loop
-        self.remove_button_to_loop[remove_button] = loop
-        self.loop_dec_to_loop[dec_button] = loop
-        self.loop_inc_to_loop[inc_button] = loop
-        return loop
-
-    def destroy_loop_block(self, loop: LoopBlock):
-        self.script_button_to_block.pop(loop.button, None)
-        self.remove_button_to_loop.pop(loop.remove_button, None)
-        self.loop_dec_to_loop.pop(loop.dec_button, None)
-        self.loop_inc_to_loop.pop(loop.inc_button, None)
-        for child in loop.children_blocks:
-            self.script_button_to_block.pop(child.button, None)
-            self.remove_button_to_block.pop(child.remove_button, None)
-        loop.kill()
 
     def panel_local_pos(self, mouse_pos):
         panel_rect = self.get_abs_rect()
         return (mouse_pos[0] - panel_rect.x, mouse_pos[1] - panel_rect.y)
-
-    def slot_position(self, index):
-        y = self.script_area_rect.y + self.LANE_HEADER_HEIGHT
-        for i, item in enumerate(self.program_blocks):
-            if i == index:
-                return (self.script_area_rect.x + self.LANE_PADDING_X, y)
-            if isinstance(item, LoopBlock):
-                y += item.total_height(self.slot_spacing)
-            else:
-                y += self.slot_spacing
-        return (self.script_area_rect.x + self.LANE_PADDING_X, y)
 
     def relayout_program_blocks(self):
         y = self.script_area_rect.y + self.LANE_HEADER_HEIGHT
@@ -594,7 +562,7 @@ class CodeBlocks(UIPanel):
                         and self.script_area_rect.x <= block_center[0] < self.script_area_rect.right
                         and len(item.children_blocks) < self.LOOP_CHILD_LIMIT):
                     rel_y = block_center[1] - child_top
-                    child_index = max(0, min(round(rel_y / self.slot_spacing), len(item.children_blocks)))
+                    child_index = max(0, min(round(rel_y / LoopBlock.CHILD_SLOT_SPACING), len(item.children_blocks)))
                     return child_index, item
                 running_y += item.total_height()
             else:
@@ -645,8 +613,8 @@ class CodeBlocks(UIPanel):
                 self.relayout_program_blocks()
 
         if dragged_block.button.alive():
-            dragged_block.button.change_layer(self.SCRIPT_BLOCK_LAYER)
-            dragged_block.remove_button.change_layer(self.SCRIPT_BLOCK_LAYER + 1)
+            dragged_block.button.change_layer(ScriptBlock.SCRIPT_BLOCK_LAYER)
+            dragged_block.remove_button.change_layer(ScriptBlock.SCRIPT_BLOCK_LAYER + 1)
 
         self.dragged_block = None
         self.drag_offset = Vector2()
@@ -655,20 +623,11 @@ class CodeBlocks(UIPanel):
         self.drag_was_new = False
         self.refresh_status()
 
-    def script_block_at_pos(self, mouse_pos):
-        for item in reversed(self.program_blocks):
-            if item.button.get_abs_rect().collidepoint(mouse_pos):
-                return item
-        return None
-
     def clear_program(self):
         if self.is_running:
             return
         for item in self.program_blocks:
-            if isinstance(item, LoopBlock):
-                self.destroy_loop_block(item)
-            else:
-                self.destroy_script_block(item)
+            self.destroy_script_block(item)
         self.program_blocks.clear()
         self.next_step_index = 0
         self.refresh_status()
@@ -688,14 +647,6 @@ class CodeBlocks(UIPanel):
             self.program_blocks.remove(block)
             self.destroy_script_block(block)
             self.relayout_program_blocks()
-        self.refresh_status()
-
-    def remove_loop_block(self, loop: LoopBlock):
-        if self.is_running or loop not in self.program_blocks:
-            return
-        self.program_blocks.remove(loop)
-        self.destroy_loop_block(loop)
-        self.relayout_program_blocks()
         self.refresh_status()
 
     def start_program(self):
@@ -741,7 +692,7 @@ class CodeBlocks(UIPanel):
                 self.destroy_script_block(child)
             else:
                 self.program_blocks.pop()
-                self.destroy_loop_block(last)
+                self.destroy_script_block(last)
         else:
             self.program_blocks.pop()
             self.destroy_script_block(last)
@@ -760,14 +711,6 @@ class CodeBlocks(UIPanel):
             self.finish_drag(event.pos)
             return
 
-        if event.type == MOUSEBUTTONDOWN and event.button == 1:
-            mouse_pos = event.pos
-
-            block = self.script_block_at_pos(mouse_pos)
-            if block is not None:
-                self.start_drag(block, mouse_pos, was_new=False)
-                return
-
         if event.type == UI_BUTTON_START_PRESS:
             if event.ui_element in self.palette_button_to_spec:
                 spec = self.palette_button_to_spec[event.ui_element]
@@ -775,10 +718,7 @@ class CodeBlocks(UIPanel):
                 mouse_pos = getattr(event, "mouse_pos", event.ui_element.get_abs_rect().center)
                 if self.dragged_block is not None:
                     self.finish_drag(mouse_pos)
-                if spec.id == 'loop':
-                    new_block = self.create_loop_block(spec, self.panel_local_pos(mouse_pos))
-                else:
-                    new_block = self.create_script_block(spec, self.panel_local_pos(mouse_pos))
+                new_block = self.create_script_block(spec, self.panel_local_pos(mouse_pos))
                 self.start_drag(new_block, mouse_pos, was_new=True)
                 return
             if event.ui_element in self.script_button_to_block:
@@ -790,26 +730,6 @@ class CodeBlocks(UIPanel):
                 return
 
         if event.type != UI_BUTTON_PRESSED:
-            return
-
-        if event.ui_element in self.remove_button_to_block:
-            self.remove_script_block(self.remove_button_to_block[event.ui_element])
-            return
-        
-        if event.ui_element in self.remove_button_to_loop:
-            self.remove_loop_block(self.remove_button_to_loop[event.ui_element])
-            return
-
-        if event.ui_element in self.loop_dec_to_loop:
-            loop = self.loop_dec_to_loop[event.ui_element]
-            loop.update_count(-1)
-            self.refresh_status()
-            return
-
-        if event.ui_element in self.loop_inc_to_loop:
-            loop = self.loop_inc_to_loop[event.ui_element]
-            loop.update_count(1)
-            self.refresh_status()
             return
 
         if event.ui_element == self.run_button:
@@ -829,11 +749,4 @@ class CodeBlocks(UIPanel):
             return
 
     def update(self, delta_time):
-        for block in self.program_blocks:
-            if block is not self.dragged_block:
-                block.update()
-
-        if self.dragged_block is not None:
-            self.dragged_block.update()
-
         self.run_next_step()

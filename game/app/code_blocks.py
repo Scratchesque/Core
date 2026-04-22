@@ -55,6 +55,12 @@ class ScriptBlock(UIPanel):
     def sync_controls(self):
         x = int(self.position.x)
         y = int(self.position.y)
+
+        if self.parent_block is None:
+            self.button.set_dimensions(self.size)
+        else: 
+            self.button.set_dimensions((self.size.x-LoopBlock.CHILD_INDENT_X, self.size.y))
+
         self.button.set_relative_position((x, y))
         self.remove_button.set_relative_position(
             (
@@ -402,7 +408,7 @@ class CodeBlocks(UIPanel):
         )
 
     def refresh_status(self):
-        total_steps = self._count_total_steps()
+        total_steps, total_blocks = self._count_total_steps()
         if self.is_running:
             current_step = min(self.next_step_index + 1, len(self._exec_steps))
             status = (
@@ -412,7 +418,7 @@ class CodeBlocks(UIPanel):
         elif self.program_blocks:
             status = (
                 "<b>Status:</b> Script ready.<br>"
-                f"{len(self.program_blocks)} item(s) in lane — {total_steps} total step(s)."
+                f"{total_blocks} Movement Blocks(s) in lane — {total_steps} total step(s)."
             )
         else:
             status = (
@@ -423,18 +429,21 @@ class CodeBlocks(UIPanel):
  
     def _count_total_steps(self):
         count = 0
+        blocks = 0
         for item in self.program_blocks:
             if isinstance(item, LoopBlock):
                 count += len(item.children_blocks) * item.repeat_count
+                blocks += len(item.children_blocks)
             else:
                 count += 1
-        return count
+                blocks += 1
+        return count, blocks
     
     def _build_exec_steps(self):
         steps = []
         for item in self.program_blocks:
             if isinstance(item, LoopBlock):
-                for x in range(item.repeat_count):
+                for _ in range(item.repeat_count):
                     for child in item.children_blocks:
                         steps.append(child.spec)
             else:
@@ -636,17 +645,9 @@ class CodeBlocks(UIPanel):
         if self.is_running:
             return
         
-        if block.parent_block is not None:
-            loop = block.parent_block
-            if block in loop.children_blocks:
-                loop.children_blocks.remove(block)
-                block.parent_block = None
-                self.destroy_script_block(block)
-                self.relayout_program_blocks()
-        elif block in self.program_blocks:
-            self.program_blocks.remove(block)
-            self.destroy_script_block(block)
-            self.relayout_program_blocks()
+        self.program_blocks.remove(block)
+        self.destroy_script_block(block)
+        self.relayout_program_blocks()
         self.refresh_status()
 
     def start_program(self):

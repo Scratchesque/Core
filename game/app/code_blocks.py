@@ -410,7 +410,6 @@ class CodeBlocks(UIPanel):
         block.kill()
 
     def create_loop_block(self, spec, pos, repeat_count=2):
-        """Create a LoopBlock UI at the given panel-local position."""
         button = UIButton(
             relative_rect=Rect(pos, self.slot_size),
             text=spec.label,
@@ -583,7 +582,6 @@ class CodeBlocks(UIPanel):
         if not drop_rect.collidepoint(block_center) and not drop_rect.colliderect(dragged_rect):
             return None, None
         
-        # no adding to script if the mouse has not been put in the script panel 
         if not self.script_lane.panel_container.rect.collidepoint(mouse_pos):
             return None, None
 
@@ -622,6 +620,8 @@ class CodeBlocks(UIPanel):
         placed = False
         if drop_index is not None:
             if target_loop is not None:
+                if isinstance(dragged_block, LoopBlock):
+                    return
                 target_loop.children_blocks.insert(drop_index, dragged_block)
                 dragged_block.parent_block = target_loop
                 self.relayout_program_blocks()
@@ -773,20 +773,20 @@ class CodeBlocks(UIPanel):
                 spec = self.palette_button_to_spec[event.ui_element]
                 self.palette_drag_source = event.ui_element
                 mouse_pos = getattr(event, "mouse_pos", event.ui_element.get_abs_rect().center)
+                if self.dragged_block is not None:
+                    self.finish_drag(mouse_pos)
                 if spec.id == 'loop':
-                    if self.dragged_block is None:
-                        loop = self.create_loop_block(spec, self.panel_local_pos(mouse_pos))
-                        self.start_drag(loop, mouse_pos, was_new=True)
+                    new_block = self.create_loop_block(spec, self.panel_local_pos(mouse_pos))
                 else:
-                    if self.dragged_block is None:
-                        new_block = self.create_script_block(spec, self.panel_local_pos(mouse_pos))
-                        self.start_drag(new_block, mouse_pos, was_new=True)
+                    new_block = self.create_script_block(spec, self.panel_local_pos(mouse_pos))
+                self.start_drag(new_block, mouse_pos, was_new=True)
                 return
             if event.ui_element in self.script_button_to_block:
                 block = self.script_button_to_block[event.ui_element]
                 mouse_pos = getattr(event, "mouse_pos", event.ui_element.get_abs_rect().topleft)
-                if self.dragged_block is None:
-                    self.start_drag(block, mouse_pos, was_new=False)
+                if self.dragged_block is not None:
+                    self.finish_drag(mouse_pos)
+                self.start_drag(block, mouse_pos, was_new=False)
                 return
 
         if event.type != UI_BUTTON_PRESSED:

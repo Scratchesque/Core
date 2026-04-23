@@ -14,7 +14,7 @@ def import_map_layout(path):
             terrain_map.append(list(row))
         return terrain_map
    
-# chatgpt made this for me cause i didnt have a clue, but it goes through each {} in the json and returns result to get added to the env_data
+# This goes through each {} in the json and returns result to get added to the env_data
 def _dict_to_namespace(dictionary):
     if isinstance(dictionary, dict):
         return SimpleNamespace(**{k: _dict_to_namespace(v) for k, v in dictionary.items()})

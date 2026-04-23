@@ -409,5 +409,19 @@
   },
   "#pause_menu.label":{
     "prototype": "#lane_title"
+  },
+  "#python_panel":{
+    "prototype": "#game_panel"
+  },
+  "#python_text":{
+    "prototype" : "#test_font",
+    "colours":{
+      "normal_text":"#000000",      
+      "dark_bg": "#00000000",
+      "normal_border": "#00000000"
+    },
+    "misc":{
+      "shadow_width": "0"
+    }
   }
 }

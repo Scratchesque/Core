@@ -56,7 +56,7 @@ class MessagePanel(UIPanel):
             Rect(panel_pos, panel_size),
             manager=manager,
             object_id="#confirm_panel",
-            starting_height=6,
+            starting_height=8,
         )
         self.create_ui(title, message, panel_size)
 
@@ -86,7 +86,7 @@ class SpeechPanel(UIPanel):
             Rect(panel_pos, panel_size),
             manager=manager,
             object_id="#transparent_panel",
-            starting_height=4,
+            starting_height=2,
         )
         self.message_list = message_list
         self.message_index = 0
@@ -141,7 +141,7 @@ class ConfirmationPanel(UIPanel):
             Rect(panel_pos, panel_size),
             manager=manager,
             object_id="#confirm_panel",
-            starting_height=6,
+            starting_height=9,
         )
         self.confirm_event_type = confirm_event_type
         self.create_ui(title, message, panel_size)

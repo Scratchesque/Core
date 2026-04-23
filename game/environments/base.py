@@ -148,6 +148,7 @@ class GameEnv(BaseEnvironment):
         self.blocks = CodeBlocks(
             panel_pos=blocks_pos,
             panel_size=blocks_size,
+            level_title=self.title,
             manager=self.ui_manager, 
             player=self.board.player,
             allowed_blocks=self.get_allowed_blocks())

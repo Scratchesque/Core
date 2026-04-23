@@ -1,10 +1,11 @@
-from pygame import MOUSEBUTTONDOWN, MOUSEBUTTONUP, MOUSEMOTION, Rect
+from pygame import MOUSEBUTTONUP, MOUSEMOTION, Rect
 from pygame.math import Vector2
 from pygame_gui.elements import UIButton, UILabel, UIPanel, UITextBox
 from pygame_gui._constants import UI_BUTTON_PRESSED, UI_BUTTON_START_PRESS
 
 from game.app.block_registry import get_block_library
 from game.core.events import *
+from game.app.block_interpreter import InterpreterPanel
 
 
 class ScriptBlock(UIPanel):
@@ -147,6 +148,8 @@ class LoopBlock(ScriptBlock):
         return self.size.y + child_index * self.CHILD_SLOT_SPACING
 
     def update_count(self, ammount):
+        if self.container.is_running:
+            return
         self.repeat_count += ammount
         if self.repeat_count > self.MAX_REPEAT: 
             self.repeat_count = self.MAX_REPEAT
@@ -219,12 +222,12 @@ class CodeBlocks(UIPanel):
     PALETTE_FALLBACK_MIN_WIDTH = 116
     LANE_MIN_WIDTH = 220
 
-    def __init__(self, panel_pos, panel_size, manager, player, allowed_blocks=None):
+    def __init__(self, panel_pos, panel_size, level_title, manager, player, allowed_blocks=None):
         super().__init__(
             Rect(panel_pos, panel_size),
             manager=manager,
             object_id="#code_panel",
-            starting_height=2,
+            starting_height=4,
         )
 
         self.player = player
@@ -244,8 +247,16 @@ class CodeBlocks(UIPanel):
         self.palette_drag_source = None
 
         self.configure_layout()
-
         self.create_ui()
+
+        self.interpreter = InterpreterPanel(
+            panel_pos=panel_pos,
+            panel_size=panel_size, 
+            manager=self.ui_manager,
+            pallet_blocks=self.palette_button_to_spec,
+            level_title=level_title
+        )
+
         self.refresh_status()
 
     def configure_layout(self):
@@ -408,6 +419,7 @@ class CodeBlocks(UIPanel):
         )
 
     def refresh_status(self):
+        self.interpreter.translate_blocks(self.program_blocks)
         total_steps, total_blocks = self._count_total_steps()
         if self.is_running:
             current_step = min(self.next_step_index + 1, len(self._exec_steps))

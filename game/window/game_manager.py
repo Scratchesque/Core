@@ -23,7 +23,8 @@ class GameManager:
             self.load_level = False
             self.display.run(self.env)
         except Exception as e:
-            print(f"Error: {e}")
+            import traceback
+            traceback.print_exc()
         finally:
             self.quit_load_level()
 
@@ -37,12 +38,17 @@ class GameManager:
             self.env = prev
             self.load_level = True
         else:
+            matched = False
             for env in self.envs_list:
                 if env.title == env_title:
+                    matched = True
+                    print(f"Found match: {env.title}")
                     self.display.stop_game_loop()
                     self.prev_env = self.env 
                     self.env = env
                     self.load_level = True
+            if not matched:
+                print(f"NO MATCH FOUND. Available: {[e.title for e in self.envs_list]}")
 
     def mark_level_completed(self, level_name, next_level_name=None):
         self.player_data.complete_level(level_name, next_level_name)

@@ -4,7 +4,7 @@
             "title": "Level 2",
             "background": "menu/background.png",
             "theme": "game",
-            "next_env": "QUIT"
+            "next_env": "Level 3"
         }
     },
     "systems": {
@@ -22,19 +22,16 @@
         ]
     },
     "map":{
-        "water": ["Level_1/water", "SproutLands/Tilesets/Water"],
-        "water_bounds": ["Level_1/water_bounds", "SproutLands/Tilesets/Water"],
-        "terrain": ["Level_1/terrain", "SproutLands/Tilesets/Grass"],
-        "tree": ["Level_1/tree","SproutLands/Objects/Basic_Grass_Biom_things"],
-        "house": ["Level_1/house", "SproutLands/Tilesets/Wooden_House_Walls_Tilset"],
-        "door": ["Level_1/door", "SproutLands/Tilesets/Doors"],
-        "vegetation": ["Level_1/vegetation", "SproutLands/Objects/Basic_Grass_Biom_things"],
+        "water": ["Level_2/Level_2_water", "SproutLands/Tilesets/Water"],
+        "water_bounds": ["Level_2/Level_2_water_bounds", "SproutLands/Tilesets/Water"],
+        "terrain": ["Level_2/Level_2_terrain", "SproutLands/Tilesets/Grass"],
+        "tree": ["Level_2/Level_2_tree","SproutLands/Objects/Basic_Grass_Biom_things"],
+        "vegetation": ["Level_2/Level_2_vegetation", "SproutLands/Objects/Basic_Grass_Biom_things"],
         "start_pos": "Level_2/start_pos"
     },
     "player":{
         "bounds": {
-            "blocked":["water","tree"],
-            "jumpable": ["vegetation"]
+            "blocked":["water","tree"]
         },
         "energy": {
             "health": 5

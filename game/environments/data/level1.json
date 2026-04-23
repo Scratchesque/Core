@@ -11,19 +11,18 @@
         "allowed_blocks": ["up", "down", "left", "right"]
     },
     "map": {
-        "water": ["Level_1/water", "SproutLands/Tilesets/Water"],
-        "water_bounds": ["Level_1/water_bounds", "SproutLands/Tilesets/Water"],
-        "terrain": ["Level_1/terrain", "SproutLands/Tilesets/Grass"],
-        "tree": ["Level_1/tree","SproutLands/Objects/Basic_Grass_Biom_things"],
-        "house": ["Level_1/house", "SproutLands/Tilesets/Wooden_House_Walls_Tilset"],
-        "door": ["Level_1/door", "SproutLands/Tilesets/Doors"],
-        "vegetation": ["Level_1/vegetation", "SproutLands/Objects/Basic_Grass_Biom_things"],
+        "water": ["Level_1/Level_1_water", "SproutLands/Tilesets/Water"],
+        "water_bounds": ["Level_1/Level_1_water_bounds", "SproutLands/Tilesets/Water"],
+        "terrain": ["Level_1/Level_1_terrain", "SproutLands/Tilesets/Grass"],
+        "tree": ["Level_1/Level_1_tree","SproutLands/Objects/Basic_Grass_Biom_things"],
+        "house": ["Level_1/Level_1_house", "SproutLands/Tilesets/Wooden_House_Walls_Tilset"],
+        "door": ["Level_1/Level_1_door", "SproutLands/Tilesets/Doors"],
+        "vegetation": ["Level_1/Level_1_vegetation", "SproutLands/Objects/Basic_Grass_Biom_things"],
         "start_pos": "Level_1/start_pos"
     },
     "player":{
         "bounds": {
-            "blocked":["water","tree"],
-            "jumpable": ["vegetation"]
+            "blocked":["water","tree"]
         }
     },
     "npc": ["Kevin has just left his house/cabin and is now on a green island, in the distance he can see a carrot next to a tree." , "Maybe you should try to get to the carrot."]

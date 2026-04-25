@@ -1,7 +1,5 @@
 import pygame
 NEXT_ENV_CONFIRMED = pygame.event.custom_type()
-PREV_ENV_CONFIRMED = pygame.event.custom_type()
-PREV_ENV_REQUESTED = pygame.event.custom_type()
 QUIT_EMV_CONFIRMED = pygame.event.custom_type()
 QUIT_EMV_REQUESTED = pygame.event.custom_type()
 RESET_ENV_CONFIRMED = pygame.event.custom_type()

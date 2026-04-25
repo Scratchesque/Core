@@ -45,7 +45,7 @@ class LevelSelect(BaseEnvironment):
         total_unlocked = 0
         for index, env in enumerate(playable_envs):
             button_y = start_y + (index * (self.BUTTON_SIZE[1] + self.BUTTON_GAP))
-            is_unlocked = self.game_manager.player_data.is_unlocked(env.title)
+            is_unlocked = self.game_manager.player_data.is_unlocked(env.title) or getattr(self.game_manager, "debug", False)
             total_unlocked+=1 if is_unlocked else 0
             button_text = env.title if is_unlocked else f"Locked: {env.title}"
             button = UIFactory.button_img(

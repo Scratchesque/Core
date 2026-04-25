@@ -29,6 +29,7 @@ class Display:
         self.running = True
         env.ui_manager = pygame_gui.UIManager(self.resolution, theme_path=env.theme_path)
 
+        self.surface.fill(env.background_colour)
         env.reset()
 
         pygame.mouse.set_visible(False)
@@ -58,6 +59,7 @@ class Display:
         self.env.update_frame(delta_time)
         # pygame_gui manager updating/drawing
         self.env.ui_manager.update(delta_time)
+        self.screen.blit(self.surface, (0, 0))
         self.env.ui_manager.draw_ui(self.screen)
 
         pygame.display.update()

@@ -1,11 +1,8 @@
 {
     "env":{
-        "init":{
-            "title": "Level 3",
-            "background": "menu/background.png",
-            "theme": "game",
-            "next_env": "QUIT"
-        }
+        "title": "Level 3",
+        "theme": "game",
+        "next_env": "QUIT"
     },
     "systems": {
         "allowed_blocks": [

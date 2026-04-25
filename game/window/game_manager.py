@@ -15,7 +15,6 @@ class GameManager:
         self.player_data = PlayerData()
         self.display = Display()
         self.envs_list = self._load_environments()
-        self.env = self.envs_list[0] # for initalising prev_env
         self.change_env("Main Menu")
 
     def start(self):
@@ -31,11 +30,8 @@ class GameManager:
     def change_env(self, env_title: str):
         if env_title == "QUIT":
             self.display.stop_game_loop()
-        elif env_title == "BACK":
+        elif env_title == "RESET":
             self.display.stop_game_loop()
-            prev = self.prev_env
-            self.prev_env = self.env
-            self.env = prev
             self.load_level = True
         else:
             matched = False
@@ -44,7 +40,6 @@ class GameManager:
                     matched = True
                     print(f"Found match: {env.title}")
                     self.display.stop_game_loop()
-                    self.prev_env = self.env 
                     self.env = env
                     self.load_level = True
             if not matched:

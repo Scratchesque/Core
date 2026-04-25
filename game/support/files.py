@@ -30,7 +30,6 @@ def load_json(file_path):
         with open(path, 'r', encoding='utf-8') as f:
             data = json.load(f)
         data_list = _dict_to_namespace(data)
-        data_list.env.init # checks if init data exists inside jsons at 'environments/data/xxx.json' 
         return data_list
     except:
         return False

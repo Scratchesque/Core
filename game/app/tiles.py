@@ -72,11 +72,11 @@ class Tile(UIImage):
         self.set_image(self.sprite_list[tile_number])
         self.animation_count += 1
     
-    # Check that absolute distance between 2 objects is less than 0.9 tiles away 
+    # Check the absolute distance between 2 objects
     @staticmethod
     def collision_check(pos1, pos2):
-        x = abs(pos1.x - pos2.x) <= 0.9
-        y = abs(pos1.y - pos2.y) <= 0.9
+        x = abs(pos1.x - pos2.x) < 1
+        y = abs(pos1.y - pos2.y) < 1
         if x and y:
             return True
 

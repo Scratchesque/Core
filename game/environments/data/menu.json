@@ -1,10 +1,8 @@
 {
     "env":{
-        "init":{
-            "title": "Main Menu",
-            "background": "menu/background.png",
-            "theme": "main_menu",
-            "next_env": "Start"
-        }
+        "title": "Main Menu",
+        "background": "AAAAAA",
+        "theme": "main_menu",
+        "next_env": "Start"
     }
 }

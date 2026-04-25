@@ -218,10 +218,8 @@ class LevelText(UIPanel):
             container=self)
         
 class PauseMenu(UIPanel):
-    def __init__(self, panel_size, manager, open_confirmation_panel):
+    def __init__(self, panel_size, manager):
 
-        self.open_confirmation_panel = open_confirmation_panel
-        
         panel_pos = (
             (SCREEN_WIDTH-panel_size[0])//2, 
             (SCREEN_HEIGHT-panel_size[1])//2
@@ -246,31 +244,31 @@ class PauseMenu(UIPanel):
 
         UILabel(
             relative_rect=Rect((padding_x, 0), label_size),
-            text="Menu",
+            text="Settings",
             manager=self.ui_manager,
             container=self,
             object_id="#pause_title",
         )
 
-        self.back_button = UIFactory.button(
+        self.menu_button = UIFactory.button(
             pos=(padding_x, button_y),
             size=button_size,
-            text="Back",
+            text="Menu",
             manager=self.ui_manager,
-            container=self
+            container=self,
         )
         self.quit_button = UIFactory.button(
             pos=(padding_x, button_y + button_gap),
             size=button_size,
             text="Quit",
             manager=self.ui_manager,
-            container=self
+            container=self,
         )
 
     def process_event(self, event):
-        if self.back_button.on_click(event):
-            back_event = pygame.event.Event(PREV_ENV_REQUESTED)
-            pygame.event.post(back_event)
+        if self.menu_button.on_click(event):
+            menu_event = pygame.event.Event(MENU_ENV_REQUESTED)
+            pygame.event.post(menu_event)
             self.kill()
             return
         if self.quit_button.on_click(event):

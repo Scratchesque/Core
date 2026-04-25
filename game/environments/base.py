@@ -1,4 +1,4 @@
-from pygame import Rect, KEYUP, K_ESCAPE
+from pygame import Rect, KEYUP, K_ESCAPE, Color
 from pygame_gui.elements import UIImage, UIPanel
 
 from game.app.board import Board
@@ -17,31 +17,31 @@ class BaseEnvironment:
     # When an environemnt using this class init's, it loads all relevant data from 'environments/data/{level_file}.json" to be used
     def __init__(self, level_file):
         root_dir = "game/environments/data/"
-        env_path = f"{root_dir}{level_file}.json"
-        self.env_data = load_json(env_path)
-        if not self.env_data:
+        default_data = load_json(f"{root_dir}default.json")
+        self.env_data = load_json(f"{root_dir}{level_file}.json")
+        if not hasattr(self.env_data, 'env'):
             print(f'Using default env data. Could not find env data: {level_file}')
-            default_path = f"{root_dir}default.json"
-            self.env_data = load_json(default_path)
+            self.env_data = default_data
 
-        init_data = self.env_data.env.init
-        self.title = init_data.title
-        img_path = f'game/assets/{init_data.background}'
-        self.background_img = load_image(img_path)
-        self.theme_path = str(resolve_project_path(f"game/environments/themes/{init_data.theme}.json"))
+        env_data = self.env_data.env
+        self.title = env_data.title
+        self.theme_path = str(resolve_project_path(f"game/environments/themes/{env_data.theme}.json"))
+
+        self.background_colour = Color(f'#{default_data.env.background}')
+        if hasattr(env_data, 'background'):
+            print(env_data.background)
+            self.background_colour = Color(f'#{env_data.background}')
 
     def create_ui(self):
         pass
 
     def on_ui_event(self, event):
-        if event.type == PREV_ENV_CONFIRMED:
-            self.game_manager.change_env('BACK')
         if event.type == QUIT_EMV_CONFIRMED:
             self.game_manager.change_env('QUIT')
         if event.type == NEXT_ENV_CONFIRMED:
             self.game_manager.change_env(self.env_data.env.init.next_env)
         if event.type == RESET_ENV_CONFIRMED:
-            self.reset()
+            self.game_manager.change_env('RESET')
         if event.type == LEVEL_COMPLETED:
             next_env = getattr(self.env_data.env.init, "next_env", None)
             self.game_manager.mark_level_completed(
@@ -55,17 +55,10 @@ class BaseEnvironment:
         # Per-frame updates (e.g., typing effects, animations).
         pass
      
-    # Gets the resolution set in 'window/display.py' from the game manager
-    def render_background(self):
-        width = self.game_manager.display.resolution[0]
-        height = self.game_manager.display.resolution[1]
-        UIImage(relative_rect=Rect((0,0),(width,height)), image_surface=self.background_img, manager=self.ui_manager)
-        
     # This is called when the screen is to be reset to recreate ui elements, it can also change the level from a level file
     def reset(self):
         self.ui_manager.clear_and_reset()
         self.game_manager.display.create_cursor()
-        self.render_background()
         self.create_ui()
  
 # This contains all of the info that will be consistent accross each of the levels
@@ -75,8 +68,6 @@ class GameEnv(BaseEnvironment):
     PANEL_SHADOW_SPREAD = 10
     BLOCKS_PANEL_MIN_WIDTH = 700
     BLOCKS_PANEL_WIDTH_RATIO = 0.39
-    DEBUG_MENU_BUTTON_MARGIN = 18
-    DEBUG_MENU_BUTTON_SIZE = (120, 44)
     CONFIRM_PANEL_SIZE = (550, 220)
 
     # The BaseEnvironment in 'environments/base.py', init's the level file
@@ -137,14 +128,14 @@ class GameEnv(BaseEnvironment):
         self.create_shadow_panel(board_pos, board_size)
         self.create_shadow_panel(blocks_pos, blocks_size)
 
-        # Takes data passed through and starts creating the tiles/player/goal and more in the future possibly
+        # Takes data passed through and starts creating the tiles/player/goal
         self.board = Board(
             panel_pos=board_pos,
             panel_size=board_size,
             env_data=self.env_data, 
             manager=self.ui_manager)
 
-        # A temporary placeholder of where our code blocks could be placed and initalised when finished programming
+        # Where our code blocks will be placed and initalised
         self.blocks = CodeBlocks(
             panel_pos=blocks_pos,
             panel_size=blocks_size,
@@ -160,17 +151,7 @@ class GameEnv(BaseEnvironment):
             text=self.title, 
             manager=self.ui_manager)
 
-        self.debug_menu_button = None
         self.confirmation_panel = None
-        if getattr(self.game_manager, "debug", False):
-            self.debug_menu_button = UIFactory.button(
-                pos=(self.DEBUG_MENU_BUTTON_MARGIN, SCREEN_HEIGHT - self.DEBUG_MENU_BUTTON_MARGIN),
-                size=self.DEBUG_MENU_BUTTON_SIZE,
-                text="Menu",
-                manager=self.ui_manager,
-                object_id="#edit_button",
-                anchor="bottomleft",
-            )
 
         square_size = 30
         self.pause_button = UIFactory.button_img(
@@ -188,16 +169,12 @@ class GameEnv(BaseEnvironment):
         super().on_ui_event(event)
         if (event.type == KEYUP and event.key == K_ESCAPE) or self.pause_button.on_click(event):
             if self.pause_menu is None or not self.pause_menu.alive():
-                self.pause_menu = PauseMenu((200,250), self.ui_manager, self.open_confirmation_panel)
+                self.pause_menu = PauseMenu(
+                    panel_size=(200,250), 
+                    manager=self.ui_manager
+                )
             else:
                 self.pause_menu.kill()
-        if event.type == PREV_ENV_REQUESTED:
-            self.open_confirmation_panel(
-                title="Go back?",
-                message="Leave this level and go back a page.",
-                confirm_event_type=PREV_ENV_CONFIRMED,
-            )
-            return
         if event.type == QUIT_EMV_REQUESTED:
             self.open_confirmation_panel(
                 title="Quit game?",
@@ -222,9 +199,6 @@ class GameEnv(BaseEnvironment):
         if event.type == MENU_ENV_CONFIRMED:
             self.game_manager.change_env("Main Menu")
             return
-        if self.debug_menu_button and self.debug_menu_button.on_click(event):
-            menu_event = pygame.event.Event(MENU_ENV_REQUESTED)
-            pygame.event.post(menu_event)
 
     def open_confirmation_panel(self, title, message, confirm_event_type):
         if self.confirmation_panel and self.confirmation_panel.alive():

@@ -153,6 +153,15 @@
       "text_vert_alignment_padding":"0"
     }
   },
+  "#remove_block_button":{
+    "prototype":"#button_element",
+    "colours":{
+      "normal_bg": "#FFFFFF",
+      "hovered_bg": "#F4E7E7",
+      "active_bg": "#EBCFCF",
+      "normal_text": "#A12D2D"
+    }
+  },
   "#loop_count_btn":{
     "prototype":"#button_element",
     "colours":{

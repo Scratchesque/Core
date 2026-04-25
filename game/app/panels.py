@@ -9,7 +9,7 @@ from game.support.ui import TypingTextBox, UIFactory
 
 class DialoguePanel(UIPanel):
     def __init__(self, panel_pos, panel_size, title, message, manager):
-        super().__init__(Rect(panel_pos, panel_size), manager=manager, object_id="#confirm_panel", starting_height=5)
+        super().__init__(Rect(panel_pos, panel_size), manager=manager, object_id="#dialogue_panel", starting_height=5)
         
         self.create_ui(title, message, panel_size)
 
@@ -22,40 +22,37 @@ class DialoguePanel(UIPanel):
             text=title,
             manager=self.ui_manager,
             container=self,
-            object_id="#confirm_title",
+            object_id="#title",
         )
 
-        self.text_box = TypingTextBox(
+        TypingTextBox(
             pos=(padding, 78),
             size=((panel_size[0] - padding * 2), (panel_size[1] -  padding * 2 - 125)),
             html_text=message,
             manager=self.ui_manager,
             container=self,
-            object_id="#confirm_body")
+            object_id="#body")
         
         self.confirm_button = UIFactory.button_img(
             pos=((panel_size[0] - button_size[0]) // 2, panel_size[1] - 78),
             size=button_size,
-            image_path="game/assets/menu/button.png",
+            image_path="game/assets/SproutLands/cropped/brown_button.png",
             text="Confirm",
             manager=self.ui_manager,
             container=self,
-            object_id="#confirm_accept_button",
+            object_id="#button",
         )
 
     def process_event(self, event):
         if self.confirm_button.on_click(event):
             self.kill()
 
-    def update(self, delta_time):
-        self.text_box.update_typing(delta_time)
-
 class MessagePanel(UIPanel):
     def __init__(self, panel_pos, panel_size, title, message, manager):
         super().__init__(
             Rect(panel_pos, panel_size),
             manager=manager,
-            object_id="#confirm_panel",
+            object_id="#message_panel",
             starting_height=8,
         )
         self.create_ui(title, message, panel_size)
@@ -68,7 +65,7 @@ class MessagePanel(UIPanel):
             text=title,
             manager=self.ui_manager,
             container=self,
-            object_id="#confirm_title",
+            object_id="#title",
         )
 
         UILabel(
@@ -76,7 +73,7 @@ class MessagePanel(UIPanel):
             text=message,
             manager=self.ui_manager,
             container=self,
-            object_id="#confirm_body",
+            object_id="#body",
         )
 
 
@@ -85,7 +82,7 @@ class SpeechPanel(UIPanel):
         super().__init__(
             Rect(panel_pos, panel_size),
             manager=manager,
-            object_id="#transparent_panel",
+            object_id="#speech_panel",
             starting_height=2,
         )
         self.message_list = message_list
@@ -111,7 +108,7 @@ class SpeechPanel(UIPanel):
             html_text=self.message_list[0],
             manager=self.ui_manager,
             container=self,
-            object_id="#speech_body")
+            object_id="#body")
 
         self.next_button = UIFactory.button(
             pos=(panel_size[0]-button_size[0]-padding/2,panel_size[1]-button_size[1]-padding),
@@ -119,7 +116,7 @@ class SpeechPanel(UIPanel):
             text="OK",
             manager=self.ui_manager,
             container=self,
-            object_id="#speech_button",
+            object_id="#button",
         )
 
     def process_event(self, event):
@@ -130,9 +127,6 @@ class SpeechPanel(UIPanel):
                 self.kill()
                 return
             self.text_box.set_full_text(self.message_list[self.message_index])
-
-    def update(self, delta_time):
-        self.text_box.update_typing(delta_time)
 
 
 class ConfirmationPanel(UIPanel):
@@ -159,7 +153,7 @@ class ConfirmationPanel(UIPanel):
             text=title,
             manager=self.ui_manager,
             container=self,
-            object_id="#confirm_title",
+            object_id="#title",
         )
 
         UILabel(
@@ -167,26 +161,24 @@ class ConfirmationPanel(UIPanel):
             text=message,
             manager=self.ui_manager,
             container=self,
-            object_id="#confirm_body",
+            object_id="#body",
         )
 
         self.cancel_button = UIFactory.button_img(
             pos=(buttons_x, button_y),
             size=button_size,
-            image_path="game/assets/menu/button.png",
+            image_path="game/assets/SproutLands/cropped/grey_button.png",
             text="Cancel",
             manager=self.ui_manager,
-            container=self,
-            object_id="#confirm_cancel_button",
+            container=self
         )
         self.confirm_button = UIFactory.button_img(
             pos=(buttons_x + button_size[0] + button_gap, button_y),
             size=button_size,
-            image_path="game/assets/menu/button.png",
+            image_path="game/assets/SproutLands/cropped/brown_button.png",
             text="Confirm",
             manager=self.ui_manager,
-            container=self,
-            object_id="#confirm_accept_button",
+            container=self
         )
 
     def process_event(self, event):
@@ -203,21 +195,21 @@ class ConfirmationPanel(UIPanel):
 class LevelText(UIPanel):
     def __init__(self, panel_pos, panel_size, text, manager):
         # Setting the starting height to 4 here since it should be above any other ui panels to be rendered, but below the dialouge text
-        super().__init__(Rect(panel_pos, panel_size), manager=manager, object_id="#transparent_panel", starting_height=4)
+        super().__init__(Rect(panel_pos, panel_size), manager=manager, object_id="#level_text_panel", starting_height=4)
 
-        # for some reason im having trouble using the theme.json aswell for this panel to set the image so ive just put the image as an element
-        img = load_image('game/assets/menu/button.png')
-        UIImage(relative_rect=Rect((0,0), panel_size), 
-            image_surface=img, 
-            manager=self.ui_manager, 
+        UIFactory.image(
+            pos=(-1,-1),
+            size=panel_size,
+            image_path='game/assets/SproutLands/cropped/brown_panel.png',
+            manager=self.ui_manager,
             container=self)
         
-        UILabel(relative_rect=Rect((0,0),panel_size),
+        UILabel(relative_rect=Rect((-1,-1),panel_size),
             text=text,
             manager=self.ui_manager,
             container=self)
         
-class PauseMenu(UIPanel):
+class SettingsMenu(UIPanel):
     def __init__(self, panel_size, manager):
 
         panel_pos = (
@@ -227,7 +219,7 @@ class PauseMenu(UIPanel):
         super().__init__(
             Rect(panel_pos, panel_size), 
             manager=manager, 
-            object_id="#pause_menu", 
+            object_id="#settings_panel", 
             starting_height=10
         )
         
@@ -247,19 +239,21 @@ class PauseMenu(UIPanel):
             text="Settings",
             manager=self.ui_manager,
             container=self,
-            object_id="#pause_title",
+            object_id="#title",
         )
 
-        self.menu_button = UIFactory.button(
+        self.menu_button = UIFactory.button_img(
             pos=(padding_x, button_y),
             size=button_size,
+            image_path="game/assets/SproutLands/cropped/brown_button.png",
             text="Menu",
             manager=self.ui_manager,
             container=self,
         )
-        self.quit_button = UIFactory.button(
+        self.quit_button = UIFactory.button_img(
             pos=(padding_x, button_y + button_gap),
             size=button_size,
+            image_path="game/assets/SproutLands/cropped/grey_button.png",
             text="Quit",
             manager=self.ui_manager,
             container=self,

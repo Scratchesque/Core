@@ -30,9 +30,7 @@
         "bounds": {
             "blocked":["water","tree"]
         },
-        "energy": {
-            "health": 5
-        }
+        "energy": 10
     },
-    "npc": ["Be careful theres energy now!" , "Kevin has just refound the taste for Carrots, he wants more, so much so, that he can smell it in the distance."]
+    "npc": ["Be careful theres energy now!" , "Kevin has just refound the taste for Carrots, he wants more", "So much so, that he can smell it in the distance."]
 }

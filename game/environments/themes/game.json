@@ -1,10 +1,7 @@
 {
-  "#test_font": {
+  "#fira_code_font": {
     "font": {
       "name": "custom_font",
-      "size": "14",
-      "bold": "1",
-      "italic": "0",
       "regular_resource": {
         "package": "game.assets.fonts",
         "resource": "FiraCode-Regular.ttf"
@@ -15,83 +12,84 @@
       }
     }
   },
-  "#pixel_font":{
+  "#sprout_lands_font":{
     "font": {
-      "name": "SproutLands",
+      "name": "pixel_font",
       "regular_resource": {
         "package": "game.assets.fonts",
         "resource": "SproutLands-PixelFont.ttf"
       }
     }
   },
-  "button": {
-    "colours": {
-      "normal_border": "White",
-      "normal_bg": "SlateGray",
-      "normal_text": "White"
+  "label":{
+    "font": {
+      "name": "custom_font",
+      "size":"14",
+      "bold": "1"
     },
-    "misc": {
-      "shape": "rounded_rectangle",
-      "shape_corner_radius": "10",
-      "border_width": "2"
-    }
-  },
-  "label": {
     "colours": {
       "normal_text": "Black"
     }
   },
-  "#title": {
-    "parent": "label"
-  },
-  "#dialogue": {
+  "button":{
     "font": {
       "name": "custom_font",
-      "size": "14"
+      "size":"14",
+      "bold": "1"
+    },
+    "colours": {
+      "normal_text": "White"
     }
   },
-  "#transparent_button": {
+  "#transparent": {
     "colours": {
       "normal_bg": "#00000000",
-      "normal_text": "White"
+      "dark_bg": "#00000000",
+      "hovered_bg": "#00000000",
+      "active_bg": "#00000000",
+      "normal_border": "#00000000",
+      "hovered_border": "#00000000",
+      "active_border": "#00000000"
     },
     "misc": {
-      "border_width": "0",
       "shadow_width": "0"
     }
   },
-  "#transparent_panel":{
+  "#core_panel":{
     "colours": {
-      "dark_bg": "#00000000"
+      "dark_bg": "#FFF6D8",
+      "normal_border": "#D1B97A"
     },
     "misc": {
-      "border_width": "0",
+      "shape": "rounded_rectangle",
+      "shape_corner_radius": "18",
+      "border_width": "3",
       "shadow_width": "0"
     }
   },
   "#game_panel": {
-    "colours": {
-      "dark_bg": "#FFF6D8",
-      "normal_border": "#D1B97A"
-    },
-    "misc": {
-      "shape": "rounded_rectangle",
-      "shape_corner_radius": "18",
-      "border_width": "3",
-      "shadow_width": "0"
-    }
+    "prototype": "#core_panel"
   },
   "#code_panel": {
-    "colours": {
-      "dark_bg": "#FFF6D8",
-      "normal_border": "#D1B97A"
-    },
-    "misc": {
-      "shape": "rounded_rectangle",
-      "shape_corner_radius": "18",
-      "border_width": "3",
-      "shadow_width": "0"
-    }
+    "prototype": "#core_panel"
+  },
+  "#speech_panel":{
+    "prototype": "#transparent" 
+  },
+  "#message_panel":{
+    "prototype": "#core_panel"
+  },
+  "#confirm_panel": {
+    "prototype": "#core_panel"
+  },
+  "#settings_panel":{
+    "prototype":"#core_panel"
+  },
+  "#interpreter_panel":{
+    "prototype": "#core_panel"
+  },
+  "#level_text_panel":{
+    "prototype": "#transparent"
   },
   "#panel_shadow": {
     "colours": {
@@ -104,259 +102,8 @@
       "shadow_width": "0"
     }
   },
-  "#motion_block": {
-    "colours": {
-      "normal_bg": "#4C97FF",
-      "hovered_bg": "#4280D7",
-      "active_bg": "#3373CC",
-      "normal_text": "#FFFFFF"
-    },
-    "misc": {
-      "shape": "rounded_rectangle",
-      "shape_corner_radius": "14",
-      "border_width": "0"
-    }
-  },
-  "#remove_block_button": {
-    "font": {
-      "name": "custom_font",
-      "size": "14",
-      "bold": "1",
-      "regular_resource": {
-        "package": "game.assets",
-        "resource": "FiraCode-Regular.ttf"
-      },
-      "bold_resource": {
-        "package": "game.assets",
-        "resource": "FiraCode-Bold.ttf"
-      }
-    },
-    "colours": {
-      "normal_bg": "#FFFFFF",
-      "hovered_bg": "#F4E7E7",
-      "active_bg": "#EBCFCF",
-      "normal_text": "#A12D2D"
-    },
-    "misc": {
-      "shape": "rounded_rectangle",
-      "shape_corner_radius": "9",
-      "border_width": "1",
-      "text_horiz_alignment_padding":"0",
-      "text_vert_alignment_padding":"0"
-    }
-  },
-  "#loop_block": {
-    "colours": {
-      "normal_bg": "#c20017",
-      "hovered_bg": "#ad0216",
-      "normal_text": "#FFFFFF"
-    },
-    "misc": {
-      "shape": "rounded_rectangle",
-      "shape_corner_radius": "14",
-      "border_width": "0"
-    }
-  },
-  "#loop_count_btn":{
-    "prototype":"#remove_block_button",
-    "colours":{
-      "normal_text":"#000000"
-    }
-  },
-  "#loop_count_txt":{
-    "prototype":"#loop_count_btn",
-    "colours":{
-      "normal_text":"#ffffff"
-    }
-  },
-  "#run_button": {
-    "colours": {
-      "normal_bg": "#59C059",
-      "hovered_bg": "#4AA84A",
-      "active_bg": "#3A8E3A",
-      "normal_text": "#FFFFFF"
-    },
-    "misc": {
-      "shape": "rounded_rectangle",
-      "shape_corner_radius": "14",
-      "border_width": "0"
-    }
-  },
-  "#edit_button": {
-    "colours": {
-      "normal_bg": "#FFAB19",
-      "hovered_bg": "#E69B17",
-      "active_bg": "#CC8612",
-      "normal_text": "#3A2C00"
-    },
-    "misc": {
-      "shape": "rounded_rectangle",
-      "shape_corner_radius": "14",
-      "border_width": "0"
-    }
-  },
-  "#script_display": {
-    "colours": {
-      "dark_bg": "#FFFDF3",
-      "normal_text": "#2E2E2E"
-    },
-    "misc": {
-      "border_width": "2",
-      "shape": "rounded_rectangle",
-      "shape_corner_radius": "14"
-    }
-  },
-  "#script_status": {
-    "colours": {
-      "dark_bg": "#FFFDF3",
-      "normal_text": "#2E2E2E"
-    },
-    "misc": {
-      "border_width": "2",
-      "shape": "rounded_rectangle",
-      "shape_corner_radius": "14"
-    }
-  },
-  "#script_lane": {
-    "colours": {
-      "dark_bg": "#FFFDF3"
-    },
-    "misc": {
-      "border_width": "3",
-      "shape": "rounded_rectangle",
-      "shape_corner_radius": "16"
-    }
-  },
-  "#lane_title": {
-    "parent": "label",
-    "font": {
-      "name": "custom_font",
-      "size": "16",
-      "bold": "1",
-      "regular_resource": {
-        "package": "game.assets",
-        "resource": "FiraCode-Regular.ttf"
-      },
-      "bold_resource": {
-        "package": "game.assets",
-        "resource": "FiraCode-Bold.ttf"
-      }
-    }
-  },
-  "#lane_hint": {
-    "parent": "label",
-    "colours": {
-      "normal_text": "#666666"
-    }
-  },
-  "#confirm_panel": {
-    "colours": {
-      "dark_bg": "#FFF6D8",
-      "normal_border": "#D1B97A"
-    },
-    "misc": {
-      "shape": "rounded_rectangle",
-      "shape_corner_radius": "18",
-      "border_width": "3",
-      "shadow_width": "0"
-    }
-  },
-  "#confirm_title": {
-    "parent": "label",
-    "font": {
-      "name": "custom_font",
-      "size": "22",
-      "bold": "1",
-      "regular_resource": {
-        "package": "game.assets",
-        "resource": "FiraCode-Regular.ttf"
-      },
-      "bold_resource": {
-        "package": "game.assets",
-        "resource": "FiraCode-Bold.ttf"
-      }
-    },
-    "colours": {
-      "normal_text": "#2E2E2E"
-    }
-  },
-  "#confirm_body": {
-    "parent": "label",
-    "font": {
-      "name": "custom_font",
-      "size": "18",
-      "bold": "0",
-      "regular_resource": {
-        "package": "game.assets",
-        "resource": "FiraCode-Regular.ttf"
-      }
-    },
-    "colours": {
-      "normal_text": "#4A3A1C",
-      "dark_bg": "#00000000",
-      "normal_border": "#00000000"
-    }
-  },
-  "#confirm_cancel_button": {
-    "font": {
-      "name": "custom_font",
-      "size": "18",
-      "bold": "1",
-      "regular_resource": {
-        "package": "game.assets",
-        "resource": "FiraCode-Regular.ttf"
-      },
-      "bold_resource": {
-        "package": "game.assets",
-        "resource": "FiraCode-Bold.ttf"
-      }
-    },
-    "colours": {
-      "normal_bg": "#00000000",
-      "hovered_bg": "#00000000",
-      "active_bg": "#00000000",
-      "normal_border": "#00000000",
-      "hovered_border": "#00000000",
-      "active_border": "#00000000",
-      "normal_text": "#4B3513",
-      "hovered_text": "#2F2412",
-      "active_text": "#2F2412"
-    },
-    "misc": {
-      "border_width": "0",
-      "shadow_width": "0"
-    }
-  },
-  "#confirm_accept_button": {
-    "font": {
-      "name": "custom_font",
-      "size": "18",
-      "bold": "1",
-      "regular_resource": {
-        "package": "game.assets",
-        "resource": "FiraCode-Regular.ttf"
-      },
-      "bold_resource": {
-        "package": "game.assets",
-        "resource": "FiraCode-Bold.ttf"
-      }
-    },
-    "colours": {
-      "normal_bg": "#00000000",
-      "hovered_bg": "#00000000",
-      "active_bg": "#00000000",
-      "normal_border": "#00000000",
-      "hovered_border": "#00000000",
-      "active_border": "#00000000",
-      "normal_text": "#FFF8F5",
-      "hovered_text": "#FFE9DE",
-      "active_text": "#FFD7C6"
-    },
-    "misc": {
-      "border_width": "0"
-    }
-  },
   "#energy_bar": {
+    "parent": "label",
     "colours": {
       "normal_text": "#FFFFFF",
       "filled_bar": "#0091fb,#2060A0,90",
@@ -366,62 +113,229 @@
       "shadow_width": "1"
     }
   },
-  "#speech_body":{
-    "prototype": "#pixel_font",
-    "font":{
-      "size":"14"
-    },
-    "colours":{
-      "normal_text":"#000000",      
-      "dark_bg": "#00000000",
-      "normal_border": "#00000000"
-    },
-    "misc":{
-      "shadow_width": "0"
+  "#script_block":{
+    "parent": "label",
+    "misc": {
+      "shape": "rounded_rectangle",
+      "shape_corner_radius": "14",
+      "border_width": "0"
     }
   },
-  "#speech_button":{
-    "prototype": "#pixel_font",
-    "font":{
-      "size":"12"
+  "#motion_block": {
+    "prototype": "#script_block",
+    "colours": {
+      "normal_bg": "#4C97FF",
+      "hovered_bg": "#4280D7",
+      "active_bg": "#3373CC",
+      "normal_text": "#FFFFFF"
+    }
+  },
+  "#loop_block": {
+    "prototype": "#script_block",
+    "colours": {
+      "normal_bg": "#c20017",
+      "hovered_bg": "#ad0216",
+      "normal_text": "#FFFFFF"
+    }
+  },
+  "#button_element":{
+    "parent": "button",
+    "colours": {
+      "normal_bg": "#FFFFFF",
+      "hovered_bg": "#F4E7E7",
+      "active_bg": "#EBCFCF"
+    },
+    "misc": {
+      "shape": "rounded_rectangle",
+      "shape_corner_radius": "9",
+      "border_width": "1",
+      "text_horiz_alignment_padding":"0",
+      "text_vert_alignment_padding":"0"
+    }
+  },
+  "#loop_count_btn":{
+    "prototype":"#button_element",
+    "colours":{
+      "normal_text":"#000000"
+    }
+  },
+  "#loop_count_txt":{
+    "prototype":"#button_element",
+    "colours":{
+      "normal_text":"#ffffff"
+    }
+  },
+  "#code_panel.#run_button": {
+    "prototype": "#script_block",
+    "colours": {
+      "normal_bg": "#59C059",
+      "hovered_bg": "#4AA84A",
+      "active_bg": "#3A8E3A",
+      "normal_text": "#FFFFFF"
+    }
+  },
+  "#code_panel.#edit_button": {
+    "prototype": "#script_block",
+    "colours": {
+      "normal_bg": "#FFAB19",
+      "hovered_bg": "#E69B17",
+      "active_bg": "#CC8612",
+      "normal_text": "#3A2C00"
+    }
+  },
+  "#code_panel.#script_lane": {
+    "parent": "label",
+    "colours": {
+      "dark_bg": "#FFFDF3"
+    },
+    "misc": {
+      "border_width": "3",
+      "shape": "rounded_rectangle",
+      "shape_corner_radius": "16"
+    }
+  },
+  "#code_panel.#script_lane.#lane_hint": {
+    "font": {
+      "name": "custom_font",
+      "bold": "0"
     },
     "colours": {
-      "normal_bg": "#00000000",
-      "hovered_bg": "#00000000",
-      "active_bg": "#00000000",
-      "normal_border": "#2F2F2F",
-      "hovered_border": "#00000000",
-      "active_border": "#00000000",
-      "normal_text": "#000000",
+      "normal_text": "#666666"
+    }
+  },
+  "#code_panel.#script_status": {
+    "font": {
+      "name": "custom_font",
+      "bold": "1",
+      "size": "14"
+    },
+    "colours": {
+      "dark_bg": "#FFFDF3",
+      "normal_text": "#2E2E2E"
+    },
+    "misc": {
+      "border_width": "2",
+      "shape": "rounded_rectangle",
+      "shape_corner_radius": "14"
+    }
+  },
+  "#confirm_panel.#title": {
+    "font": {
+      "name": "custom_font",
+      "bold": "1",
+      "size": "22"
+    },
+    "colours": {
+      "normal_text": "#2E2E2E"
+    }
+  },
+  "#confirm_panel.#body": {
+    "prototype": "#transparent",
+    "font": {
+      "name": "custom_font",
+      "size": "18"
+    },
+    "colours": {
+      "normal_text": "#4A3A1C"
+    }
+  },
+  "#confirm_panel.button": {
+    "prototype": "#transparent",
+    "font":{
+      "name":"pixel_font",
+      "size":"18"
+    },
+    "colours":{
+      "normal_text": "#2F2412",
+      "active_text": "#4B3513"
+    }
+  },
+  "#confirm_panel.#accept_button": {
+    "prototype": "#transparent",
+    "font": {
+      "name": "custom_font",
+      "bold": "1",
+      "size": "18"
+    },
+    "colours": {
+      "normal_text": "#FFF8F5",
+      "hovered_text": "#FFE9DE",
       "active_text": "#FFD7C6"
+    }
+  },
+  "#message_panel.#title":{
+    "prototype": "#confirm_panel.#title"
+  },
+  "#message_panel.#body":{
+    "prototype": "#confirm_panel.#body"
+  },
+  "#speech_panel.#body":{
+    "prototype": "#transparent",
+    "font": {
+      "name": "pixel_font"
+    },
+    "colours":{
+      "normal_text":"#000000"
+    }
+  },
+  "#speech_panel.#button":{
+    "prototype": "#transparent",
+    "font": {
+      "name": "pixel_font",
+      "size": "12"
+    },
+    "colours": {
+      "normal_border": "#2F2F2F",
+      "normal_text": "#000000"
     },
     "misc":{
-      "shape_corner_radius":"5",
-      "shadow_width": "1",
+      "shape": "rounded_rectangle",
+      "shape_corner_radius": "5",
+      "shadow_width": "0",
       "text_horiz_alignment_padding":"0"
     }
   },
-  "#pause_menu":{
-    "prototype":"#confirm_panel"
-  },
-  "#pause_menu.button":{
-    "prototype": "#motion_block"
-  },
-  "#pause_menu.label":{
-    "prototype": "#lane_title"
-  },
-  "#python_panel":{
-    "prototype": "#game_panel"
-  },
-  "#python_text":{
-    "prototype" : "#test_font",
+  "#settings_panel.button":{
+    "prototype": "#transparent",
+    "font":{
+      "name":"pixel_font",
+      "size":"18"
+    },
     "colours":{
-      "normal_text":"#000000",      
-      "dark_bg": "#00000000",
-      "normal_border": "#00000000"
+      "normal_text":"#2F2412"
+    }
+  },
+  "#settings_panel.#title":{
+    "font": {
+      "name": "custom_font",
+      "bold": "1",
+      "size": "16"
+    },
+    "colours":{
+      "normal_text":"#000000"
+    }
+  },
+  "#interpreter_panel.#text_code": {
+    "prototype": "#transparent",
+    "font": {
+      "name": "custom_font",
+      "bold": "1",
+      "size": "14"
+    },
+    "colours":{
+      "normal_text":"#000000"
     },
     "misc":{
       "shadow_width": "0"
     }
+  },
+  "#level_text_panel.label":{
+    "font":{
+      "name":"pixel_font"
+    },
+    "colours":{
+      "normal_text":"#FFF8F5"
+    }
+
   }
 }

@@ -334,7 +334,7 @@ class CodeBlocks(UIPanel):
             text="Motion Blocks",
             manager=self.ui_manager,
             container=self,
-            object_id="#lane_title",
+            object_id="#title",
         )
 
         for index, spec in enumerate(self.block_library):

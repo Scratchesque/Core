@@ -25,20 +25,19 @@ class Tile(UIImage):
         # Setup image graphics
         self.full_img = load_image(f'game/assets/{img_path}')
         if tile == None:
-            self.base_image = self.full_img
+            loaded_image = self.full_img
         else:
             self.sprite_list = tile_graphics(self.full_img)
-            self.base_image = self.sprite_list[tile]
+            loaded_image = self.sprite_list[tile]
 
-        super().__init__(relative_rect=relative_rect, image_surface=self.base_image, manager=manager, container=container)
-        self.set_image(self.base_image)
+        super().__init__(relative_rect=relative_rect, image_surface=loaded_image, manager=manager, container=container)
+        self.set_image(loaded_image)
 
         self.pos = math.Vector2(start_pos)
         self.animation_count = 0
 
     # Fix blurry images with scaling
     def set_image(self, image_surface, image_is_alpha_premultiplied=False):
-        self.base_image = image_surface
         scaled_image = transform.scale(image_surface, self.tiles_size)
         super().set_image(scaled_image, image_is_alpha_premultiplied)
     
@@ -166,8 +165,8 @@ class Player(Tile):
         # set up the energy bar if it is present in the env data json
         if hasattr(player_data, "energy"):
             player_energy = player_data.energy
-            self.health_capacity = player_energy.health
-            self.current_health = player_energy.health
+            self.health_capacity = player_energy
+            self.current_health = player_energy
             self.move_cost = 1
 
             UIScreenSpaceHealthBar(relative_rect=Rect((50,50),(75,25)),

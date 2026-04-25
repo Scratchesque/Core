@@ -1,7 +1,6 @@
 {
     "env":{
         "title": "Main Menu",
-        "background": "AAAAAA",
         "theme": "main_menu",
         "next_env": "Start"
     }

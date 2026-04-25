@@ -22,5 +22,5 @@
             "blocked":["water","tree"]
         }
     },
-    "npc": ["Kevin has just left his house/cabin and is now on a green island, in the distance he can see a carrot next to a tree." , "Maybe you should try to get to the carrot."]
+    "npc": ["Kevin has just left his cabin and is now on a green island", "In the distance he can see a carrot next to a tree." , "Maybe you should try to get to the carrot."]
 }

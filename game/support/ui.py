@@ -37,6 +37,20 @@ class ImageButton:
         self.image.kill()
         self.button.kill()
 
+    def alive(self):
+        return self.button.alive()
+    
+    def change_layer(self, num):
+        self.image.change_layer(num)
+        self.button.change_layer(num)
+
+    def set_relative_position(self, pos):
+        self.image.set_relative_position(pos)
+        self.button.set_relative_position(pos)
+
+    def set_text(self, string):
+        self.button.set_text(string)
+
 # An easy way of accessing different ui elements that can do different things in one place
 class UIFactory:
     @staticmethod
@@ -67,7 +81,7 @@ class UIFactory:
         # Image element for portraits/icons; scales to size if provided.
         loaded_image = load_image(image_path)
         if size is not None:
-            loaded_image = transform.smoothscale(loaded_image, size)
+            loaded_image = transform.scale(loaded_image, size)
         rect = Rect((0, 0), loaded_image.get_size())
         if anchor is not None:
             setattr(rect, anchor, pos)
@@ -79,7 +93,7 @@ class UIFactory:
     def button_img(pos, size, image_path, text, manager, object_id=None, center=False, anchor=None, container=None):
         # Image-backed button with smooth scaling and a transparent text/click layer.
         root_image = load_image(image_path)
-        scaled_image = transform.smoothscale(root_image, size)
+        scaled_image = transform.scale(root_image, size)
 
         rect = Rect((0, 0), size)
         if anchor is not None:
@@ -109,7 +123,7 @@ class TypingTextBox(UITextBox):
         self.elapsed = 0.0
         self.set_text("")
 
-    def update_typing(self, delta_time):
+    def update(self, delta_time): 
         if self.visible_chars >= visible_text_length(self.full_text):
             return
         self.elapsed += delta_time

@@ -1,7 +1,6 @@
 from pygame import Rect
 from pygame_gui.elements import UIPanel
 
-from game.app.panels import MessagePanel
 from game.app.tiles import Tile, Player, NPC
 from game.core.constants import *
 from game.core.events import *
@@ -101,35 +100,4 @@ class Board(UIPanel):
                     container=self, 
                     tile=int(val),
                     board_offset=self.board_offset)
-        
-    # i was wrong, we dont need to acctually call super unless you want to use the relavant method in the inheriting class itself
-    # just use update/process_event or any other methods from the inheriting class if it uses pygame_gui to override what it does, it still gets called
-
-    # also goal checks should be carried out on every frame, not when ui events happen
-    def update(self, time_delta):
-        if self.completed_level == False:
-            if self.player.goal_check(self.goal):
-                self.completed_level = True
-                info_size = (275,160)
-                info_pos = ((SCREEN_WIDTH-info_size[0])//2), ((SCREEN_HEIGHT-info_size[1])//2)
-                MessagePanel(panel_pos=info_pos,
-                    panel_size=info_size,
-                    title="You Win!",
-                    message="Loading next level...",
-                    manager=self.ui_manager)
-                level_complete_event = pygame.event.Event(LEVEL_COMPLETED)
-                pygame.event.post(level_complete_event)
-                return
-        
-            if self.player.current_health <= 0:
-                info_size = (275,160)
-                info_pos = ((SCREEN_WIDTH-info_size[0])//2), ((SCREEN_HEIGHT-info_size[1])//2)
-                MessagePanel(panel_pos=info_pos,
-                    panel_size=info_size,
-                    title="Level Reset!",
-                    message="No energy remaining",
-                    manager=self.ui_manager)
-                reset_event = pygame.event.Event(RESET_ENV_CONFIRMED)
-                pygame.event.post(reset_event)
-                return
         

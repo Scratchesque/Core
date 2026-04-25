@@ -7,19 +7,19 @@ from game.support.ui import UIFactory
 class InterpreterPanel(UIPanel):
     GAP = ' ' * 4
     MIN_CODE_LINES = 40
-    SLIDE_TIME = 10
     PULL_BUTTON_SIZE = (30, 30) 
+    PANEL_WIDTH = 350
 
     def __init__(self, panel_pos, panel_size, manager, pallet_blocks, level_title):
+        self.size = Vector2(self.PANEL_WIDTH, panel_size[1])
         super().__init__(
-            relative_rect=Rect(panel_pos,panel_size),
+            relative_rect=Rect(panel_pos,self.size),
             starting_height=3,
             manager=manager,
-            object_id="#python_panel"
+            object_id="#interpreter_panel"
         )
         self.level_title = level_title 
         self.pos = Vector2(panel_pos)
-        self.size = Vector2(panel_size)
 
         self.is_moving = False
         self.is_visible = False
@@ -40,15 +40,16 @@ class InterpreterPanel(UIPanel):
             html_text='', 
             manager=self.ui_manager, 
             container=self, 
-            object_id='#python_text',
-            visible=0 
+            object_id='#text_code',
+            visible=0
         )
-        self.pull_button = UIFactory.button(
+        self.pull_button = UIFactory.button_img(
             pos=(0,0),
             size=self.PULL_BUTTON_SIZE,
+            image_path="game/assets/SproutLands/cropped/brown_block.png",
             text='<',
             manager=self.ui_manager,
-            object_id='#remove_block_button'
+            object_id='#transparent'
         )
         self.pull_button.change_layer(5)
         self._update_button_pos()
@@ -65,7 +66,7 @@ class InterpreterPanel(UIPanel):
                 self.text.visible = 1
                 self.is_visible = True
                 self.pull_button.set_text('>')
-            self.move_timer = self.SLIDE_TIME
+            self.move_timer = 10
             self.is_moving = True
             pass
 
@@ -74,7 +75,7 @@ class InterpreterPanel(UIPanel):
             return
         
         self.move_timer -= 1
-        self.progress = 1 - (self.move_timer / self.SLIDE_TIME)
+        self.progress = 1 - (self.move_timer / 10)
 
         if self.move_timer <= 0:
             self.is_moving = False
@@ -100,7 +101,7 @@ class InterpreterPanel(UIPanel):
         self.text.set_text(script_str)
 
     def _update_pos(self):
-        distance = 75
+        distance = self.PANEL_WIDTH/4.5
         offset = self.progress * (distance if self.is_visible else -distance)
 
         self.pos.x-=int(offset)

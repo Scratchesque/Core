@@ -48,13 +48,14 @@ class LevelSelect(BaseEnvironment):
             is_unlocked = self.game_manager.player_data.is_unlocked(env.title) or getattr(self.game_manager, "debug", False)
             total_unlocked+=1 if is_unlocked else 0
             button_text = env.title if is_unlocked else f"Locked: {env.title}"
+            button_path = "game/assets/SproutLands/cropped/"
             button = UIFactory.button_img(
                 pos=(SCREEN_WIDTH // 2, button_y),
                 size=self.BUTTON_SIZE,
-                image_path="game/assets/menu/button.png" if is_unlocked else "game/assets/menu/lock_button.png",
+                image_path=f"{button_path}brown_button.png" if is_unlocked else f"{button_path}grey_button.png",
                 text=button_text,
                 manager=self.ui_manager,
-                object_id="#menu_image_button" if is_unlocked else "#menu_locked_image_button",
+                object_id="#menu_image_button",
                 anchor="midtop",
             )
             self.level_buttons.append((button, env.title, is_unlocked))
@@ -67,16 +68,16 @@ class LevelSelect(BaseEnvironment):
                 panel_size=self.INTRO_SIZE,
                 title="Welcome to Rabbit Rush your introduction to computer science!",
                 message='''Kevin the Bunny has lost his Carrots and abilities. It's your goal to gain them back. 
-Learn how to read and implement code to help Kevin reach his goal.''',
+Learn how to read and implement code to help Kevin reach his goal!''',
                 manager=self.ui_manager)
 
         self.quit_button = UIFactory.button_img(
             pos=(SCREEN_WIDTH // 2, SCREEN_HEIGHT - 80),
             size=(260, 72),
-            image_path="game/assets/menu/button.png",
+            image_path="game/assets/SproutLands/cropped/grey_button.png",
             text="Quit",
             manager=self.ui_manager,
-            object_id="#menu_quit_image_button",
+            object_id="#menu_image_button",
             anchor="midbottom",
         )
 

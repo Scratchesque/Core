@@ -1,166 +1,73 @@
 {
-  "label": {
+  "#fira_code_font": {
+    "font": {
+      "name": "custom_font",
+      "size": "14",
+      "regular_resource": {
+        "package": "game.assets.fonts",
+        "resource": "FiraCode-Regular.ttf"
+      },
+      "bold_resource": {
+        "package": "game.assets.fonts",
+        "resource": "FiraCode-Bold.ttf"
+      }
+    }
+  },
+  "#sprout_lands_font":{
+    "font": {
+      "name": "pixel_font",
+      "regular_resource": {
+        "package": "game.assets.fonts",
+        "resource": "SproutLands-PixelFont.ttf"
+      }
+    }
+  },
+  "label":{
+    "font": {
+      "name": "custom_font",
+      "size":"18",
+      "bold": "1"
+    },
     "colours": {
       "normal_text": "#FFF9E8"
     }
   },
-  "button": {
+  "button":{
     "font": {
-      "name": "custom_font",
-      "size": "18",
-      "bold": "1",
-      "regular_resource": {
-        "package": "game.assets.fonts",
-        "resource": "FiraCode-Regular.ttf"
-      },
-      "bold_resource": {
-        "package": "game.assets.fonts",
-        "resource": "FiraCode-Bold.ttf"
-      }
-    }
-  },
-  "#menu_title": {
-    "parent": "label",
-    "font": {
-      "name": "custom_font",
-      "size": "34",
-      "bold": "1",
-      "regular_resource": {
-        "package": "game.assets.fonts",
-        "resource": "FiraCode-Regular.ttf"
-      },
-      "bold_resource": {
-        "package": "game.assets.fonts",
-        "resource": "FiraCode-Bold.ttf"
-      }
+      "name": "pixel_font",
+      "size":"18",
+      "bold": "1"
     },
     "colours": {
-      "normal_text": "#FFF6D8"
+      "normal_text": "#2F2412",
+      "active_text": "#9F9F9F"
+    }
+  },
+  "#transparent": {
+    "colours": {
+      "normal_bg": "#00000000",
+      "dark_bg": "#00000000",
+      "hovered_bg": "#00000000",
+      "active_bg": "#00000000",
+      "normal_border": "#00000000",
+      "hovered_border": "#00000000",
+      "active_border": "#00000000"
+    },
+    "misc": {
+      "shadow_width": "0"
     }
   },
   "#menu_subtitle": {
     "parent": "label",
-    "font": {
-      "name": "custom_font",
-      "size": "20",
-      "bold": "1",
-      "regular_resource": {
-        "package": "game.assets.fonts",
-        "resource": "FiraCode-Regular.ttf"
-      },
-      "bold_resource": {
-        "package": "game.assets.fonts",
-        "resource": "FiraCode-Bold.ttf"
-      }
-    },
     "colours": {
       "normal_text": "#2F2412"
     }
   },
   "#menu_image_button": {
-    "parent": "button",
-    "font": {
-      "name": "custom_font",
-      "size": "22",
-      "bold": "1",
-      "regular_resource": {
-        "package": "game.assets.fonts",
-        "resource": "FiraCode-Regular.ttf"
-      },
-      "bold_resource": {
-        "package": "game.assets.fonts",
-        "resource": "FiraCode-Bold.ttf"
-      }
-    },
-    "colours": {
-      "normal_bg": "#00000000",
-      "hovered_bg": "#00000000",
-      "active_bg": "#00000000",
-      "normal_border": "#00000000",
-      "hovered_border": "#00000000",
-      "active_border": "#00000000",
-      "normal_text": "#FFF9E8",
-      "hovered_text": "#FFF1BF",
-      "active_text": "#FFE39A"
-    },
-    "misc": {
-      "border_width": "0",
-      "shadow_width": "0"
-    }
+    "prototype": "#transparent",
+    "parent":"button"
   },
-  "#menu_locked_image_button": {
-    "parent": "button",
-    "font": {
-      "name": "custom_font",
-      "size": "20",
-      "bold": "1",
-      "regular_resource": {
-        "package": "game.assets.fonts",
-        "resource": "FiraCode-Regular.ttf"
-      },
-      "bold_resource": {
-        "package": "game.assets.fonts",
-        "resource": "FiraCode-Bold.ttf"
-      }
-    },
-    "colours": {
-      "normal_bg": "#00000000",
-      "hovered_bg": "#00000000",
-      "active_bg": "#00000000",
-      "normal_border": "#00000000",
-      "hovered_border": "#00000000",
-      "active_border": "#00000000",
-      "normal_text": "#A89C7B",
-      "hovered_text": "#A89C7B",
-      "active_text": "#A89C7B"
-    },
-    "misc": {
-      "border_width": "0",
-      "shadow_width": "0"
-    }
-  },
-  "#menu_quit_image_button": {
-    "parent": "button",
-    "font": {
-      "name": "custom_font",
-      "size": "20",
-      "bold": "1",
-      "regular_resource": {
-        "package": "game.assets.fonts",
-        "resource": "FiraCode-Regular.ttf"
-      },
-      "bold_resource": {
-        "package": "game.assets.fonts",
-        "resource": "FiraCode-Bold.ttf"
-      }
-    },
-    "colours": {
-      "normal_bg": "#00000000",
-      "hovered_bg": "#00000000",
-      "active_bg": "#00000000",
-      "normal_border": "#00000000",
-      "hovered_border": "#00000000",
-      "active_border": "#00000000",
-      "normal_text": "#FFF2EF",
-      "hovered_text": "#FFE0D8",
-      "active_text": "#FFD0C4"
-    },
-    "misc": {
-      "border_width": "0",
-      "shadow_width": "0"
-    }
-  },
-  "#transparent_button": {
-    "colours": {
-      "normal_bg": "#00000000",
-      "normal_text": "White"
-    },
-    "misc": {
-      "border_width": "0",
-      "shadow_width": "0"
-    }
-  },
-  "#confirm_panel": {
+  "#dialogue_panel": {
     "colours": {
       "dark_bg": "#FFF6D8",
       "normal_border": "#D1B97A"
@@ -172,69 +79,29 @@
       "shadow_width": "0"
     }
   },
-  "#confirm_title": {
-    "parent": "label",
+  "#dialogue_panel.#title": {
     "font": {
       "name": "custom_font",
       "size": "22",
-      "bold": "1",
-      "regular_resource": {
-        "package": "game.assets",
-        "resource": "FiraCode-Regular.ttf"
-      },
-      "bold_resource": {
-        "package": "game.assets",
-        "resource": "FiraCode-Bold.ttf"
-      }
+      "bold": "1"
     },
     "colours": {
       "normal_text": "#2E2E2E"
     }
   },
-  "#confirm_body": {
-    "parent": "label",
+  "#dialogue_panel.#body": {
+    "prototype": "#transparent",
     "font": {
       "name": "custom_font",
       "size": "18",
-      "bold": "0",
-      "regular_resource": {
-        "package": "game.assets",
-        "resource": "FiraCode-Regular.ttf"
-      }
+      "bold": "0"
     },
     "colours": {
-      "normal_text": "#4A3A1C",
-      "dark_bg": "#00000000",
-      "normal_border": "#00000000"
+      "normal_text": "#4A3A1C"
     }
   },
-  "#confirm_accept_button": {
-    "font": {
-      "name": "custom_font",
-      "size": "18",
-      "bold": "1",
-      "regular_resource": {
-        "package": "game.assets",
-        "resource": "FiraCode-Regular.ttf"
-      },
-      "bold_resource": {
-        "package": "game.assets",
-        "resource": "FiraCode-Bold.ttf"
-      }
-    },
-    "colours": {
-      "normal_bg": "#00000000",
-      "hovered_bg": "#00000000",
-      "active_bg": "#00000000",
-      "normal_border": "#00000000",
-      "hovered_border": "#00000000",
-      "active_border": "#00000000",
-      "normal_text": "#FFF8F5",
-      "hovered_text": "#FFE9DE",
-      "active_text": "#FFD7C6"
-    },
-    "misc": {
-      "border_width": "0"
-    }
+  "#dialogue_panel.#button": {
+    "prototype": "#transparent",
+    "parent": "button"
   }
 }

@@ -32,9 +32,7 @@
             "blocked":["water", "tree"],
             "jumpable": ["fence"]
         },
-        "energy": {
-            "health": 5
-        }
+        "energy": 5
     },
-    "npc": ["Be careful theres energy now!" , "Kevin has just refound the taste for Carrots, he wants more, so much so, that he can smell it in the distance."]
+    "npc": ["Be careful theres energy now!" , "Kevin has just refound the taste for Carrots, he wants more", "So much so, that he can smell it in the distance."]
 }

@@ -3,7 +3,7 @@ from pygame_gui.elements import UIImage, UIPanel
 
 from game.app.board import Board
 from game.app.code_blocks import CodeBlocks
-from game.app.panels import ConfirmationPanel, LevelText, PauseMenu
+from game.app.panels import ConfirmationPanel, LevelText, SettingsMenu, MessagePanel
 from game.core.images import load_image
 from game.core.paths import resolve_project_path
 from game.core.constants import *
@@ -29,7 +29,6 @@ class BaseEnvironment:
 
         self.background_colour = Color(f'#{default_data.env.background}')
         if hasattr(env_data, 'background'):
-            print(env_data.background)
             self.background_colour = Color(f'#{env_data.background}')
 
     def create_ui(self):
@@ -43,7 +42,7 @@ class BaseEnvironment:
         if event.type == RESET_ENV_CONFIRMED:
             self.game_manager.change_env('RESET')
         if event.type == LEVEL_COMPLETED:
-            next_env = getattr(self.env_data.env.init, "next_env", None)
+            next_env = getattr(self.env_data.env, "next_env", None)
             self.game_manager.mark_level_completed(
                 self.title,
                 next_env,
@@ -146,35 +145,36 @@ class GameEnv(BaseEnvironment):
         
         # Setting level text from getting the env title
         LevelText(
-            panel_pos=(0,0), 
-            panel_size= (100, 50),
+            panel_pos=(10,-5), 
+            panel_size=(220, 50),
             text=self.title, 
             manager=self.ui_manager)
 
         self.confirmation_panel = None
 
         square_size = 30
-        self.pause_button = UIFactory.button_img(
+        self.settings_button = UIFactory.button_img(
             pos=(SCREEN_WIDTH-square_size-5, 5),
             size=(square_size,square_size),
             text="",
             image_path='game/assets/levels/hamburger_icon.png',
             manager=self.ui_manager,
-            object_id="#transparent_button"
+            object_id="#transparent"
         )
-        self.pause_menu = None
+        self.settings_panel = None
         
     def on_ui_event(self, event):
         # here we need super cause this is our own implementation that is called from display.py and needs calls from the BaseEnvironment class 
         super().on_ui_event(event)
-        if (event.type == KEYUP and event.key == K_ESCAPE) or self.pause_button.on_click(event):
-            if self.pause_menu is None or not self.pause_menu.alive():
-                self.pause_menu = PauseMenu(
+        if (event.type == KEYUP and event.key == K_ESCAPE) or self.settings_button.on_click(event):
+            if self.settings_panel is None or not self.settings_button.alive():
+                self.settings_panel = SettingsMenu(
                     panel_size=(200,250), 
                     manager=self.ui_manager
                 )
             else:
-                self.pause_menu.kill()
+                self.settings_panel.kill()
+                self.settings_panel = None
         if event.type == QUIT_EMV_REQUESTED:
             self.open_confirmation_panel(
                 title="Quit game?",
@@ -221,5 +221,36 @@ class GameEnv(BaseEnvironment):
         if systems_data is None:
             return None
         return getattr(systems_data, "allowed_blocks", None)
+    
+    def update_frame(self, delta_time):
+        self.check_level_complete()
         
+    def check_level_complete(self):
+        if self.board.completed_level == False:
+            player = self.board.player
+            goal = self.board.goal
+            if player.goal_check(goal):
+                self.board.completed_level = True
+                info_size = (275,160)
+                info_pos = ((SCREEN_WIDTH-info_size[0])//2), ((SCREEN_HEIGHT-info_size[1])//2)
+                MessagePanel(panel_pos=info_pos,
+                    panel_size=info_size,
+                    title="You Win!",
+                    message="Loading next level...",
+                    manager=self.ui_manager)
+                level_complete_event = pygame.event.Event(LEVEL_COMPLETED)
+                pygame.event.post(level_complete_event)
+                return
         
+            if player.current_health <= 0:
+                info_size = (275,160)
+                info_pos = ((SCREEN_WIDTH-info_size[0])//2), ((SCREEN_HEIGHT-info_size[1])//2)
+                MessagePanel(panel_pos=info_pos,
+                    panel_size=info_size,
+                    title="Level Reset!",
+                    message="No energy remaining",
+                    manager=self.ui_manager)
+                reset_event = pygame.event.Event(RESET_ENV_CONFIRMED)
+                pygame.event.post(reset_event)
+                return
+

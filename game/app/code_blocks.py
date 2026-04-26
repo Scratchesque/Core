@@ -204,7 +204,8 @@ class LoopBlock(ScriptBlock):
         self.children_blocks.clear()
 
 class CodeBlocks(UIPanel):
-    PROGRAM_LIMIT = 8
+    SCRIPT_PROGRAM_LIMIT = 8
+    LOOP_PROGRAM_LIMIT = 2
     LOOP_CHILD_LIMIT = 4
     PANEL_PADDING = 18
     SECTION_GAP = 16
@@ -419,7 +420,7 @@ class CodeBlocks(UIPanel):
         )
 
     def refresh_status(self):
-        total_steps, total_blocks = self._count_total_steps()
+        total_steps, total_blocks, _ = self._count_total_steps()
         if self.is_running:
             current_step = min(self.next_step_index + 1, len(self._exec_steps))
             status = (
@@ -443,14 +444,16 @@ class CodeBlocks(UIPanel):
     def _count_total_steps(self):
         count = 0
         blocks = 0
+        loops = 0
         for item in self.program_blocks:
             if isinstance(item, LoopBlock):
+                loops += 1
                 count += len(item.children_blocks) * item.repeat_count
                 blocks += len(item.children_blocks)
             else:
                 count += 1
                 blocks += 1
-        return count, blocks
+        return count, blocks, loops
     
     def _build_exec_steps(self):
         steps = []
@@ -593,7 +596,7 @@ class CodeBlocks(UIPanel):
         lane_top = drop_rect.y
         lane_bottom = min(
             drop_rect.bottom - self.slot_size[1],
-            lane_top + ((self.PROGRAM_LIMIT - 1) * self.slot_spacing),
+            lane_top + ((self.SCRIPT_PROGRAM_LIMIT - 1) * self.slot_spacing),
         )
         clamped_y = max(lane_top, min(block_center[1] - (self.slot_size[1] // 2), lane_bottom))
         relative_y = clamped_y - lane_top
@@ -609,6 +612,18 @@ class CodeBlocks(UIPanel):
 
         placed = False
         if drop_index is not None:
+            _, total_blocks, total_loops = self._count_total_steps()
+            if isinstance(dragged_block, LoopBlock):
+                 if total_loops >= self.LOOP_PROGRAM_LIMIT:
+                    self.destroy_script_block(dragged_block)
+                    self.relayout_program_blocks()
+                    return
+            else:
+                if total_blocks >= self.SCRIPT_PROGRAM_LIMIT:
+                    self.destroy_script_block(dragged_block)
+                    self.relayout_program_blocks()
+                    return
+
             if target_loop is not None:
                 if isinstance(dragged_block, LoopBlock):
                     return
@@ -616,7 +631,7 @@ class CodeBlocks(UIPanel):
                 dragged_block.parent_block = target_loop
                 self.relayout_program_blocks()
                 placed = True
-            elif len(self.program_blocks) < self.PROGRAM_LIMIT:
+            else:
                 self.program_blocks.insert(drop_index, dragged_block)
                 self.relayout_program_blocks()
                 placed = True

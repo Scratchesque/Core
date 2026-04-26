@@ -3,7 +3,7 @@ from pygame_gui.elements import UIButton, UIImage, UILabel, UITextBox
 from pygame_gui._constants import UI_BUTTON_PRESSED
 
 from game.core.images import load_image
-from game.support.html_typing import truncate_html, visible_text_length
+from game.support.html_typing import truncate_html
 
 
 # Making a button that can make it easy to check if itself has been pressed 
@@ -110,11 +110,10 @@ class UIFactory:
 
 
 class TypingTextBox(UITextBox):
-    def __init__(self, pos, size, html_text, manager, object_id=None, typing_speed=30, container=None):
+    def __init__(self, pos, size, html_text, manager, object_id=None, container=None):
         super().__init__("", Rect(pos, size), manager, container=container, object_id=object_id)
         self.full_text = html_text
         self.visible_chars = 0
-        self.typing_speed = typing_speed  # chars per second
         self.elapsed = 0.0
 
     def set_full_text(self, html_text):
@@ -124,10 +123,10 @@ class TypingTextBox(UITextBox):
         self.set_text("")
 
     def update(self, delta_time): 
-        if self.visible_chars >= visible_text_length(self.full_text):
+        if self.visible_chars >= len(self.full_text):
             return
-        self.elapsed += delta_time
-        new_count = min(visible_text_length(self.full_text), int(self.elapsed * self.typing_speed))
+        self.elapsed += 1
+        new_count = self.elapsed * 0.5   # chars per frame
         if new_count != self.visible_chars:
             self.visible_chars = new_count
             partial_html = truncate_html(self.full_text, self.visible_chars)

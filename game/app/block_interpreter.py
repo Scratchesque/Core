@@ -126,7 +126,7 @@ class InterpreterPanel(UIPanel):
         font_text = self._type_to_font(self.level_title, 'main')
         self.block_list =  [f'Script {font_text}:']
         for block in script_blocks:
-            self.block_list += self._block_to_code(block, main_gap=(self.block_list!=[]))
+            self.block_list += self._block_to_code(block)
         
     def _spec_to_class(self, spec):
         class_font = self._type_to_font(f'{self.GAP}{(spec.label).replace(' ','')}',spec.id)
@@ -153,17 +153,16 @@ class InterpreterPanel(UIPanel):
 
         return class_text + text_list + ['']
 
-    def _block_to_code(self, block, main_gap=False, func_gap=False):
+    def _block_to_code(self, block, func_gap=False):
         text_list = []
-        main_gap_str = self.GAP if main_gap else ''
-        func_gap_str = self.GAP+main_gap_str if func_gap else main_gap_str
+        func_gap_str = self.GAP*2 if func_gap else self.GAP
 
         if 'loop' == block.spec.id:
             loop_font = self._type_to_font('Loop', block.spec.id)
-            text_list.append(f'{main_gap_str}{loop_font} ({block.repeat_count}):')
+            text_list.append(f'{self.GAP}{loop_font} ({block.repeat_count}):')
 
             for child in block.children_blocks:
-                text_list += self._block_to_code(child, main_gap, func_gap=True)
+                text_list += self._block_to_code(child, func_gap=True)
         else:
             class_font = self._type_to_font('Blocks','main')
             spec_font = self._type_to_font(f'{(block.spec.label).replace(' ','')}', block.spec.id)

@@ -419,7 +419,6 @@ class CodeBlocks(UIPanel):
         )
 
     def refresh_status(self):
-        self.interpreter.translate_blocks(self.program_blocks)
         total_steps, total_blocks = self._count_total_steps()
         if self.is_running:
             current_step = min(self.next_step_index + 1, len(self._exec_steps))
@@ -427,16 +426,18 @@ class CodeBlocks(UIPanel):
                 "<b>Status:</b> Running your script.<br>"
                 f"Step {current_step} of {len(self._exec_steps)}."
             )
-        elif self.program_blocks:
+        elif total_blocks != 0:
             status = (
                 "<b>Status:</b> Script ready.<br>"
                 f"{total_blocks} Movement Blocks(s) in lane — {total_steps} total step(s)."
             )
+            self.interpreter.translate_blocks(self.program_blocks)
         else:
             status = (
                 "<b>Status:</b> Build a short program.<br>"
                 "Drag blocks into the lane. Add a Loop block to repeat steps."
             )
+            self.interpreter.translate_blocks(self.program_blocks)
         self.status_display.set_text(status)
  
     def _count_total_steps(self):
@@ -656,10 +657,18 @@ class CodeBlocks(UIPanel):
     def remove_script_block(self, block):
         if self.is_running:
             return
-        
-        self.program_blocks.remove(block)
-        self.destroy_script_block(block)
-        self.relayout_program_blocks()
+
+        if block.parent_block is not None:
+            loop = block.parent_block
+            if block in loop.children_blocks:
+                loop.children_blocks.remove(block)
+                block.parent_block = None
+                self.destroy_script_block(block)
+                self.relayout_program_blocks()
+        else:
+            self.program_blocks.remove(block)
+            self.destroy_script_block(block)
+            self.relayout_program_blocks()
         self.refresh_status()
 
     def start_program(self):

@@ -614,24 +614,21 @@ class CodeBlocks(UIPanel):
         if drop_index is not None:
             _, total_blocks, total_loops = self._count_total_steps()
             if isinstance(dragged_block, LoopBlock):
-                 if total_loops >= self.LOOP_PROGRAM_LIMIT:
-                    self.destroy_script_block(dragged_block)
-                    self.relayout_program_blocks()
-                    return
+                if total_loops >= self.LOOP_PROGRAM_LIMIT:
+                    drop_index = None
             else:
                 if total_blocks >= self.SCRIPT_PROGRAM_LIMIT:
-                    self.destroy_script_block(dragged_block)
-                    self.relayout_program_blocks()
-                    return
+                    drop_index = None
 
-            if target_loop is not None:
+            if drop_index is not None and target_loop is not None:
                 if isinstance(dragged_block, LoopBlock):
-                    return
-                target_loop.children_blocks.insert(drop_index, dragged_block)
-                dragged_block.parent_block = target_loop
-                self.relayout_program_blocks()
-                placed = True
-            else:
+                    drop_index = None
+                else:
+                    target_loop.children_blocks.insert(drop_index, dragged_block)
+                    dragged_block.parent_block = target_loop
+                    self.relayout_program_blocks()
+                    placed = True
+            elif drop_index is not None:
                 self.program_blocks.insert(drop_index, dragged_block)
                 self.relayout_program_blocks()
                 placed = True

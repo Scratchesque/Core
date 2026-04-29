@@ -18,14 +18,17 @@ class GameManager:
         self.change_env("Main Menu")
 
     def start(self):
-        try:
-            self.load_level = False
-            self.display.run(self.env)
-        except Exception as e:
-            import traceback
-            traceback.print_exc()
-        finally:
-            self.quit_load_level()
+        while True:
+            try:
+                self.load_level = False
+                self.display.run(self.env)
+            except Exception:
+                import traceback
+                traceback.print_exc()
+
+            if not self.load_level:
+                self.display.exit_screen()
+                return
 
     def change_env(self, env_title: str):
         if env_title == "QUIT":
@@ -73,9 +76,3 @@ class GameManager:
             raise RuntimeError("No environments found in game/environments.")
 
         return environments
-
-    def quit_load_level(self):
-        if self.load_level:
-            self.start()
-        else:
-            self.display.exit_screen()

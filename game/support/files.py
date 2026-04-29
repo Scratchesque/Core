@@ -25,12 +25,8 @@ def _dict_to_namespace(dictionary):
 
 # This turns a json into a.b.c variables that we can use to get values
 def load_json(file_path):
-    try:
-        path = resolve_project_path(file_path)
-        with open(path, 'r', encoding='utf-8') as f:
-            data = json.load(f)
-        data_list = _dict_to_namespace(data)
-        return data_list
-    except:
-        return False
+    path = resolve_project_path(file_path)
+    with open(path, 'r', encoding='utf-8') as f:
+        data = json.load(f)
+    return _dict_to_namespace(data)
        

@@ -19,9 +19,11 @@ class BaseEnvironment:
         root_dir = "game/environments/data/"
         default_data = load_json(f"{root_dir}default.json")
         self.env_data = load_json(f"{root_dir}{level_file}.json")
-        if not hasattr(self.env_data, 'env'):
-            print(f'Using default env data. Could not find env data: {level_file}')
-            self.env_data = default_data
+
+        if not hasattr(default_data, "env"):
+            raise ValueError("Default environment data is missing an 'env' section.")
+        if not hasattr(self.env_data, "env"):
+            raise ValueError(f"Environment data for '{level_file}' is missing an 'env' section.")
 
         env_data = self.env_data.env
         self.title = env_data.title
@@ -38,7 +40,9 @@ class BaseEnvironment:
         if event.type == QUIT_EMV_CONFIRMED:
             self.game_manager.change_env('QUIT')
         if event.type == NEXT_ENV_CONFIRMED:
-            self.game_manager.change_env(self.env_data.env.init.next_env)
+            next_env = getattr(self.env_data.env, "next_env", None)
+            if next_env:
+                self.game_manager.change_env(next_env)
         if event.type == RESET_ENV_CONFIRMED:
             self.game_manager.change_env('RESET')
         if event.type == LEVEL_COMPLETED:
@@ -167,7 +171,7 @@ class GameEnv(BaseEnvironment):
         # here we need super cause this is our own implementation that is called from display.py and needs calls from the BaseEnvironment class 
         super().on_ui_event(event)
         if (event.type == KEYUP and event.key == K_ESCAPE) or self.settings_button.on_click(event):
-            if self.settings_panel is None or not self.settings_button.alive():
+            if self.settings_panel is None or not self.settings_panel.alive():
                 self.settings_panel = SettingsMenu(
                     panel_size=(200,250), 
                     manager=self.ui_manager
@@ -253,4 +257,3 @@ class GameEnv(BaseEnvironment):
                 reset_event = pygame.event.Event(RESET_ENV_CONFIRMED)
                 pygame.event.post(reset_event)
                 return
-

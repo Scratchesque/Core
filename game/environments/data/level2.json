@@ -1,28 +1,36 @@
 {
     "env":{
-        "init":{
-            "title": "Level 2",
-            "background": "menu/background.png",
-            "theme": "game"
-        },
-        "next_env_title": "Main Menu"
+        "title": "Level 2",
+        "theme": "game",
+        "next_env": "Level 3"
     },
-    "story": {
-        "intro_dialogue": "<b>Guide</b>: Same as before"
+    "systems": {
+        "allowed_blocks": [
+            "up",
+            "down",
+            "left",
+            "right",
+            "jump",
+            "jump_left",
+            "jump_right",
+            "jump_up",
+            "jump_down",
+            "loop"
+        ]
     },
-    "board": {
-        "map":{
-            "water": ["Level_1/water", "SproutLands/Tilesets/Water"],
-            "water_bounds": ["Level_1/water_bounds", "SproutLands/Tilesets/Water"],
-            "terrain": ["Level_1/terrain", "SproutLands/Tilesets/Grass"],
-            "tree": ["Level_1/tree","SproutLands/Objects/Basic_Grass_Biom_things"],
-            "house": ["Level_1/house", "SproutLands/Tilesets/Wooden_House_Walls_Tilset"],
-            "door": ["Level_1/door", "SproutLands/Tilesets/Doors"],
-            "vegetation": ["Level_1/vegetation", "SproutLands/Objects/Basic_Grass_Biom_things"]
+    "map":{
+        "water": ["Level_2/Level_2_water", "SproutLands/Tilesets/Water"],
+        "water_bounds": ["Level_2/Level_2_water_bounds", "SproutLands/Tilesets/Water"],
+        "terrain": ["Level_2/Level_2_terrain", "SproutLands/Tilesets/Grass"],
+        "tree": ["Level_2/Level_2_tree","SproutLands/Objects/Basic_Grass_Biom_things"],
+        "vegetation": ["Level_2/Level_2_vegetation", "SproutLands/Objects/Basic_Grass_Biom_things"],
+        "start_pos": "Level_2/start_pos"
+    },
+    "player":{
+        "bounds": {
+            "blocked":["water","tree"]
         },
-        "start_pos":{
-            "player":[7,12],
-            "goal":[3,12]
-        }
-    }
+        "energy": 10
+    },
+    "npc": ["Be careful theres energy now!" , "Kevin has just refound the taste for Carrots, he wants more", "So much so, that he can smell it in the distance."]
 }

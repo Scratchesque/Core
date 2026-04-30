@@ -1,84 +1,186 @@
-from pygame import Rect, math
-from pygame_gui.elements import UIImage
-from game.core.csv_support import cut_graphics, tile_graphics
+from pygame import Rect, math, transform, MOUSEBUTTONUP
+from pygame_gui.elements import UIImage, UIScreenSpaceHealthBar
+
+from game.app.panels import MessagePanel, SpeechPanel
 from game.core.constants import *
+from game.core.events import *
 from game.core.images import load_image
+from game.support.graphics import cut_graphics, tile_graphics
 
 # The main class that each tile is using so that they can be rendered on the board map
 class Tile(UIImage):
-    def __init__(self, start_pos, tiles_size, img_path, manager, container=None, tile=None):
-        relative_pos= (start_pos[0] * tiles_size[0], start_pos[1] * tiles_size[1])
+    MOVEMENT_DURATION = 10
+
+    def __init__(self, start_pos, tiles_size, img_path, manager, container=None, tile=None, board_offset=(0, 0)):
+        #Setup pos/size of tile
+        self.tiles_size = (int(tiles_size[0]), int(tiles_size[1]))
+        self.board_offset = (int(board_offset[0]), int(board_offset[1]))
+
+        relative_pos = (
+            self.board_offset[0] + start_pos[0] * self.tiles_size[0],
+            self.board_offset[1] + start_pos[1] * self.tiles_size[1],
+        )
         relative_rect = Rect(relative_pos, tiles_size)
-        
-        self.img = load_image(f'game/assets/{img_path}')
+
+        # Setup image graphics
+        self.full_img = load_image(f'game/assets/{img_path}')
         if tile == None:
-            loaded_image = self.img
+            loaded_image = self.full_img
         else:
-            self.sprite_list = cut_graphics(self.img)
+            self.sprite_list = tile_graphics(self.full_img)
             loaded_image = self.sprite_list[tile]
 
         super().__init__(relative_rect=relative_rect, image_surface=loaded_image, manager=manager, container=container)
+        self.set_image(loaded_image)
 
         self.pos = math.Vector2(start_pos)
+        self.animation_count = 0
+
+    # Fix blurry images with scaling
+    def set_image(self, image_surface, image_is_alpha_premultiplied=False):
+        scaled_image = transform.scale(image_surface, self.tiles_size)
+        super().set_image(scaled_image, image_is_alpha_premultiplied)
     
-    @staticmethod
-    def collision_check(pos1, pos2):
-        x = abs(pos1.x - pos2.x) <= 0.9
-        y = abs(pos1.y - pos2.y) <= 0.9
-        if x and y:
-            return True
-
-class Player(Tile):
-    def __init__(self, start_pos, tiles_size, manager, map_tiles, container=None):
-        self.shadow = Tile(start_pos=start_pos,
-                           tiles_size=tiles_size,
-                           img_path='levels/shadow.png',
-                           manager=manager,
-                           container=container)
-        
-        # Ive put the img_path in here cause its not something that 'should' be changed on the fly as animations can break if changed as of now
-        img_path='SproutLands/Characters/Basic Charakter Spritesheet.png'
-        super().__init__(start_pos, tiles_size, img_path, manager, container, 0)
-
-        self.vel = math.Vector2(0,0)
-        self.tiles_size = math.Vector2(tiles_size)
-
-        self.map_tiles = map_tiles
-        self.jumpable_tiles = ['vegetation']
-        self.boundary_tiles = ['water', 'tree'] + self.jumpable_tiles
-
-        self.animationcount = 0
+    # Setup animations with cutting parameters of image 
+    def _setup_animations(self, animation_frames, sprite_col_start=0, sprite_row_start=0, sprite_gap=0):
+        self.animation_count = 1
         self.animations = {}
         self.state = 'idle'
 
-        self.move_timer = MOVEMENT_DURATION
-        self.is_moving = False
-        self.is_jumping = False
-
-        self._set_animations()
-
-    def _set_animations(self):
-        animation_frames = {
-            "down":  [0, 1, 2, 3],
-            "up":    [4, 5, 6, 7],
-            "left":  [8, 9, 10, 11],
-            "right": [12, 13, 14, 15],
-            "idle": [0, 1],
-            "jump": [0]
-        }
-
-        animation_list = tile_graphics(img_surface=self.img, 
-                              sprite_col_start=1,
-                              sprite_row_start=1,
-                              sprite_gap=2)
+        animation_list = cut_graphics(
+            img_surface=self.full_img, 
+            sprite_col_start=sprite_col_start,
+            sprite_row_start=sprite_row_start,
+            sprite_gap=sprite_gap
+        )
         
         for name, frames in animation_frames.items():
             self.animations[name] = []
             for frame in frames:
                 self.animations[name].append(animation_list[frame])
     
+    # Update animation image state 
+    def update(self, delta_time):
+        if self.animation_count == 0:
+            return
+
+        current_strip = self.animations[self.state]
+        frame_index = (self.animation_count // self.MOVEMENT_DURATION) % len(current_strip)
+        tile_number = current_strip[frame_index]
+
+        self.set_image(self.sprite_list[tile_number])
+        self.animation_count += 1
+    
+    # Check the absolute distance between 2 objects
+    @staticmethod
+    def collision_check(pos1, pos2):
+        x = abs(pos1.x - pos2.x) < 1
+        y = abs(pos1.y - pos2.y) < 1
+        if x and y:
+            return True
+
+class NPC(Tile):
+    def __init__(self, start_pos, tiles_size, npc_data, manager, container=None, board_offset=(0, 0)):
+        img_path = 'SproutLands/Characters/Free Chicken Sprites.png'
+        super().__init__(start_pos, tiles_size, img_path, manager, container, 0, board_offset)
+        
+        self.bubble_x = self.rect.x + tiles_size[0]
+        self.bubble_y = self.rect.y - tiles_size[1]
+
+        self.message_list = npc_data
+        self.create_speech()
+
+        self._setup_animations(
+            animation_frames=({
+                "idle": [0,1]
+            })
+        )
+        
+    def create_speech(self):
+        self.speech_bubble = SpeechPanel(
+            panel_pos=(self.bubble_x,self.bubble_y),
+            panel_size=(250,80),
+            message_list=self.message_list,
+            manager=self.ui_manager
+        )
+        
+    def process_event(self, event):
+        if event.type == MOUSEBUTTONUP and event.button == 1:
+            if self.rect.collidepoint(event.pos):
+                self.speech_bubble.kill() if self.speech_bubble.alive() else self.create_speech()
+
+class Player(Tile):
+    def __init__(self, start_pos, tiles_size, map_tiles, player_data, manager, container=None, board_offset=(0, 0)):
+        self.shadow = Tile(start_pos=start_pos,
+                           tiles_size=tiles_size,
+                           img_path='levels/shadow.png',
+                           manager=manager,
+                           container=container,
+                           board_offset=board_offset)
+        
+        # Ive put the img_path in here cause its not something that 'should' be changed on the fly as animations can break if changed as of now
+        img_path='SproutLands/Characters/Basic Charakter Spritesheet.png'
+        super().__init__(start_pos, tiles_size, img_path, manager, container, 0, board_offset)
+
+        self.vel = math.Vector2(0,0)
+        self.tiles_size = math.Vector2(tiles_size)
+        self.board_offset = math.Vector2(board_offset)
+
+        self.map_tiles = map_tiles
+
+        self.jumpable_tiles = []
+        self.boundary_tiles = ['npc']
+
+        self.current_health = 1
+        self.move_cost = 0
+
+        self._load_player_data(player_data)
+
+        self._setup_animations(
+            animation_frames=({
+                "down":  [2, 3],
+                "up":    [6, 7],
+                "left":  [10, 11],
+                "right": [14, 15],
+                "idle": [0, 1],
+                "jump": [0]
+            }),
+            sprite_col_start=1,
+            sprite_row_start=1,
+            sprite_gap=2
+        )
+
+        self.move_timer = 0
+        self.is_moving = False
+        self.is_jumping = False
+
+
+    def _load_player_data(self, player_data):
+        map_bounds = player_data.bounds
+
+        if hasattr(map_bounds, "jumpable"):
+            self.jumpable_tiles = map_bounds.jumpable
+        self.boundary_tiles += map_bounds.blocked + self.jumpable_tiles
+        
+        # set up the energy bar if it is present in the env data json
+        if hasattr(player_data, "energy"):
+            player_energy = player_data.energy
+            self.health_capacity = player_energy
+            self.current_health = player_energy
+            self.move_cost = 1
+
+            UIScreenSpaceHealthBar(relative_rect=Rect((50,50),(75,25)),
+                        sprite_to_monitor=self,
+                        manager=self.ui_manager,
+                        object_id='#energy_bar',
+                        container=self.ui_container)
+    
+    # right now the only way to get the health lower is through this function that is called in code blocks
+    # so that you can change the energy per level, you can set values from the env data json 
+    def deplete_energy(self):
+        self.current_health -= self.move_cost
+    
     def goal_check(self, obj):
-        # or else they can just clip through tiles
         if not self.is_jumping:
             return self.collision_check(self.pos, obj.pos)
 
@@ -89,7 +191,7 @@ class Player(Tile):
         match action:
             case "up" | "down" | "left" | "right" | "jump":
                 self.og_pos = self.pos.copy()
-                self.move_timer = MOVEMENT_DURATION
+                self.move_timer = self.MOVEMENT_DURATION
                 self.is_moving = True
                 self.state = action
 
@@ -107,12 +209,9 @@ class Player(Tile):
     def _apply_jump(self):
         
         if self.is_jumping:
-            # if the jump height is the same as the ammount to move up/down by then it doesnt look like they are jumping
-            # because the calculations are so simple, when jumping while moving up or down, it acctually looks like just moving rapidly
-            # the fix is chaning the jump height to be variable with the self.vel.y but idk how to do that without complex calcs
-            jump_height = -3
+            jump_height = min(-2, -2 + self.vel.y)
             artificial_y = jump_height * self.progress
-            if self.move_timer >= MOVEMENT_DURATION // 2:
+            if self.move_timer >= self.MOVEMENT_DURATION // 2:
                 return artificial_y
             else:
                 return jump_height - artificial_y
@@ -125,7 +224,7 @@ class Player(Tile):
             return
 
         self.move_timer -= 1
-        self.progress = 1 - (self.move_timer / MOVEMENT_DURATION)
+        self.progress = 1 - (self.move_timer / self.MOVEMENT_DURATION)
 
         move_x = self.vel.x * self.progress
         move_y = self.vel.y * self.progress
@@ -164,28 +263,17 @@ class Player(Tile):
                     self.pos = self.og_pos.copy()
                     self.set_idle()
        
-    def update_sprite_sheet(self):
-        time_lag = 10
-        current_strip = self.animations[self.state]
-
-        frame_index = (self.animationcount // time_lag) % len(current_strip)
-        tile_number = current_strip[frame_index]
-        self.set_image(self.sprite_list[tile_number])
-        self.animationcount += 1
-
     def update_position(self):
-        # this updates the position of the player tile and the created shadow tile, then depending if the player is jumping or not it changes the position
-        screen_x = int(self.pos.x * self.tiles_size.x)
-        screen_y = int(self.pos.y * self.tiles_size.y)
+        # this updates the position of the player tile and the created shadow tile
+        player_x = int(self.board_offset.x + self.pos.x * self.tiles_size.x)
+        player_y = int(self.board_offset.y + self.pos.y * self.tiles_size.y)
 
-        shadow_y = screen_y
-        if self.is_jumping:
-            shadow_y = int((self.og_pos.y)*self.tiles_size.y)
+        shadow_pos = self.pos.y - self._apply_jump()
+        shadow_y = int(self.board_offset.y + shadow_pos * self.tiles_size.y)
 
-        self.set_relative_position((screen_x, screen_y))
-        self.shadow.set_relative_position((screen_x, shadow_y))
+        self.set_relative_position((player_x, player_y))
+        self.shadow.set_relative_position((player_x, shadow_y))
 
     def update(self, delta_time):
         super().update(delta_time)
-        self.update_sprite_sheet()
         self.update_movement()

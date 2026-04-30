@@ -4,43 +4,52 @@ import pkgutil
 
 import game.environments as environments_pkg
 from game.environments.base import BaseEnvironment, GameEnv
+from game.support.player_data import PlayerData
 from game.window.display import Display
 
 
 # This process is explained on trello under (Completed) 'Start getting the core of the program'
 class GameManager:
-    def __init__(self):
+    def __init__(self, debug=False):
+        self.debug = debug
+        self.player_data = PlayerData()
         self.display = Display()
         self.envs_list = self._load_environments()
-        self.env = self.envs_list[0] # for initalising prev_env
         self.change_env("Main Menu")
 
     def start(self):
-        try:
-            self.load_level = False
-            self.env.game_manager = self
-            self.display.run(self.env)
-        except Exception as e:
-            print(f"Error: {e}")
-        finally:
-            self.quit_load_level()
+        while True:
+            try:
+                self.load_level = False
+                self.display.run(self.env)
+            except Exception:
+                import traceback
+                traceback.print_exc()
+
+            if not self.load_level:
+                self.display.exit_screen()
+                return
 
     def change_env(self, env_title: str):
         if env_title == "QUIT":
             self.display.stop_game_loop()
-        elif env_title == "BACK":
+        elif env_title == "RESET":
             self.display.stop_game_loop()
-            prev = self.prev_env
-            self.prev_env = self.env
-            self.env = prev
             self.load_level = True
         else:
+            matched = False
             for env in self.envs_list:
                 if env.title == env_title:
+                    matched = True
+                    print(f"Found match: {env.title}")
                     self.display.stop_game_loop()
-                    self.prev_env = self.env 
                     self.env = env
                     self.load_level = True
+            if not matched:
+                print(f"NO MATCH FOUND. Available: {[e.title for e in self.envs_list]}")
+
+    def mark_level_completed(self, level_name, next_level_name=None):
+        self.player_data.complete_level(level_name, next_level_name)
                     
     def _load_environments(self):
         environments = []
@@ -59,15 +68,11 @@ class GameManager:
                 if cls.__module__ != module.__name__:
                     continue
                 
-                environments.append(cls())
+                env = cls()
+                env.game_manager = self
+                environments.append(env)
 
         if not environments:
             raise RuntimeError("No environments found in game/environments.")
 
         return environments
-
-    def quit_load_level(self):
-        if self.load_level:
-            self.start()
-        else:
-            self.display.exit_screen()

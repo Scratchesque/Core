@@ -2,7 +2,7 @@
     "env":{
         "title": "Level 3",
         "theme": "game",
-        "next_env": "QUIT"
+        "next_env": "Journey Complete"
     },
     "systems": {
         "allowed_blocks": [

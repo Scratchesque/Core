@@ -94,7 +94,10 @@ Learn how to read and implement code to help Kevin reach his goal!''',
 
     def _get_playable_envs(self):
         playable_envs = [
-            env for env in self.game_manager.envs_list if env.title != self.title
+            env
+            for env in self.game_manager.envs_list
+            if env.title != self.title
+            and getattr(env.env_data.env, "show_in_menu", True)
         ]
 
         def env_sort_key(env):

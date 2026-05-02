@@ -5,7 +5,7 @@ import pkgutil
 from game.core.paths import resolve_project_path
 from game.support.files import load_json
 import game.environments as environments_pkg
-from game.environments.base import BaseEnvironment, GameEnv, BlockEnv, InterpreterEnv
+from game.environments.base import BaseEnvironment, GameEnv, BlockEnv, InterpreterEnv, CodeEnv
 from game.support.player_data import PlayerData
 from game.window.display import Display
 
@@ -96,6 +96,8 @@ class GameManager:
         if 'level' in level_file:
             if env_data.env.type == 'Block':
                 return BlockEnv(level_file)
-            if env_data.env.type == 'Interpreter':
+            elif env_data.env.type == 'Interpreter':
                 return InterpreterEnv(level_file)
+            elif env_data.env.type == 'Code':
+                return CodeEnv(level_file)
         return None

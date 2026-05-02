@@ -2,6 +2,7 @@ from pygame import Rect, KEYUP, K_ESCAPE, Color
 from pygame_gui.elements import UIPanel
 
 from game.app.block_interpreter import InterpreterPanel
+from game.app.code_scripts import CodePanel
 from game.app.board import Board
 from game.app.code_blocks import CodeBlocks
 from game.app.panels import ConfirmationPanel, LevelText, SettingsMenu, MessagePanel
@@ -222,6 +223,12 @@ class GameEnv(BaseEnvironment):
             return None
         return getattr(systems_data, "premade_script", None)
     
+    def get_level_script(self):
+        systems_data = getattr(self.env_data, "systems", None)
+        if systems_data is None:
+            return None
+        return getattr(systems_data, "level_script", None)
+    
     def update_frame(self, delta_time):
         self.check_level_complete()
         
@@ -270,15 +277,34 @@ class BlockEnv(GameEnv):
             allowed_blocks=self.get_allowed_blocks(),
             starting_blocks=self.get_script_blocks()
         )    
+
 class InterpreterEnv(BlockEnv):
 
     def create_ui(self):
         super().create_ui()
 
-        InterpreterPanel(
+        self.interpreter = InterpreterPanel(
             panel_pos=self.blocks_pos,
             panel_size=self.blocks_size, 
             manager=self.ui_manager,
-            code_blocks=self.blocks,
+            allowed_blocks=self.get_allowed_blocks(),
             level_title=self.title
         )
+
+        self.blocks.set_interpreter(self.interpreter)
+
+class CodeEnv(GameEnv):
+
+    def create_ui(self):
+        super().create_ui()
+
+        CodePanel(
+            player=self.board.player,
+            panel_pos=self.blocks_pos,
+            panel_size=self.blocks_size, 
+            manager=self.ui_manager,
+            level_title=self.title,
+            level_script=self.get_level_script()
+        )
+
+    pass

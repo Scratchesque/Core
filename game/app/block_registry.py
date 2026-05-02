@@ -21,9 +21,10 @@ DEFAULT_BLOCK_LIBRARY = (
     BlockSpec("jump_right", "Jump Right", "#motion_block", "jump", x=2),
     BlockSpec("jump_up", "Jump Up", "#motion_block", "jump", y=-2),
     BlockSpec("jump_down", "Jump Down", "#motion_block", "jump", y=2),
-    BlockSpec("loop","Loop", "#loop_block","")
-)
+    BlockSpec("loop","Loop", "#loop_block",""),
 
+    BlockSpec("fix_right", "Move Right", "#motion_block", "right", x=-1)
+)
 
 def get_block_library(allowed_block_ids=None):
     if not allowed_block_ids:

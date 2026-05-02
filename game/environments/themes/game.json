@@ -88,6 +88,9 @@
   "#interpreter_panel":{
     "prototype": "#core_panel"
   },
+  "#problem_panel":{
+    "prototype": "#core_panel"
+  },
   "#level_text_panel":{
     "prototype": "#transparent"
   },
@@ -322,6 +325,56 @@
     },
     "colours":{
       "normal_text":"#000000"
+    }
+  },
+  "#problem_panel.#title": {
+    "font": {
+      "name": "custom_font",
+      "bold": "1",
+      "size": "22"
+    },
+    "colours": {
+      "normal_text": "#2E2E2E"
+    }
+  },
+  "#problem_panel.#body": {
+    "prototype": "#transparent",
+    "font": {
+      "name": "custom_font",
+      "size": "18"
+    },
+    "colours": {
+      "normal_text": "#4A3A1C"
+    },
+    "misc":{
+      "text_horiz_alignment":"center"
+    }
+  },
+  "#problem_panel.#entry_box": {
+    "font": {
+      "name": "custom_font",
+      "size": "18"
+    },
+    "colours": {
+      "normal_text": "#4A3A1C",
+      "dark_bg": "#FFFDF3",
+      "text_cursor": "Black"
+    },
+    "misc": {
+      "border_width": "3",
+      "shape": "rounded_rectangle",
+      "shape_corner_radius": "16"
+    }
+  },
+  "#problem_panel.button": {
+    "prototype": "#transparent",
+    "font":{
+      "name":"pixel_font",
+      "size":"18"
+    },
+    "colours":{
+      "normal_text": "#2F2412",
+      "active_text": "#4B3513"
     }
   },
   "#text_code": {

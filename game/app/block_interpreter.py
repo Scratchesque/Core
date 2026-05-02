@@ -1,11 +1,15 @@
 from pygame import Rect, Vector2, MOUSEBUTTONUP
 from pygame_gui.elements import UIPanel, UITextBox
 
+from game.app.block_registry import get_block_library
 from game.support.ui import UIFactory
 
 class Interpreter:
     GAP = ' ' * 4
     MIN_CODE_LINES = 40
+
+    def _change_min_lines(self, amm):
+        self.MIN_CODE_LINES = amm
 
     def _translate_blocks(self):
 
@@ -21,19 +25,7 @@ class Interpreter:
             
         return script_str
 
-    def _make_classes(self, block_library):
-        font_text = self._type_to_font('Blocks', 'main')
-        self.class_list = [f'Class {font_text}:']
-        for spec in block_library:
-            self.class_list += self._spec_to_class(spec) 
-
-    def _make_blocks(self, program_blocks):
-        font_text = self._type_to_font(self.level_title, 'main')
-        self.block_list =  [f'Script {font_text}:']
-        for block in program_blocks:
-            self.block_list += self._block_to_code(block)
-        
-    def _spec_to_class(self, spec):
+    def _format_spec_class(self, spec):
         class_font = self._type_to_font(f'{self.GAP}{(spec.label).replace(' ','')}',spec.id)
         class_text = [f'{class_font}():']
 
@@ -58,21 +50,12 @@ class Interpreter:
 
         return class_text + text_list + ['']
 
-    def _block_to_code(self, block, func_gap=False):
-        text_list = []
+    def _format_spec_code(self, spec, func_gap=False):
         func_gap_str = self.GAP*2 if func_gap else self.GAP
 
-        if 'loop' == block.spec.id:
-            loop_font = self._type_to_font('Loop', block.spec.id)
-            text_list.append(f'{self.GAP}{loop_font} ({block.repeat_count}):')
-
-            for child in block.children_blocks:
-                text_list += self._block_to_code(child, func_gap=True)
-        else:
-            class_font = self._type_to_font('Blocks','main')
-            spec_font = self._type_to_font(f'{(block.spec.label).replace(' ','')}', block.spec.id)
-            text_list.append(f'{func_gap_str}{class_font}.{spec_font}()')
-        return text_list
+        class_font = self._type_to_font('Blocks','main')
+        spec_font = self._type_to_font(f'{(spec.label).replace(' ','')}', spec.id)
+        return f'{func_gap_str}{class_font}.{spec_font}()'
     
     @staticmethod
     def _type_to_font(text, type):
@@ -92,11 +75,11 @@ class InterpreterPanel(UIPanel, Interpreter):
     PANEL_WIDTH = 350
     PULL_BUTTON_SIZE = (30, 30) 
 
-    def __init__(self, panel_pos, panel_size, manager, code_blocks, level_title):
-        self.code_blocks = code_blocks
+    def __init__(self, panel_pos, panel_size, manager, allowed_blocks, level_title):
         self.level_title = level_title 
         self.size = Vector2(self.PANEL_WIDTH, panel_size[1])
         self.pos = Vector2(panel_pos)
+
         super().__init__(
             relative_rect=Rect(panel_pos,self.size),
             starting_height=3,
@@ -104,13 +87,16 @@ class InterpreterPanel(UIPanel, Interpreter):
             object_id="#interpreter_panel"
         )
 
+        self.block_library = get_block_library(allowed_blocks)
         self.is_moving = False
         self.is_visible = False
         self.move_timer = 0
 
         self.create_ui()
-        self._make_classes(self.code_blocks.block_library)
+
+        self._make_classes()
         self._make_blocks([])
+        
         block_text = self._translate_blocks()
         self.text_box.set_text(block_text)
 
@@ -144,11 +130,6 @@ class InterpreterPanel(UIPanel, Interpreter):
         if self.is_moving:
             return
         
-        if event.type == MOUSEBUTTONUP:
-            self._make_blocks(self.code_blocks.program_blocks)
-            block_text = self._translate_blocks()
-            self.text_box.set_text(block_text)
-        
         if self.pull_button.on_click(event):
             if self.is_visible == True:
                 self.is_visible = False
@@ -176,6 +157,11 @@ class InterpreterPanel(UIPanel, Interpreter):
         
         self._update_pos()
 
+    def update_text(self, program_blocks):
+        self._make_blocks(program_blocks)
+        block_text = self._translate_blocks()
+        self.text_box.set_text(block_text)
+
     def _update_pos(self):
         distance = self.PANEL_WIDTH/4.5
         offset = self.progress * (distance if self.is_visible else -distance)
@@ -191,3 +177,22 @@ class InterpreterPanel(UIPanel, Interpreter):
         center = (rect.center)[1]
         self.pull_button.set_relative_position((left-self.PULL_BUTTON_SIZE[1]-10,center))
 
+    def _make_classes(self):
+        font_text = self._type_to_font('Blocks', 'main')
+        self.class_list = [f'Class {font_text}:']
+        for spec in self.block_library:
+            self.class_list += self._format_spec_class(spec) 
+
+    def _make_blocks(self, program_blocks):
+        font_text = self._type_to_font(self.level_title, 'main')
+        self.block_list =  [f'Script {font_text}:']
+        for block in program_blocks:
+            if 'loop' == block.spec.id:
+                loop_font = self._type_to_font('Loop', block.spec.id)
+                self.block_list.append(f'{self.GAP}{loop_font} ({block.repeat_count}):')
+
+                for child in block.children_blocks:
+                    self.block_list.append(self._format_spec_code(child.spec, func_gap=True))
+            else:
+                self.block_list.append(self._format_spec_code(block.spec))
+        

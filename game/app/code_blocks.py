@@ -1,4 +1,3 @@
-import pygame
 from pygame import MOUSEBUTTONUP, MOUSEMOTION, Rect
 from pygame.math import Vector2
 from pygame_gui.elements import UIButton, UILabel, UIPanel, UITextBox
@@ -232,6 +231,7 @@ class CodeBlocks(UIPanel):
         )
 
         self.player = player
+        self.interpreter = None
         self.block_library = get_block_library(allowed_blocks)
         self.starting_blocks = starting_blocks
         self.program_blocks = []
@@ -412,6 +412,14 @@ class CodeBlocks(UIPanel):
             object_id="#edit_button",
         )
 
+    def set_interpreter(self, interpreter):
+        self.interpreter = interpreter
+
+    def update_interpreter(self):
+        if self.interpreter is None: 
+            return
+        self.interpreter.update_text(self.program_blocks)
+
     def refresh_status(self):
         total_steps, total_blocks, _ = self._count_total_steps()
         if self.is_running:
@@ -425,11 +433,13 @@ class CodeBlocks(UIPanel):
                 "<b>Status:</b> Script ready.<br>"
                 f"{total_blocks} Movement Blocks(s) in lane — {total_steps} total step(s)."
             )
+            self.update_interpreter()
         else:
             status = (
                 "<b>Status:</b> Build a short program.<br>"
                 "Drag blocks into the lane. Add a Loop block to repeat steps."
             )
+            self.update_interpreter()
         self.status_display.set_text(status)
  
     def _count_total_steps(self):
@@ -681,6 +691,8 @@ class CodeBlocks(UIPanel):
             self.program_blocks.remove(block)
             self.destroy_script_block(block)
             self.relayout_program_blocks()
+        self.destroy_script_block(block)
+        self.relayout_program_blocks()
         self.refresh_status()
 
     def start_program(self):

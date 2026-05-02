@@ -3,7 +3,7 @@
         "type": "Code",
         "title": "Level 8",
         "theme": "game",
-        "next_env": "Main Menu"
+        "next_env": "Journey Complete"
     },
     "systems": {
         "level_script": [

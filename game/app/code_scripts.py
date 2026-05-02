@@ -138,6 +138,7 @@ class ProblemButton(Button):
         super().__init__(self.pos, self.size, "!", manager, object_id="#transparent", container=container)
         
         self.problem_panel = None
+        self.solved = False
 
     def get_line_pos(self, block_pos, line):
         font_size=23
@@ -157,6 +158,7 @@ class ProblemButton(Button):
             elif self.spec.y != 0:
                 spec = replace(self.spec, y=self.problem_panel.value)
 
+            self.solved = True
             self.container.change_block(spec)
             self.img.kill()
             self.kill()
@@ -186,7 +188,7 @@ class CodePanel(UIPanel, Interpreter):
         
         self.is_running = False
         self.program_blocks = []
-
+        self.problem_buttons = []
         
         self.configure_layout()
 
@@ -295,24 +297,22 @@ class CodePanel(UIPanel, Interpreter):
         self.run_next_step()
 
     def refresh_status(self):
-        # total_steps, total_blocks, _ = self._count_total_steps()
-        # total_buttons, problems_left = self._count_total_problems()
-        # if self.is_running:
-        #     current_step = min(self.next_step_index + 1, len(self._exec_steps))
-        #     status = (
-        #         "<b>Status:</b> Running your script.<br>"
-        #         f"Step {current_step} of {len(self._exec_steps)}."
-        #     )
-        # elif total_blocks != 0:
-        #     status = (
-        #         "<b>Status:</b> Script ready.<br>"
-        #         f"{total_blocks} Movement Blocks(s) in lane — {total_steps} total step(s)."
-        #     )
-        # else:
-        status = (
-            "<b>Status:</b> Fix this program.<br>"
-            "There are multiple errors for you to solve, press the ! to attempt."
-        )
+        problems_left = self._count_problems_left()
+        if self.is_running:
+            status = (
+                "<b>Status:</b> Running your script.<br>"
+                f"Step {self.next_step_index} of {len(self.program_blocks)}."
+            )
+        elif problems_left == 0:
+            status = (
+                "<b>Status:</b> Script ready.<br>"
+                "Run the program to see if you have successfully fixed the code"
+            )
+        else:
+            status = (
+                "<b>Status:</b> Fix this program.<br>"
+                f"There is {problems_left} problem(s) left for you to solve. Press '!' to attempt."
+            )
         self.status_display.set_text(status)
 
     def change_block(self, block):
@@ -325,6 +325,7 @@ class CodePanel(UIPanel, Interpreter):
         self._make_classes()
         block_text = self._translate_blocks()
         self.text_box.set_text(block_text)
+        self.refresh_status()
 
     def run_next_step(self):
         if not self.is_running or self.player.is_moving:
@@ -341,6 +342,16 @@ class CodePanel(UIPanel, Interpreter):
         self.player.do_action(spec.action, x=spec.x, y=spec.y)
         self.next_step_index += 1
         self.refresh_status()
+
+    def _count_problems_left(self):
+        total_problems = 0
+        problems_solved = 0
+        for button in self.problem_buttons:
+            total_problems += 1
+            if button.solved:
+                problems_solved += 1
+        return total_problems - problems_solved
+
 
     def _make_start_script(self, level_script):
         for script_line in level_script:
@@ -360,7 +371,16 @@ class CodePanel(UIPanel, Interpreter):
             
             spec_str_list = self._format_spec_class(spec)
             if 'fix' in spec.id and make_problem:
-                ProblemButton(spec, spec_str_list, self.script_area_rect.topleft, len(self.class_list)+2, self.ui_manager, self) 
+                self.problem_buttons.append(
+                    ProblemButton(
+                        spec=spec, 
+                        spec_str_list=spec_str_list, 
+                        pos=self.script_area_rect.topleft, 
+                        line=len(self.class_list)+2, 
+                        manager=self.ui_manager, 
+                        container=self
+                    )
+                )
             self.class_list += spec_str_list
 
     def _make_blocks(self):

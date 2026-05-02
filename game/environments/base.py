@@ -73,7 +73,7 @@ class GameEnv(BaseEnvironment):
     PANEL_SHADOW_SPREAD = 10
     BLOCKS_PANEL_MIN_WIDTH = 700
     BLOCKS_PANEL_WIDTH_RATIO = 0.39
-    CONFIRM_PANEL_SIZE = (550, 220)
+    CONFIRM_PANEL_SIZE = (525, 220)
 
     def get_board_grid_size(self):
         for map_layer in self.env_data.map.__dict__.values():
@@ -180,14 +180,14 @@ class GameEnv(BaseEnvironment):
         if event.type == RESET_ENV_REQUESTED:
             self.open_confirmation_panel(
                 title="Reset level?",
-                message="Your current script will be cleared and the level will restart.",
+                message="Current Level and Script will be reset.",
                 confirm_event_type=RESET_ENV_CONFIRMED,
             )
             return
         if event.type == MENU_ENV_REQUESTED:
             self.open_confirmation_panel(
                 title="Return to menu?",
-                message="Leave this level and go back to the main menu.",
+                message="Leave this level and go to main menu.",
                 confirm_event_type=MENU_ENV_CONFIRMED,
             )
             return
@@ -232,10 +232,7 @@ class GameEnv(BaseEnvironment):
             goal = self.board.goal
             if player.goal_check(goal):
                 self.board.completed_level = True
-                info_size = (275,160)
-                info_pos = ((SCREEN_WIDTH-info_size[0])//2), ((SCREEN_HEIGHT-info_size[1])//2)
-                MessagePanel(panel_pos=info_pos,
-                    panel_size=info_size,
+                MessagePanel(
                     title="You Win!",
                     message="Loading next level...",
                     manager=self.ui_manager)
@@ -244,12 +241,9 @@ class GameEnv(BaseEnvironment):
                 return
         
             if player.current_health <= 0:
-                info_size = (275,160)
-                info_pos = ((SCREEN_WIDTH-info_size[0])//2), ((SCREEN_HEIGHT-info_size[1])//2)
-                MessagePanel(panel_pos=info_pos,
-                    panel_size=info_size,
+                MessagePanel(
                     title="Level Reset!",
-                    message="No energy remaining",
+                    message="No energy remaining!",
                     manager=self.ui_manager)
                 reset_event = pygame.event.Event(RESET_ENV_CONFIRMED)
                 pygame.event.post(reset_event)

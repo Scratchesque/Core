@@ -35,5 +35,5 @@
         },
         "energy": 50
     },
-    "npc": ["It is now possible to loop sets of instructions by placing a loop block and organizing how to move"]
+    "npc": ["It is now possible to loop sets of instructions", "by placing a loop block and organizing how to move"]
 }

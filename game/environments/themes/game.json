@@ -133,11 +133,21 @@
       "normal_text": "#FFFFFF"
     }
   },
+  "#jump_block": {
+    "prototype": "#script_block",
+    "colours": {
+      "normal_bg": "#b603fc",
+      "hovered_bg": "#71059c",
+      "active_bg": "#5a027d",
+      "normal_text": "#FFFFFF"
+    }
+  },
   "#loop_block": {
     "prototype": "#script_block",
     "colours": {
       "normal_bg": "#c20017",
       "hovered_bg": "#ad0216",
+      "active_bg": "#73020f",
       "normal_text": "#FFFFFF"
     }
   },

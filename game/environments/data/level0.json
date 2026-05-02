@@ -6,8 +6,8 @@
         "next_env": "Level 1"
     },
     "systems": {
-        "allowed_blocks": ["down", "right"],
-        "premade_script": ["down", "down", "down"]
+        "allowed_blocks": ["down", "up"],
+        "level_script": ["down", "down", "down"]
     },
     "map":{
         "water": ["Level_0/Level_0_water", "SproutLands/Tilesets/Water"],
@@ -21,8 +21,8 @@
     },
     "player":{
         "bounds": {
-            "blocked":["walls"]
+            "blocked":["walls", "door"]
         }
     },
-    "npc": ["Drag and drop the function you want Kevin to execute" , "Your goal is to get Kevin to reach his lost carrot."]
+    "npc": ["This level has the blocks placed for you.", "No clue what else ;P"]
 }

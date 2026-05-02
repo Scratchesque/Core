@@ -93,7 +93,7 @@ class ProblemPanel(UIPanel):
         l_og_value, r_og_value = self.get_values(self.fix_string) 
         l_box_value, r_box_value = self.get_values(self.entry_box.get_text()) 
         if l_og_value != l_box_value:
-            self.help_text.set_text(Interpreter._type_to_font("You cannot change the X/Y Value!", "loop"))
+            self.help_text.set_text(Interpreter._type_to_font("You cannot change the Player Assignment!", "loop"))
             return
         
         if r_og_value == r_box_value:

@@ -15,8 +15,7 @@
             "jump_left",
             "jump_right",
             "jump_up",
-            "jump_down",
-            "loop"
+            "jump_down"
         ]
     },
     "map": {
@@ -32,7 +31,7 @@
         "bounds": {
             "blocked":["water", "tree"]
         },
-        "energy": 500
+        "energy": 50
     },
-    "npc": ["Be careful theres energy now!" , "Kevin has just refound the taste for Carrots, he wants more", "So much so, that he can smell it in the distance."]
+    "npc": ["You can now see the underlying code by pressing the '<' button next to the panel."]
 }

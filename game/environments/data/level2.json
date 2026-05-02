@@ -6,18 +6,7 @@
         "next_env": "Level 3"
     },
     "systems": {
-        "allowed_blocks": [
-            "up",
-            "down",
-            "left",
-            "right",
-            "jump",
-            "jump_left",
-            "jump_right",
-            "jump_up",
-            "jump_down",
-            "loop"
-        ]
+        "allowed_blocks": ["up", "down", "left", "right"]
     },
     "map":{
         "water": ["Level_2/Level_2_water", "SproutLands/Tilesets/Water"],
@@ -30,8 +19,7 @@
     "player":{
         "bounds": {
             "blocked":["water","tree"]
-        },
-        "energy": 10
+        }
     },
-    "npc": ["Be careful theres energy now!" , "Kevin has just refound the taste for Carrots, he wants more", "So much so, that he can smell it in the distance."]
+    "npc": ["Try get to the other side now with all your movement options"]
 }

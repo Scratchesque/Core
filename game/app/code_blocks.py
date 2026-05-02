@@ -222,7 +222,7 @@ class CodeBlocks(UIPanel):
     PALETTE_FALLBACK_MIN_WIDTH = 116
     LANE_MIN_WIDTH = 220
 
-    def __init__(self, panel_pos, panel_size, manager, player, allowed_blocks=None, starting_blocks=None):
+    def __init__(self, panel_pos, panel_size, manager, player, allowed_blocks=None, level_script=None):
         super().__init__(
             Rect(panel_pos, panel_size),
             manager=manager,
@@ -233,7 +233,7 @@ class CodeBlocks(UIPanel):
         self.player = player
         self.interpreter = None
         self.block_library = get_block_library(allowed_blocks)
-        self.starting_blocks = starting_blocks
+        self.starting_blocks = level_script
         self.program_blocks = []
         self._exec_steps: list = []
         self.next_step_index = 0

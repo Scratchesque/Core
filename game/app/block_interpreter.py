@@ -26,7 +26,7 @@ class Interpreter:
         return script_str
 
     def _format_spec_class(self, spec):
-        class_font = self._type_to_font(f'{self.GAP}{(spec.label).replace(' ','')}',spec.id)
+        class_font = self._type_to_font(f'{self.GAP}{(spec.label).replace(' ','')}',spec.action)
         class_text = [f'{class_font}():']
 
         player_font = self._type_to_font('Player', 'main')
@@ -41,7 +41,7 @@ class Interpreter:
             text_list.append(f'{jump_font} = 1')
             text_list.append(f'{jump_font} = -1')
         elif 'jump' in spec.id:
-            jump_font = self._type_to_font('Jump', spec.id)
+            jump_font = self._type_to_font('Jump', spec.action)
             text_list.append(f'{self.GAP*2}{jump_font}()')
         if spec.x != 0:
             text_list.append(f'{self.GAP*2}{player_font}.{x_font} = {spec.x}')
@@ -54,7 +54,7 @@ class Interpreter:
         func_gap_str = self.GAP*2 if func_gap else self.GAP
 
         class_font = self._type_to_font('Blocks','main')
-        spec_font = self._type_to_font(f'{(spec.label).replace(' ','')}', spec.id)
+        spec_font = self._type_to_font(f'{(spec.label).replace(' ','')}', spec.action)
         return f'{func_gap_str}{class_font}.{spec_font}()'
     
     @staticmethod
@@ -66,6 +66,8 @@ class Interpreter:
                 colour = '76E01F'
             case 'loop':
                 colour = 'C20017'
+            case 'jump':
+                colour = 'B603FC'
             case _:
                 colour = '4C97FF'
 

@@ -22,7 +22,7 @@
         "bounds": {
             "blocked":["water", "tree"]
         },
-        "energy": 5
+        "energy": 50
     },
-    "npc": ["Be careful theres energy now!" , "Kevin has just refound the taste for Carrots, he wants more", "So much so, that he can smell it in the distance."]
+    "npc": ["You have now learnt the basics of moving a player around", "Now try and see if you can fix errors in code"]
 }

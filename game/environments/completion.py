@@ -160,7 +160,7 @@ class CompletionScreen(BaseEnvironment):
     def _build_credits_html(self):
         lines = [
             "<b>Credits</b>",
-            "Created by <b>Will</b>, <b>Albert</b>, <b>Harry</b>, <b>Kavron</b>, <b>Tafara</b>, and <b>Vlad</b>.",
+            "Created by <b>Will</b>, <b>Albert</b>, <b>Harry</b>, <b>Kamran</b>, <b>Tafara</b>, and <b>Vlad</b>.",
             "",
             "<b>References</b>",
             "pygame. GitHub (2020). Available at: github.com/pygame/pygame.",

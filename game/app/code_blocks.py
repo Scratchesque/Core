@@ -5,7 +5,6 @@ from pygame_gui._constants import UI_BUTTON_PRESSED, UI_BUTTON_START_PRESS
 
 from game.app.block_registry import get_block_library
 from game.core.events import *
-from game.app.block_interpreter import InterpreterPanel
 
 
 class ScriptBlock(UIPanel):
@@ -223,7 +222,7 @@ class CodeBlocks(UIPanel):
     PALETTE_FALLBACK_MIN_WIDTH = 116
     LANE_MIN_WIDTH = 220
 
-    def __init__(self, panel_pos, panel_size, level_title, manager, player, allowed_blocks=None):
+    def __init__(self, panel_pos, panel_size, manager, player, allowed_blocks=None):
         super().__init__(
             Rect(panel_pos, panel_size),
             manager=manager,
@@ -249,15 +248,6 @@ class CodeBlocks(UIPanel):
 
         self.configure_layout()
         self.create_ui()
-
-        self.interpreter = InterpreterPanel(
-            panel_pos=panel_pos,
-            panel_size=panel_size, 
-            manager=self.ui_manager,
-            pallet_blocks=self.palette_button_to_spec,
-            level_title=level_title
-        )
-
         self.refresh_status()
 
     def configure_layout(self):
@@ -432,13 +422,11 @@ class CodeBlocks(UIPanel):
                 "<b>Status:</b> Script ready.<br>"
                 f"{total_blocks} Movement Blocks(s) in lane — {total_steps} total step(s)."
             )
-            self.interpreter.translate_blocks(self.program_blocks)
         else:
             status = (
                 "<b>Status:</b> Build a short program.<br>"
                 "Drag blocks into the lane. Add a Loop block to repeat steps."
             )
-            self.interpreter.translate_blocks(self.program_blocks)
         self.status_display.set_text(status)
  
     def _count_total_steps(self):

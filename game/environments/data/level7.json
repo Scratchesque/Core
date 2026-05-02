@@ -1,6 +1,6 @@
 {
     "env":{
-        "type": "Block",
+        "type": "Interpreter",
         "title": "Level 7",
         "theme": "game",
         "next_env": "Journey Complete"

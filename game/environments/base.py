@@ -1,6 +1,7 @@
 from pygame import Rect, KEYUP, K_ESCAPE, Color
 from pygame_gui.elements import UIPanel
 
+from game.app.block_interpreter import InterpreterPanel
 from game.app.board import Board
 from game.app.code_blocks import CodeBlocks
 from game.app.panels import ConfirmationPanel, LevelText, SettingsMenu, MessagePanel
@@ -258,8 +259,19 @@ class BlockEnv(GameEnv):
         self.blocks = CodeBlocks(
             panel_pos=self.blocks_pos,
             panel_size=self.blocks_size,
-            level_title=self.title,
             manager=self.ui_manager, 
             player=self.board.player,
             allowed_blocks=self.get_allowed_blocks(),
         )    
+class InterpreterEnv(BlockEnv):
+
+    def create_ui(self):
+        super().create_ui()
+
+        InterpreterPanel(
+            panel_pos=self.blocks_pos,
+            panel_size=self.blocks_size, 
+            manager=self.ui_manager,
+            code_blocks=self.blocks,
+            level_title=self.title
+        )

@@ -324,7 +324,7 @@
       "normal_text":"#000000"
     }
   },
-  "#interpreter_panel.#text_code": {
+  "#text_code": {
     "prototype": "#transparent",
     "font": {
       "name": "custom_font",

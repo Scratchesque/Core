@@ -5,7 +5,8 @@
         "next_env": "Level 1"
     },
     "systems": {
-        "allowed_blocks": ["down", "right"]
+        "allowed_blocks": ["down", "right"],
+        "premade_script": ["down", "down", "down"]
     },
     "map":{
         "water": ["Level_0/Level_0_water", "SproutLands/Tilesets/Water"],

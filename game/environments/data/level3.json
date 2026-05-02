@@ -23,14 +23,12 @@
         "water_bounds": ["Level_3/Level_3_water_bounds", "SproutLands/Tilesets/Water"],
         "terrain": ["Level_3/Level_3_terrain", "SproutLands/Tilesets/Grass"],
         "tree": ["Level_3/Level_3_tree","SproutLands/Objects/Basic_Grass_Biom_things"],
-        "fence": ["Level_3/Level_3_fence", "SproutLands/Tilesets/Fences"],
         "vegetation": ["Level_3/Level_3_vegetation", "SproutLands/Objects/Basic_Grass_Biom_things"],
          "start_pos": "Level_3/start_pos"
     },
     "player":{
         "bounds": {
-            "blocked":["water", "tree"],
-            "jumpable": ["fence"]
+            "blocked":["water", "tree"]
         },
         "energy": 5
     },

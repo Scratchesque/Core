@@ -1,0 +1,39 @@
+{
+    "env":{
+        "title": "Level 7",
+        "theme": "game",
+        "next_env": "Journey Complete"
+    },
+    "systems": {
+        "allowed_blocks": [
+            "up",
+            "down",
+            "left",
+            "right",
+            "jump",
+            "jump_left",
+            "jump_right",
+            "jump_up",
+            "jump_down",
+            "loop"
+        ]
+    },
+    "map": {
+        "water": ["Level_7/Level_7_water", "SproutLands/Tilesets/Water"],
+        "water_bounds": ["Level_7/Level_7_water_bounds", "SproutLands/Tilesets/Water"],
+        "terrain": ["Level_7/Level_7_terrain", "SproutLands/Tilesets/Grass"],
+        "tree": ["Level_7/Level_7_tree","SproutLands/Objects/Basic_Grass_Biom_things"],
+        "fence": ["Level_7/Level_7_fence", "SproutLands/Tilesets/Fences"],
+        "bridge": ["Level_7/Level_7_bridge", "SproutLands/Objects/Wood_Bridge"],
+        "vegetation": ["Level_7/Level_7_vegetation", "SproutLands/Objects/Basic_Grass_Biom_things"],
+         "start_pos": "Level_7/start_pos"
+    },
+    "player":{
+        "bounds": {
+            "blocked":["water", "tree"],
+            "jumpable": ["fence"]
+        },
+        "energy": 500
+    },
+    "npc": ["Be careful theres energy now!" , "Kevin has just refound the taste for Carrots, he wants more", "So much so, that he can smell it in the distance."]
+}

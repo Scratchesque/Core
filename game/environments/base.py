@@ -216,6 +216,12 @@ class GameEnv(BaseEnvironment):
             return None
         return getattr(systems_data, "allowed_blocks", None)
     
+    def get_script_blocks(self):
+        systems_data = getattr(self.env_data, "systems", None)
+        if systems_data is None:
+            return None
+        return getattr(systems_data, "premade_script", None)
+    
     def update_frame(self, delta_time):
         self.check_level_complete()
         
@@ -262,6 +268,7 @@ class BlockEnv(GameEnv):
             manager=self.ui_manager, 
             player=self.board.player,
             allowed_blocks=self.get_allowed_blocks(),
+            starting_blocks=self.get_script_blocks()
         )    
 class InterpreterEnv(BlockEnv):
 

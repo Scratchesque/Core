@@ -1,3 +1,4 @@
+import pygame
 from pygame import MOUSEBUTTONUP, MOUSEMOTION, Rect
 from pygame.math import Vector2
 from pygame_gui.elements import UIButton, UILabel, UIPanel, UITextBox
@@ -222,7 +223,7 @@ class CodeBlocks(UIPanel):
     PALETTE_FALLBACK_MIN_WIDTH = 116
     LANE_MIN_WIDTH = 220
 
-    def __init__(self, panel_pos, panel_size, manager, player, allowed_blocks=None):
+    def __init__(self, panel_pos, panel_size, manager, player, allowed_blocks=None, starting_blocks=None):
         super().__init__(
             Rect(panel_pos, panel_size),
             manager=manager,
@@ -232,6 +233,7 @@ class CodeBlocks(UIPanel):
 
         self.player = player
         self.block_library = get_block_library(allowed_blocks)
+        self.starting_blocks = starting_blocks
         self.program_blocks = []
         self._exec_steps: list = []
         self.next_step_index = 0
@@ -248,6 +250,7 @@ class CodeBlocks(UIPanel):
 
         self.configure_layout()
         self.create_ui()
+        self._make_start_script()
         self.refresh_status()
 
     def configure_layout(self):
@@ -645,6 +648,15 @@ class CodeBlocks(UIPanel):
         self.drag_was_new = False
         self.refresh_status()
 
+    def _make_start_script(self):
+        if self.starting_blocks is None: return 
+        for element_block in self.starting_blocks:
+            spec = get_block_library([element_block])
+            new_block = self.create_script_block(spec[0], (0, 0))
+            self.program_blocks.append(new_block)
+        self.relayout_program_blocks()
+        self.refresh_status()
+    
     def clear_program(self):
         if self.is_running:
             return

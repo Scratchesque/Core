@@ -1,8 +1,9 @@
 {
     "env":{
+        "type": "Block",
         "title": "Level 3",
         "theme": "game",
-        "next_env": "Journey Complete"
+        "next_env": "Level 4"
     },
     "systems": {
         "allowed_blocks": [

@@ -5,7 +5,7 @@ import pkgutil
 from game.core.paths import resolve_project_path
 from game.support.files import load_json
 import game.environments as environments_pkg
-from game.environments.base import BaseEnvironment, GameEnv
+from game.environments.base import BaseEnvironment, GameEnv, BlockEnv
 from game.support.player_data import PlayerData
 from game.window.display import Display
 
@@ -94,5 +94,6 @@ class GameManager:
             raise ValueError(f"Environment data for '{level_file}' is missing an 'env' section.")
         
         if 'level' in level_file:
-            return GameEnv(level_file)
+            if env_data.env.type == 'Block':
+                return BlockEnv(level_file)
         return None

@@ -1,5 +1,6 @@
 {
     "env":{
+        "type": "Block",
         "title": "Level 6",
         "theme": "game",
         "next_env": "Level 7"

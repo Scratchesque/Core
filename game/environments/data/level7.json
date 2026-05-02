@@ -1,5 +1,6 @@
 {
     "env":{
+        "type": "Block",
         "title": "Level 7",
         "theme": "game",
         "next_env": "Journey Complete"

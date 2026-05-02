@@ -1,5 +1,5 @@
 from pygame import Rect, KEYUP, K_ESCAPE, Color
-from pygame_gui.elements import UIImage, UIPanel
+from pygame_gui.elements import UIPanel
 
 from game.app.board import Board
 from game.app.code_blocks import CodeBlocks
@@ -73,10 +73,6 @@ class GameEnv(BaseEnvironment):
     BLOCKS_PANEL_WIDTH_RATIO = 0.39
     CONFIRM_PANEL_SIZE = (550, 220)
 
-    # The BaseEnvironment in 'environments/base.py', init's the level file
-    def __init__(self, level_file): # This file is where the env gets/loads inital data for the level
-        super().__init__(level_file)
-
     def get_board_grid_size(self):
         for map_layer in self.env_data.map.__dict__.values():
             csv_layout = import_map_layout(map_layer[0])
@@ -112,7 +108,7 @@ class GameEnv(BaseEnvironment):
             starting_height=1,
         )
 
-    def create_ui(self):
+    def configure_layout(self):
         outer_margin = 40
         panel_gap = 20
         available_width = SCREEN_WIDTH - (outer_margin * 2) - panel_gap
@@ -123,29 +119,23 @@ class GameEnv(BaseEnvironment):
             int(available_width * self.BLOCKS_PANEL_WIDTH_RATIO),
         )
         board_max_width = available_width - blocks_width
-        board_size = self.get_board_panel_size(board_max_width, available_height)
-        board_pos = (outer_margin, outer_margin + ((available_height - board_size[1]) // 2))
-        blocks_pos = (SCREEN_WIDTH - outer_margin - blocks_width, outer_margin)
-        blocks_size = (blocks_width, available_height)
 
-        self.create_shadow_panel(board_pos, board_size)
-        self.create_shadow_panel(blocks_pos, blocks_size)
+        self.board_size = self.get_board_panel_size(board_max_width, available_height)
+        self.board_pos = (outer_margin, outer_margin + ((available_height - self.board_size[1]) // 2))
+        self.blocks_size = (blocks_width, available_height)
+        self.blocks_pos = (SCREEN_WIDTH - outer_margin - blocks_width, outer_margin)
+
+    def create_ui(self):
+        self.configure_layout()
+
+        self.create_shadow_panel(self.board_pos, self.board_size)
 
         # Takes data passed through and starts creating the tiles/player/goal
         self.board = Board(
-            panel_pos=board_pos,
-            panel_size=board_size,
+            panel_pos=self.board_pos,
+            panel_size=self.board_size,
             env_data=self.env_data, 
             manager=self.ui_manager)
-
-        # Where our code blocks will be placed and initalised
-        self.blocks = CodeBlocks(
-            panel_pos=blocks_pos,
-            panel_size=blocks_size,
-            level_title=self.title,
-            manager=self.ui_manager, 
-            player=self.board.player,
-            allowed_blocks=self.get_allowed_blocks())
         
         # Setting level text from getting the env title
         LevelText(
@@ -168,7 +158,6 @@ class GameEnv(BaseEnvironment):
         self.settings_panel = None
         
     def on_ui_event(self, event):
-        # here we need super cause this is our own implementation that is called from display.py and needs calls from the BaseEnvironment class 
         super().on_ui_event(event)
         if (event.type == KEYUP and event.key == K_ESCAPE) or self.settings_button.on_click(event):
             if self.settings_panel is None or not self.settings_panel.alive():
@@ -257,3 +246,20 @@ class GameEnv(BaseEnvironment):
                 reset_event = pygame.event.Event(RESET_ENV_CONFIRMED)
                 pygame.event.post(reset_event)
                 return
+
+class BlockEnv(GameEnv):
+    
+    def create_ui(self):
+        super().create_ui()
+        
+        self.create_shadow_panel(self.blocks_pos, self.blocks_size)
+    
+        # Where our code blocks will be placed and initalised
+        self.blocks = CodeBlocks(
+            panel_pos=self.blocks_pos,
+            panel_size=self.blocks_size,
+            level_title=self.title,
+            manager=self.ui_manager, 
+            player=self.board.player,
+            allowed_blocks=self.get_allowed_blocks(),
+        )    

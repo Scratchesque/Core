@@ -7,7 +7,7 @@
     },
     "systems": {
         "level_script": [
-            "left", "fix_right", "fix_right"
+            "left", "fix_right", "fix_right", "fix_jump_down"
         ]
     },
     "map": {

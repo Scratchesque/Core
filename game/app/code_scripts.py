@@ -18,7 +18,7 @@ class ProblemPanel(UIPanel):
         (SCREEN_HEIGHT-PANEL_SIZE[1])//2
     )
 
-    def __init__(self, spec_str_list, manager):
+    def __init__(self, spec_str, manager):
         super().__init__(
             relative_rect=Rect(self.PANEL_POS, self.PANEL_SIZE), 
             starting_height=8,
@@ -26,7 +26,7 @@ class ProblemPanel(UIPanel):
             object_id="#problem_panel"
         )
         
-        temp_str = spec_str_list[1].replace('    ','')
+        temp_str = spec_str.replace('  ','')
         self.fix_string = re.sub(r'<[^>]+>', '', temp_str)
 
         self.value = 0
@@ -119,9 +119,9 @@ class ProblemPanel(UIPanel):
             return
 
 class ProblemButton(Button):
-    def __init__(self, spec, spec_str_list, pos, line, manager, container = None):
+    def __init__(self, spec, spec_str, pos, line, manager, container = None):
         self.spec = spec
-        self.spec_str_list = spec_str_list
+        self.spec_str = spec_str
         self.size = Vector2(30, 30)
         self.pos = Vector2(self.get_line_pos(pos, line))
         self.line = line
@@ -148,7 +148,10 @@ class ProblemButton(Button):
     def process_event(self, event):
         super().process_event(event)
         if self.on_click(event) and (self.problem_panel is None or not self.problem_panel.alive()):
-            self.problem_panel = ProblemPanel(self.spec_str_list, self.ui_manager)
+            self.problem_panel = ProblemPanel(
+                spec_str=self.spec_str, 
+                manager=self.ui_manager
+            )
 
         if self.problem_panel == None: return
 
@@ -371,12 +374,14 @@ class CodePanel(UIPanel, Interpreter):
             
             spec_str_list = self._format_spec_class(spec)
             if 'fix' in spec.id and make_problem:
+                line_type = 2 if spec.action == 'jump' else 1
+                line_pos = len(self.class_list)+1+line_type
                 self.problem_buttons.append(
                     ProblemButton(
                         spec=spec, 
-                        spec_str_list=spec_str_list, 
+                        spec_str=spec_str_list[line_type], 
                         pos=self.script_area_rect.topleft, 
-                        line=len(self.class_list)+2, 
+                        line=line_pos, 
                         manager=self.ui_manager, 
                         container=self
                     )

@@ -141,7 +141,7 @@ class ProblemButton(Button):
         self.solved = False
 
     def get_line_pos(self, block_pos, line):
-        font_size=23
+        font_size=21
         line_y = block_pos[1]+5 + (line - 1) * font_size
         return (block_pos[0]-self.size.x-10, line_y)
 
@@ -334,11 +334,10 @@ class CodePanel(UIPanel, Interpreter):
 
     def change_block(self, block):
         for x in range(len(self.program_blocks)):
-            spec_list = self.program_blocks[x]
+            spec_list = self.program_blocks[x][0]
             for y in range(len(spec_list)):
-                spec = self.program_blocks[x][y]
-                if spec.id == block.id:
-                    self.program_blocks[x][y] = block
+                if spec_list[y].id == block.id:
+                    self.program_blocks[x][0][y] = block
                     continue
 
         self._make_classes()

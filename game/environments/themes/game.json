@@ -2,6 +2,7 @@
   "#fira_code_font": {
     "font": {
       "name": "custom_font",
+      "size": "13",
       "regular_resource": {
         "package": "game.assets.fonts",
         "resource": "FiraCode-Regular.ttf"

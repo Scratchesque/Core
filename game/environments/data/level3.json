@@ -28,5 +28,5 @@
         },
         "energy": 50
     },
-    "npc": ["Be careful theres energy now!" , "Kevin has just refound the taste for Carrots, he wants more", "So much so, that he can smell it in the distance."]
+  "npc":["Congrats on getting the carrot!","Now Kevin has found a taste for them!","So much so, that he can almost smell one in the distance.","Maybe you could help Kevin get to his next Carrot.", "It also looks like you've learned a new ability from getting the carrots!", "Maybe its worth trying it out?", "It also looks like an energy bar has appeared!","Maybe you should use your run button wisely!"]
 }

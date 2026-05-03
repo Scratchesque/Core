@@ -24,5 +24,5 @@
         },
         "energy": 50
     },
-    "npc": ["You have now learnt the basics of moving a player around", "Now try and see if you can fix errors in code"]
+  "npc":["It seems like you are now familiar with how the code works!","Do you see the ! on your screen?","Click that to edit the code on the screen","There is something stopping it from running", "Have a go at fixing it to really put your skills to the test!","Good Luck!"]
 }

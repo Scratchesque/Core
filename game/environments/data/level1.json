@@ -23,5 +23,5 @@
             "blocked":["water","tree"]
         }
     },
-    "npc": ["Kevin has just left his cabin and is now on a green island", "In the distance he can see a carrot next to a tree." , "Maybe you should try to get to the carrot."]
+  "npc":["Now that you've helped Kevin leave his house/cabin", "he appears to be on a green island!","In the distance he can see a Carrot next to a tree. ","Maybe you should go to the Carrot!", "Kevin has recently forgotten how to do many things","The things he can remember-,", "you can see in the form of draggable boxes","As you get more carrots-", "he should start to remember how to do more things"]
 }

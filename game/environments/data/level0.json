@@ -24,5 +24,5 @@
             "blocked":["walls", "door"]
         }
     },
-    "npc": ["This level has the blocks placed for you.", "No clue what else ;P"]
+  "npc":["Welcome to Rabbit Rush!", "This game is focussed on building up your problem solving skills", "And teaching you some of the basics of how to code!", "This level starts off with the building  blocks in place already.", "feel free to mess around with them", "And then press run when you're ready to start the game "]
 }

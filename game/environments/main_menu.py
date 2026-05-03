@@ -20,7 +20,7 @@ class LevelSelect(BaseEnvironment):
         self.level_buttons = []
 
         UIFactory.image(
-            pos=(SCREEN_WIDTH // 2, 150),
+            pos=(SCREEN_WIDTH // 2, 100),
             size=self.LOGO_SIZE,
             image_path="game/assets/menu/logo.png",
             manager=self.ui_manager,

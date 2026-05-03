@@ -19,7 +19,7 @@ class CompletionScreen(BaseEnvironment):
 
     def create_ui(self):
         UIFactory.image(
-            pos=(SCREEN_WIDTH // 2, 72),
+            pos=(SCREEN_WIDTH // 2, 50),
             size=(620, 220),
             image_path="game/assets/menu/logo.png",
             manager=self.ui_manager,

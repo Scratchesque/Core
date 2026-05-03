@@ -172,13 +172,13 @@ class CodePanel(UIPanel, Interpreter):
     PANEL_PADDING = 18
     SCRIPT_LANE_PADDING = 30
     SECTION_GAP = 16
-    STATUS_HEIGHT = 82
+    STATUS_HEIGHT = 75
     ACTION_BUTTON_HEIGHT = 54
     RESET_BUTTON_HEIGHT = 50
 
     def __init__(self, player, panel_pos, panel_size, level_script, manager, level_title):
         self.player=player
-        self._change_min_lines(30)
+        self._change_min_lines(34)
         self.size = Vector2(panel_size)
         self.pos = Vector2(panel_pos)
         self.level_title = level_title 
@@ -191,6 +191,7 @@ class CodePanel(UIPanel, Interpreter):
         
         self.is_running = False
         self.program_blocks = []
+        self._exec_steps = []
         self.problem_buttons = []
         
         self.configure_layout()
@@ -235,7 +236,7 @@ class CodePanel(UIPanel, Interpreter):
 
         self.text_rect = Rect(
             (self.script_area_rect.x+5, self.script_area_rect.y+5),
-            (self.script_area_rect.size[0],self.script_area_rect.size[1])
+            (self.script_area_rect.size[0],self.script_area_rect.size[1]+50)
         )
 
     def create_ui(self):
@@ -287,6 +288,9 @@ class CodePanel(UIPanel, Interpreter):
             return
         
         if event.ui_element == self.run_button:
+            self._exec_steps = self._build_exec_steps()
+            if not self._exec_steps:
+                return
             self.is_running = True
             self.next_step_index = 0
             return
@@ -299,12 +303,22 @@ class CodePanel(UIPanel, Interpreter):
     def update(self, delta_time):
         self.run_next_step()
 
+    def _build_exec_steps(self):
+        steps = []
+        for script_list in self.program_blocks:
+            spec_list = script_list[0]
+            repeat_amm = script_list[1]
+            for _ in range(repeat_amm):
+                for spec in spec_list:
+                    steps.append(spec)
+        return steps
+
     def refresh_status(self):
         problems_left = self._count_problems_left()
         if self.is_running:
             status = (
                 "<b>Status:</b> Running your script.<br>"
-                f"Step {self.next_step_index} of {len(self.program_blocks)}."
+                f"Step {self.next_step_index} of {len(self._exec_steps)}."
             )
         elif problems_left == 0:
             status = (
@@ -320,10 +334,12 @@ class CodePanel(UIPanel, Interpreter):
 
     def change_block(self, block):
         for x in range(len(self.program_blocks)):
-            spec = self.program_blocks[x]
-            if spec.id == block.id:
-                self.program_blocks[x] = block
-                continue
+            spec_list = self.program_blocks[x]
+            for y in range(len(spec_list)):
+                spec = self.program_blocks[x][y]
+                if spec.id == block.id:
+                    self.program_blocks[x][y] = block
+                    continue
 
         self._make_classes()
         block_text = self._translate_blocks()
@@ -334,14 +350,14 @@ class CodePanel(UIPanel, Interpreter):
         if not self.is_running or self.player.is_moving:
             return
 
-        if self.next_step_index >= len(self.program_blocks):
+        if self.next_step_index >= len(self._exec_steps):
             self.is_running = False
             self.next_step_index = 0
             self.player.deplete_energy()
             self.refresh_status()
             return
         
-        spec = self.program_blocks[self.next_step_index]
+        spec = self._exec_steps[self.next_step_index]
         self.player.do_action(spec.action, x=spec.x, y=spec.y)
         self.next_step_index += 1
         self.refresh_status()
@@ -358,38 +374,50 @@ class CodePanel(UIPanel, Interpreter):
 
     def _make_start_script(self, level_script):
         for script_line in level_script:
-            block = get_block_library([script_line])[0]
-
-            self.program_blocks.append(block)
+            blocks = get_block_library(script_line[0])
+            self.program_blocks.append([blocks,script_line[1]])
 
     def _make_classes(self, make_problem = False):
         font_text = self._type_to_font('Blocks', 'main')
         self.class_list = [f'Class {font_text}:']
         seen_ids = []
 
-        for spec in self.program_blocks:
-            if spec.id in seen_ids: 
-                continue
-            seen_ids.append(spec.id)
-            
-            spec_str_list = self._format_spec_class(spec)
-            if 'fix' in spec.id and make_problem:
-                line_type = 2 if spec.action == 'jump' else 1
-                line_pos = len(self.class_list)+1+line_type
-                self.problem_buttons.append(
-                    ProblemButton(
-                        spec=spec, 
-                        spec_str=spec_str_list[line_type], 
-                        pos=self.script_area_rect.topleft, 
-                        line=line_pos, 
-                        manager=self.ui_manager, 
-                        container=self
+        for script_list in self.program_blocks:
+            for spec in script_list[0]:
+                if spec.id in seen_ids: 
+                    continue
+                seen_ids.append(spec.id)
+                
+                spec_str_list = self._format_spec_class(spec)
+                if 'fix' in spec.id and make_problem:
+                    line_type = 2 if spec.action == 'jump' else 1
+                    line_pos = len(self.class_list)+1+line_type
+                    self.problem_buttons.append(
+                        ProblemButton(
+                            spec=spec, 
+                            spec_str=spec_str_list[line_type], 
+                            pos=self.script_area_rect.topleft, 
+                            line=line_pos, 
+                            manager=self.ui_manager, 
+                            container=self
+                        )
                     )
-                )
-            self.class_list += spec_str_list
+                self.class_list += spec_str_list
 
     def _make_blocks(self):
         font_text = self._type_to_font(self.level_title, 'main')
         self.block_list =  [f'Script {font_text}:']
-        for block in self.program_blocks:
-            self.block_list.append(self._format_spec_code(block))
+
+        for script_list in self.program_blocks:
+            spec_list = script_list[0]
+            repeat_amm = script_list[1]
+            if repeat_amm != 1:
+                loop_font = self._type_to_font('Loop', 'loop')
+                self.block_list.append(f'{self.GAP}{loop_font} ({repeat_amm}):')
+
+                for spec in spec_list:
+                    self.block_list.append(self._format_spec_code(spec, func_gap=True))
+            else:
+                for spec in spec_list:
+                    self.block_list.append(self._format_spec_code(spec))
+                pass

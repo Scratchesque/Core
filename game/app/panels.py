@@ -190,7 +190,7 @@ class ConfirmationPanel(UIPanel):
             return
         if self.confirm_button.on_click(event):
             self.kill()
-            confirm_event = pygame.event.Event(self.confirm_event_type)
+            confirm_event = pygame.event.Event(CHANGE_ENV_CONFIRMED, {'change_env': self.confirm_event_type})
             pygame.event.post(confirm_event)
 
 

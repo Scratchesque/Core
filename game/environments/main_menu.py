@@ -1,4 +1,5 @@
 from game.core.constants import SCREEN_HEIGHT, SCREEN_WIDTH
+from game.core.events import *
 from game.support.ui import UIFactory
 from game.environments.base import BaseEnvironment
 from game.app.panels import DialoguePanel
@@ -84,13 +85,18 @@ Learn how to read and implement code to help Kevin reach his goal!''',
     def on_ui_event(self, event):
         super().on_ui_event(event)
 
+        change_env_data = {}
         for button, env_title, is_unlocked in self.level_buttons:
             if is_unlocked and button.on_click(event):
-                self.game_manager.change_env(env_title)
-                return
+                change_env_data = {'change_env': env_title}
+                continue
 
         if self.quit_button and self.quit_button.on_click(event):
-            self.game_manager.change_env("QUIT")
+            change_env_data = {'change_env': 'QUIT'}
+
+        if change_env_data != {}:
+            env_event = pygame.event.Event(CHANGE_ENV_CONFIRMED, change_env_data)
+            pygame.event.post(env_event)
 
     def _get_button_pos(self, index, start_x, start_y):
 

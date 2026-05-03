@@ -39,14 +39,13 @@ class BaseEnvironment:
         pass
 
     def on_ui_event(self, event):
-        if event.type == QUIT_EMV_CONFIRMED:
-            self.game_manager.change_env('QUIT')
-        if event.type == NEXT_ENV_CONFIRMED:
-            next_env = getattr(self.env_data.env, "next_env", None)
-            if next_env:
-                self.game_manager.change_env(next_env)
-        if event.type == RESET_ENV_CONFIRMED:
-            self.game_manager.change_env('RESET')
+        if event.type == CHANGE_ENV_CONFIRMED:
+            MessagePanel(
+                title="Please Wait!",
+                message="Loading level...",
+                manager=self.ui_manager
+            )
+            self.game_manager.change_env(event.change_env)
         if event.type == LEVEL_COMPLETED:
             next_env = getattr(self.env_data.env, "next_env", None)
             self.game_manager.mark_level_completed(
@@ -174,25 +173,22 @@ class GameEnv(BaseEnvironment):
             self.open_confirmation_panel(
                 title="Quit game?",
                 message="Exit the program on this level.",
-                confirm_event_type=QUIT_EMV_CONFIRMED,
+                confirm_event_type='QUIT',
             )
             return
         if event.type == RESET_ENV_REQUESTED:
             self.open_confirmation_panel(
                 title="Reset level?",
                 message="Current Level and Script will be reset.",
-                confirm_event_type=RESET_ENV_CONFIRMED,
+                confirm_event_type='RESET',
             )
             return
         if event.type == MENU_ENV_REQUESTED:
             self.open_confirmation_panel(
                 title="Return to menu?",
                 message="Leave this level and go to main menu.",
-                confirm_event_type=MENU_ENV_CONFIRMED,
+                confirm_event_type='Main Menu',
             )
-            return
-        if event.type == MENU_ENV_CONFIRMED:
-            self.game_manager.change_env("Main Menu")
             return
 
     def open_confirmation_panel(self, title, message, confirm_event_type):
@@ -245,7 +241,7 @@ class GameEnv(BaseEnvironment):
                     title="Level Reset!",
                     message="No energy remaining!",
                     manager=self.ui_manager)
-                reset_event = pygame.event.Event(RESET_ENV_CONFIRMED)
+                reset_event = pygame.event.Event(CHANGE_ENV_CONFIRMED, {'change_env': 'RESET'})
                 pygame.event.post(reset_event)
                 return
 

@@ -6,7 +6,7 @@ from game.support.ui import UIFactory
 
 class Interpreter:
     GAP = ' ' * 4
-    MIN_CODE_LINES = 40
+    MIN_CODE_LINES = 50
 
     def _change_min_lines(self, amm):
         self.MIN_CODE_LINES = amm

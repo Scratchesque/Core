@@ -241,8 +241,7 @@ class GameEnv(BaseEnvironment):
                     title="Level Reset!",
                     message="No energy remaining!",
                     manager=self.ui_manager)
-                reset_event = pygame.event.Event(CHANGE_ENV_CONFIRMED, {'change_env': 'RESET'})
-                pygame.event.post(reset_event)
+                self.game_manager.change_env('RESET')
                 return
 
 class BlockEnv(GameEnv):

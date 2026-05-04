@@ -48,20 +48,23 @@ class DialoguePanel(UIPanel):
             self.kill()
 
 class MessagePanel(UIPanel):
-    def __init__(self, panel_pos, panel_size, title, message, manager):
+    PANEL_SIZE = (300,160)
+    PANEL_POS = ((SCREEN_WIDTH-PANEL_SIZE[0])//2), ((SCREEN_HEIGHT-PANEL_SIZE[1])//2)
+
+    def __init__(self, title, message, manager):
         super().__init__(
-            Rect(panel_pos, panel_size),
+            Rect(self.PANEL_POS, self.PANEL_SIZE),
             manager=manager,
             object_id="#message_panel",
             starting_height=8,
         )
-        self.create_ui(title, message, panel_size)
+        self.create_ui(title, message)
 
-    def create_ui(self, title, message, panel_size):
+    def create_ui(self, title, message):
         padding = 24
 
         UILabel(
-            relative_rect=Rect((padding, 22), (panel_size[0] - (padding * 2), 36)),
+            relative_rect=Rect((padding, 22), (self.PANEL_SIZE[0] - (padding * 2), 36)),
             text=title,
             manager=self.ui_manager,
             container=self,
@@ -69,7 +72,7 @@ class MessagePanel(UIPanel):
         )
 
         UILabel(
-            relative_rect=Rect((padding, 78), (panel_size[0] - (padding * 2), 52)),
+            relative_rect=Rect((padding, 78), (self.PANEL_SIZE[0] - (padding * 2), 52)),
             text=message,
             manager=self.ui_manager,
             container=self,
@@ -187,7 +190,7 @@ class ConfirmationPanel(UIPanel):
             return
         if self.confirm_button.on_click(event):
             self.kill()
-            confirm_event = pygame.event.Event(self.confirm_event_type)
+            confirm_event = pygame.event.Event(CHANGE_ENV_CONFIRMED, {'change_env': self.confirm_event_type})
             pygame.event.post(confirm_event)
 
 

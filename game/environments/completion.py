@@ -1,6 +1,7 @@
 from pygame import Rect
 from pygame_gui.elements import UIPanel
 
+from game.core.events import *
 from game.core.constants import SCREEN_HEIGHT, SCREEN_WIDTH
 from game.environments.base import BaseEnvironment
 from game.support.ui import UIFactory
@@ -19,7 +20,7 @@ class CompletionScreen(BaseEnvironment):
 
     def create_ui(self):
         UIFactory.image(
-            pos=(SCREEN_WIDTH // 2, 72),
+            pos=(SCREEN_WIDTH // 2, 50),
             size=(620, 220),
             image_path="game/assets/menu/logo.png",
             manager=self.ui_manager,
@@ -108,16 +109,19 @@ class CompletionScreen(BaseEnvironment):
     def on_ui_event(self, event):
         super().on_ui_event(event)
 
+        change_env_data = {} 
         if self.replay_button and self.replay_button.on_click(event):
-            self.game_manager.change_env("Start")
-            return
+            change_env_data = {'change_env': 'Start'}
 
         if self.menu_button and self.menu_button.on_click(event):
-            self.game_manager.change_env("Main Menu")
-            return
+            change_env_data = {'change_env': 'Main Menu'}
 
         if self.quit_button and self.quit_button.on_click(event):
-            self.game_manager.change_env("QUIT")
+            change_env_data = {'change_env': 'QUIT'}
+
+        if change_env_data != {}:
+            env_event = pygame.event.Event(CHANGE_ENV_CONFIRMED, change_env_data)
+            pygame.event.post(env_event)
 
     def _get_story_envs(self):
         story_envs = []
@@ -160,7 +164,7 @@ class CompletionScreen(BaseEnvironment):
     def _build_credits_html(self):
         lines = [
             "<b>Credits</b>",
-            "Created by <b>Will</b>, <b>Albert</b>, <b>Harry</b>, <b>Kavron</b>, <b>Tafara</b>, and <b>Vlad</b>.",
+            "Created by <b>Will</b>, <b>Albert</b>, <b>Harry</b>, <b>Kamran</b>, <b>Tafara</b>, and <b>Vlad</b>.",
             "",
             "<b>References</b>",
             "pygame. GitHub (2020). Available at: github.com/pygame/pygame.",

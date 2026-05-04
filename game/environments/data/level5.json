@@ -1,0 +1,37 @@
+{
+    "env":{
+        "type": "Interpreter",
+        "title": "Level 5",
+        "theme": "game",
+        "next_env": "Level 6"
+    },
+    "systems": {
+        "allowed_blocks": [
+            "up",
+            "down",
+            "left",
+            "right",
+            "jump",
+            "jump_left",
+            "jump_right",
+            "jump_up",
+            "jump_down"
+        ]
+    },
+    "map": {
+        "water": ["Level_5/Level_5_water", "SproutLands/Tilesets/Water"],
+        "water_bounds": ["Level_5/Level_5_water_bounds", "SproutLands/Tilesets/Water"],
+        "terrain": ["Level_5/Level_5_terrain", "SproutLands/Tilesets/Grass"],
+        "tree": ["Level_5/Level_5_tree","SproutLands/Objects/Basic_Grass_Biom_things"],
+        "bridge": ["Level_5/Level_5_bridge", "SproutLands/Objects/Wood_Bridge"],
+        "vegetation": ["Level_5/Level_5_vegetation", "SproutLands/Objects/Basic_Grass_Biom_things"],
+         "start_pos": "Level_5/start_pos"
+    },
+    "player":{
+        "bounds": {
+            "blocked":["water", "tree"]
+        },
+        "energy": 50
+    },
+  "npc":["Now that you've gained some experience with the blocks-"," you can see the underlying code in a pullout box!","This may be useful to look at for later on!", "Continue using the drop down boxes for movement for now", "Try help Kevin get to the carrot!"]
+}

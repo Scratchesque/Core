@@ -3,7 +3,6 @@
         "title": "Journey Complete",
         "theme": "main_menu",
         "next_env": "Main Menu",
-        "show_in_menu": false,
-        "background": "f5f4d5"
+        "show_in_menu": false
     }
 }

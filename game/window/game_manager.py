@@ -2,8 +2,10 @@ import importlib
 import inspect
 import pkgutil
 
+from game.core.paths import resolve_project_path
+from game.support.files import load_json
 import game.environments as environments_pkg
-from game.environments.base import BaseEnvironment, GameEnv
+from game.environments.base import BaseEnvironment, GameEnv, BlockEnv, InterpreterEnv, CodeEnv
 from game.support.player_data import PlayerData
 from game.window.display import Display
 
@@ -72,7 +74,30 @@ class GameManager:
                 env.game_manager = self
                 environments.append(env)
 
+        data_dir = resolve_project_path("game/environments/data")
+
+        for f in sorted(data_dir.glob("*.json")):
+            env = self._create_level_from_file(f.stem)
+            if env is None: continue
+            env.game_manager = self
+            environments.append(env)
+
         if not environments:
             raise RuntimeError("No environments found in game/environments.")
 
         return environments
+
+    def _create_level_from_file(self, level_file):
+        env_data = load_json(f"game/environments/data/{level_file}.json")
+
+        if not hasattr(env_data, "env"):
+            raise ValueError(f"Environment data for '{level_file}' is missing an 'env' section.")
+        
+        if 'level' in level_file:
+            if env_data.env.type == 'Block':
+                return BlockEnv(level_file)
+            elif env_data.env.type == 'Interpreter':
+                return InterpreterEnv(level_file)
+            elif env_data.env.type == 'Code':
+                return CodeEnv(level_file)
+        return None

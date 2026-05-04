@@ -6,7 +6,7 @@ class BlockSpec:
     id: str
     label: str
     object_id: str
-    action: str
+    action: str = ""
     x: int = 0
     y: int = 0
 
@@ -16,14 +16,22 @@ DEFAULT_BLOCK_LIBRARY = (
     BlockSpec("down", "Move Down", "#motion_block", "down", y=1),
     BlockSpec("left", "Move Left", "#motion_block", "left", x=-1),
     BlockSpec("right", "Move Right", "#motion_block", "right", x=1),
-    BlockSpec("jump", "Jump", "#motion_block", "jump"),
-    BlockSpec("jump_left", "Jump Left", "#motion_block", "jump", x=-2),
-    BlockSpec("jump_right", "Jump Right", "#motion_block", "jump", x=2),
-    BlockSpec("jump_up", "Jump Up", "#motion_block", "jump", y=-2),
-    BlockSpec("jump_down", "Jump Down", "#motion_block", "jump", y=2),
-    BlockSpec("loop","Loop", "#loop_block","")
-)
+    BlockSpec("jump", "Jump", "#jump_block", "jump"),
+    BlockSpec("jump_left", "Jump Left", "#jump_block", "jump", x=-2),
+    BlockSpec("jump_right", "Jump Right", "#jump_block", "jump", x=2),
+    BlockSpec("jump_up", "Jump Up", "#jump_block", "jump", y=-2),
+    BlockSpec("jump_down", "Jump Down", "#jump_block", "jump", y=2),
+    BlockSpec("loop","Loop", "#loop_block"),
 
+    BlockSpec("fix_up", "Move Up", "#motion_block", "up", y=1),
+    BlockSpec("fix_down", "Move Down", "#motion_block", "down", y=-1),
+    BlockSpec("fix_left", "Move Left", "#motion_block", "left", x=1),
+    BlockSpec("fix_right", "Move Right", "#motion_block", "right", x=-1),
+    BlockSpec("fix_jump_left", "Jump Left", "#jump_block", "jump", x=1),
+    BlockSpec("fix_jump_right", "Jump Right", "#jump_block", "jump", x=-1),
+    BlockSpec("fix_jump_up", "Jump Up", "#jump_block", "jump", y=1),
+    BlockSpec("fix_jump_down", "Jump Down", "#jump_block", "jump", y=-1),
+)
 
 def get_block_library(allowed_block_ids=None):
     if not allowed_block_ids:

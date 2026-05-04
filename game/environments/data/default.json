@@ -1,7 +1,7 @@
 {
     "env":{
         "title":"DEFAULT",
-        "background": "f5f4d5", 
+        "background": "F8F4CC", 
         "theme": "game",
         "next_env": "QUIT"
     }

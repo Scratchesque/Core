@@ -1,8 +1,9 @@
 {
     "env":{
+        "type": "Block",
         "title": "Level 3",
         "theme": "game",
-        "next_env": "QUIT"
+        "next_env": "Level 4"
     },
     "systems": {
         "allowed_blocks": [
@@ -10,12 +11,7 @@
             "down",
             "left",
             "right",
-            "jump",
-            "jump_left",
-            "jump_right",
-            "jump_up",
-            "jump_down",
-            "loop"
+            "jump"
         ]
     },
     "map": {
@@ -23,16 +19,14 @@
         "water_bounds": ["Level_3/Level_3_water_bounds", "SproutLands/Tilesets/Water"],
         "terrain": ["Level_3/Level_3_terrain", "SproutLands/Tilesets/Grass"],
         "tree": ["Level_3/Level_3_tree","SproutLands/Objects/Basic_Grass_Biom_things"],
-        "fence": ["Level_3/Level_3_fence", "SproutLands/Tilesets/Fences"],
         "vegetation": ["Level_3/Level_3_vegetation", "SproutLands/Objects/Basic_Grass_Biom_things"],
          "start_pos": "Level_3/start_pos"
     },
     "player":{
         "bounds": {
-            "blocked":["water", "tree"],
-            "jumpable": ["fence"]
+            "blocked":["water", "tree"]
         },
-        "energy": 5
+        "energy": 50
     },
-    "npc": ["Be careful theres energy now!" , "Kevin has just refound the taste for Carrots, he wants more", "So much so, that he can smell it in the distance."]
+  "npc":["Congrats on getting the carrot!","Now Kevin has found a taste for them!","So much so, that he can almost smell one in the distance.","Maybe you could help Kevin get to his next Carrot.", "It also looks like you've learned a new ability from getting the carrots!", "Maybe its worth trying it out?", "It also looks like an energy bar has appeared!","Maybe you should use your run button wisely!"]
 }

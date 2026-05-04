@@ -1,11 +1,13 @@
 {
     "env":{
+        "type": "Block",
         "title": "Start",
         "theme": "game",
         "next_env": "Level 1"
     },
     "systems": {
-        "allowed_blocks": ["down", "right"]
+        "allowed_blocks": ["down", "up"],
+        "level_script": ["down", "down", "down"]
     },
     "map":{
         "water": ["Level_0/Level_0_water", "SproutLands/Tilesets/Water"],
@@ -19,8 +21,8 @@
     },
     "player":{
         "bounds": {
-            "blocked":["walls"]
+            "blocked":["walls", "door"]
         }
     },
-    "npc": ["Drag and drop the function you want Kevin to execute" , "Your goal is to get Kevin to reach his lost carrot."]
+  "npc":["Welcome to Rabbit Rush!", "This game is focussed on building up your problem solving skills", "And teaching you some of the basics of how to code!", "This level starts off with the building  blocks in place already.", "feel free to mess around with them", "And then press run when you're ready to start the game "]
 }

@@ -1,0 +1,8 @@
+{
+    "env":{
+        "title": "Journey Complete",
+        "theme": "main_menu",
+        "next_env": "Main Menu",
+        "show_in_menu": false
+    }
+}

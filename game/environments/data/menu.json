@@ -2,6 +2,6 @@
     "env":{
         "title": "Main Menu",
         "theme": "main_menu",
-        "next_env": "Start"
+        "next_env": "QUIT"
     }
 }

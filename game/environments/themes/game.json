@@ -2,6 +2,7 @@
   "#fira_code_font": {
     "font": {
       "name": "custom_font",
+      "size": "13",
       "regular_resource": {
         "package": "game.assets.fonts",
         "resource": "FiraCode-Regular.ttf"
@@ -88,6 +89,9 @@
   "#interpreter_panel":{
     "prototype": "#core_panel"
   },
+  "#problem_panel":{
+    "prototype": "#core_panel"
+  },
   "#level_text_panel":{
     "prototype": "#transparent"
   },
@@ -130,11 +134,21 @@
       "normal_text": "#FFFFFF"
     }
   },
+  "#jump_block": {
+    "prototype": "#script_block",
+    "colours": {
+      "normal_bg": "#b603fc",
+      "hovered_bg": "#71059c",
+      "active_bg": "#5a027d",
+      "normal_text": "#FFFFFF"
+    }
+  },
   "#loop_block": {
     "prototype": "#script_block",
     "colours": {
       "normal_bg": "#c20017",
       "hovered_bg": "#ad0216",
+      "active_bg": "#73020f",
       "normal_text": "#FFFFFF"
     }
   },
@@ -324,12 +338,62 @@
       "normal_text":"#000000"
     }
   },
-  "#interpreter_panel.#text_code": {
+  "#problem_panel.#title": {
+    "font": {
+      "name": "custom_font",
+      "bold": "1",
+      "size": "22"
+    },
+    "colours": {
+      "normal_text": "#2E2E2E"
+    }
+  },
+  "#problem_panel.#body": {
+    "prototype": "#transparent",
+    "font": {
+      "name": "custom_font",
+      "size": "18"
+    },
+    "colours": {
+      "normal_text": "#4A3A1C"
+    },
+    "misc":{
+      "text_horiz_alignment":"center"
+    }
+  },
+  "#problem_panel.#entry_box": {
+    "font": {
+      "name": "custom_font",
+      "size": "18"
+    },
+    "colours": {
+      "normal_text": "#4A3A1C",
+      "dark_bg": "#FFFDF3",
+      "text_cursor": "Black"
+    },
+    "misc": {
+      "border_width": "3",
+      "shape": "rounded_rectangle",
+      "shape_corner_radius": "16"
+    }
+  },
+  "#problem_panel.button": {
+    "prototype": "#transparent",
+    "font":{
+      "name":"pixel_font",
+      "size":"18"
+    },
+    "colours":{
+      "normal_text": "#2F2412",
+      "active_text": "#4B3513"
+    }
+  },
+  "#text_code": {
     "prototype": "#transparent",
     "font": {
       "name": "custom_font",
       "bold": "1",
-      "size": "14"
+      "size": "13"
     },
     "colours":{
       "normal_text":"#000000"

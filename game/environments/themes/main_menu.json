@@ -98,10 +98,22 @@
     },
     "colours": {
       "normal_text": "#4A3A1C"
+    },
+    "misc": {
+      "text_horiz_alignment": "center"
     }
   },
   "#dialogue_panel.#button": {
     "prototype": "#transparent",
     "parent": "button"
+  },
+  "#message_panel":{
+    "prototype": "#dialogue_panel"
+  },
+  "#message_panel.#title":{
+    "prototype": "#dialogue_panel.#title"
+  },
+  "#message_panel.#body":{
+    "prototype": "#dialogue_panel.#body"
   }
 }

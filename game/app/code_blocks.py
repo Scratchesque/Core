@@ -5,7 +5,6 @@ from pygame_gui._constants import UI_BUTTON_PRESSED, UI_BUTTON_START_PRESS
 
 from game.app.block_registry import get_block_library
 from game.core.events import *
-from game.app.block_interpreter import InterpreterPanel
 
 
 class ScriptBlock(UIPanel):
@@ -223,7 +222,7 @@ class CodeBlocks(UIPanel):
     PALETTE_FALLBACK_MIN_WIDTH = 116
     LANE_MIN_WIDTH = 220
 
-    def __init__(self, panel_pos, panel_size, level_title, manager, player, allowed_blocks=None):
+    def __init__(self, panel_pos, panel_size, manager, player, allowed_blocks=None, level_script=None):
         super().__init__(
             Rect(panel_pos, panel_size),
             manager=manager,
@@ -232,7 +231,9 @@ class CodeBlocks(UIPanel):
         )
 
         self.player = player
+        self.interpreter = None
         self.block_library = get_block_library(allowed_blocks)
+        self.starting_blocks = level_script
         self.program_blocks = []
         self._exec_steps: list = []
         self.next_step_index = 0
@@ -246,18 +247,11 @@ class CodeBlocks(UIPanel):
         self.palette_button_to_spec = {}
         self.script_button_to_block = {}
         self.palette_drag_source = None
+        self.placed_blocks_history = []
 
         self.configure_layout()
         self.create_ui()
-
-        self.interpreter = InterpreterPanel(
-            panel_pos=panel_pos,
-            panel_size=panel_size, 
-            manager=self.ui_manager,
-            pallet_blocks=self.palette_button_to_spec,
-            level_title=level_title
-        )
-
+        self._make_start_script()
         self.refresh_status()
 
     def configure_layout(self):
@@ -419,6 +413,14 @@ class CodeBlocks(UIPanel):
             object_id="#edit_button",
         )
 
+    def set_interpreter(self, interpreter):
+        self.interpreter = interpreter
+
+    def update_interpreter(self):
+        if self.interpreter is None: 
+            return
+        self.interpreter.update_text(self.program_blocks)
+
     def refresh_status(self):
         total_steps, total_blocks, _ = self._count_total_steps()
         if self.is_running:
@@ -432,13 +434,13 @@ class CodeBlocks(UIPanel):
                 "<b>Status:</b> Script ready.<br>"
                 f"{total_blocks} Movement Blocks(s) in lane — {total_steps} total step(s)."
             )
-            self.interpreter.translate_blocks(self.program_blocks)
+            self.update_interpreter()
         else:
             status = (
                 "<b>Status:</b> Build a short program.<br>"
                 "Drag blocks into the lane. Add a Loop block to repeat steps."
             )
-            self.interpreter.translate_blocks(self.program_blocks)
+            self.update_interpreter()
         self.status_display.set_text(status)
  
     def _count_total_steps(self):
@@ -487,6 +489,21 @@ class CodeBlocks(UIPanel):
             for child in block.children_blocks:
                 self.script_button_to_block.pop(child.button, None)
         block.kill()
+
+    def _record_user_placement(self, block):
+        self.placed_blocks_history.append(block)
+
+    def _remove_from_placement_history(self, block):
+        self.placed_blocks_history = [item for item in self.placed_blocks_history if item is not block]
+        if isinstance(block, LoopBlock):
+            for child in block.children_blocks:
+                self._remove_from_placement_history(child)
+
+    def _is_block_in_program(self, block):
+        parent = block.parent_block
+        if parent is not None:
+            return block in parent.children_blocks
+        return block in self.program_blocks
 
     def panel_local_pos(self, mouse_pos):
         panel_rect = self.get_abs_rect()
@@ -645,6 +662,8 @@ class CodeBlocks(UIPanel):
                     restore_index = min(self.drag_original_index, len(self.program_blocks))
                     self.program_blocks.insert(restore_index, dragged_block)
                 self.relayout_program_blocks()
+        elif self.drag_was_new:
+            self._record_user_placement(dragged_block)
 
         if dragged_block.button.alive():
             dragged_block.button.change_layer(ScriptBlock.SCRIPT_BLOCK_LAYER)
@@ -657,12 +676,22 @@ class CodeBlocks(UIPanel):
         self.drag_was_new = False
         self.refresh_status()
 
+    def _make_start_script(self):
+        if self.starting_blocks is None: return 
+        for element_block in self.starting_blocks:
+            spec = get_block_library([element_block])
+            new_block = self.create_script_block(spec[0], (0, 0))
+            self.program_blocks.append(new_block)
+        self.relayout_program_blocks()
+        self.refresh_status()
+    
     def clear_program(self):
         if self.is_running:
             return
         for item in self.program_blocks:
             self.destroy_script_block(item)
         self.program_blocks.clear()
+        self.placed_blocks_history.clear()
         self.next_step_index = 0
         self.refresh_status()
 
@@ -675,12 +704,16 @@ class CodeBlocks(UIPanel):
             if block in loop.children_blocks:
                 loop.children_blocks.remove(block)
                 block.parent_block = None
+                self._remove_from_placement_history(block)
                 self.destroy_script_block(block)
                 self.relayout_program_blocks()
         else:
             self.program_blocks.remove(block)
+            self._remove_from_placement_history(block)
             self.destroy_script_block(block)
             self.relayout_program_blocks()
+        self.destroy_script_block(block)
+        self.relayout_program_blocks()
         self.refresh_status()
 
     def start_program(self):
@@ -716,20 +749,25 @@ class CodeBlocks(UIPanel):
         self.refresh_status()
 
     def undo_step(self):
-        if self.is_running or not self.program_blocks:
+        if self.is_running:
             return
-        last = self.program_blocks[-1]
-        if isinstance(last, LoopBlock):
-            if last.children_blocks:
-                child = last.children_blocks.pop()
-                child.parent_block = None
-                self.destroy_script_block(child)
+
+        while self.placed_blocks_history:
+            block = self.placed_blocks_history.pop()
+            if not self._is_block_in_program(block):
+                continue
+
+            if block.parent_block is not None:
+                parent_loop = block.parent_block
+                parent_loop.children_blocks.remove(block)
+                block.parent_block = None
             else:
-                self.program_blocks.pop()
-                self.destroy_script_block(last)
-        else:
-            self.program_blocks.pop()
-            self.destroy_script_block(last)
+                self.program_blocks.remove(block)
+
+            self._remove_from_placement_history(block)
+            self.destroy_script_block(block)
+            break
+
         self.relayout_program_blocks()
         self.refresh_status()
 

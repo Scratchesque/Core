@@ -247,6 +247,7 @@ class CodeBlocks(UIPanel):
         self.palette_button_to_spec = {}
         self.script_button_to_block = {}
         self.palette_drag_source = None
+        self.placed_blocks_history = []
 
         self.configure_layout()
         self.create_ui()
@@ -489,6 +490,21 @@ class CodeBlocks(UIPanel):
                 self.script_button_to_block.pop(child.button, None)
         block.kill()
 
+    def _record_user_placement(self, block):
+        self.placed_blocks_history.append(block)
+
+    def _remove_from_placement_history(self, block):
+        self.placed_blocks_history = [item for item in self.placed_blocks_history if item is not block]
+        if isinstance(block, LoopBlock):
+            for child in block.children_blocks:
+                self._remove_from_placement_history(child)
+
+    def _is_block_in_program(self, block):
+        parent = block.parent_block
+        if parent is not None:
+            return block in parent.children_blocks
+        return block in self.program_blocks
+
     def panel_local_pos(self, mouse_pos):
         panel_rect = self.get_abs_rect()
         return (mouse_pos[0] - panel_rect.x, mouse_pos[1] - panel_rect.y)
@@ -646,6 +662,8 @@ class CodeBlocks(UIPanel):
                     restore_index = min(self.drag_original_index, len(self.program_blocks))
                     self.program_blocks.insert(restore_index, dragged_block)
                 self.relayout_program_blocks()
+        elif self.drag_was_new:
+            self._record_user_placement(dragged_block)
 
         if dragged_block.button.alive():
             dragged_block.button.change_layer(ScriptBlock.SCRIPT_BLOCK_LAYER)
@@ -673,6 +691,7 @@ class CodeBlocks(UIPanel):
         for item in self.program_blocks:
             self.destroy_script_block(item)
         self.program_blocks.clear()
+        self.placed_blocks_history.clear()
         self.next_step_index = 0
         self.refresh_status()
 
@@ -685,10 +704,12 @@ class CodeBlocks(UIPanel):
             if block in loop.children_blocks:
                 loop.children_blocks.remove(block)
                 block.parent_block = None
+                self._remove_from_placement_history(block)
                 self.destroy_script_block(block)
                 self.relayout_program_blocks()
         else:
             self.program_blocks.remove(block)
+            self._remove_from_placement_history(block)
             self.destroy_script_block(block)
             self.relayout_program_blocks()
         self.destroy_script_block(block)
@@ -728,20 +749,25 @@ class CodeBlocks(UIPanel):
         self.refresh_status()
 
     def undo_step(self):
-        if self.is_running or not self.program_blocks:
+        if self.is_running:
             return
-        last = self.program_blocks[-1]
-        if isinstance(last, LoopBlock):
-            if last.children_blocks:
-                child = last.children_blocks.pop()
-                child.parent_block = None
-                self.destroy_script_block(child)
+
+        while self.placed_blocks_history:
+            block = self.placed_blocks_history.pop()
+            if not self._is_block_in_program(block):
+                continue
+
+            if block.parent_block is not None:
+                parent_loop = block.parent_block
+                parent_loop.children_blocks.remove(block)
+                block.parent_block = None
             else:
-                self.program_blocks.pop()
-                self.destroy_script_block(last)
-        else:
-            self.program_blocks.pop()
-            self.destroy_script_block(last)
+                self.program_blocks.remove(block)
+
+            self._remove_from_placement_history(block)
+            self.destroy_script_block(block)
+            break
+
         self.relayout_program_blocks()
         self.refresh_status()
 

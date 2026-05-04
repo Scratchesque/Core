@@ -33,5 +33,5 @@
         },
         "energy": 2
     },
-    "npc": ["This is the final level", "see if you can solve it"]
+    "npc": ["This is the final level!","There is some code that needs fixing-","Take your time, this one is tricky!","The path at the bottom has already been written,","See what you can do!","hint, the jump might need to be 2..."]
 }

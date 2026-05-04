@@ -98,6 +98,9 @@
     },
     "colours": {
       "normal_text": "#4A3A1C"
+    },
+    "misc": {
+      "text_horiz_alignment": "center"
     }
   },
   "#dialogue_panel.#button": {

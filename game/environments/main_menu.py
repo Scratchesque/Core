@@ -65,11 +65,14 @@ class LevelSelect(BaseEnvironment):
         if total_unlocked == 1:
             # only start level unlocked
             DialoguePanel(
-                panel_pos=((SCREEN_WIDTH - self.INTRO_SIZE[0])//2, (SCREEN_HEIGHT - self.INTRO_SIZE[1])//2+ 100),
+                panel_pos=((SCREEN_WIDTH - self.INTRO_SIZE[0])//2, (SCREEN_HEIGHT - self.INTRO_SIZE[1])//2+ 40),
                 panel_size=self.INTRO_SIZE,
-                title="Welcome to Rabbit Rush your introduction to computer science!",
-                message='''Kevin the Bunny has lost his Carrots and abilities. It's your goal to gain them back. 
-Learn how to read and implement code to help Kevin reach his goal!''',
+                title="Welcome to Rabbit Rush! Your Introduction to Computer Science!",
+                message=(
+                    "Kevin the Bunny has lost his Carrots and abilities.\n"
+                    "It's your goal to gain them back.\n"
+                    "Learn how to read and implement code to help Kevin reach his goal!"
+                ),
                 manager=self.ui_manager)
 
         self.quit_button = UIFactory.button_img(

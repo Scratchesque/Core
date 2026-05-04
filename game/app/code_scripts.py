@@ -393,14 +393,17 @@ class CodePanel(UIPanel, Interpreter):
     def _make_classes(self, make_problem = False):
         font_text = self._type_to_font('Blocks', 'main')
         self.class_list = [f'Class {font_text}:']
-        seen_ids = []
+        all_specs = []
 
         for script_list in self.program_blocks:
             for spec in script_list[0]:
-                if spec.id in seen_ids: 
+                if spec in all_specs: 
                     continue
-                seen_ids.append(spec.id)
-                
+                all_specs.append(spec)
+
+        all_specs.sort(key=lambda p: p.label, reverse=True)
+
+        for spec in all_specs:
                 format_spec_list = self._format_spec_class(spec)
                 if 'fix' in spec.id and make_problem:
                     line_type = 2 if spec.action == 'jump' else 1

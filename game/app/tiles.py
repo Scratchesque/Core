@@ -1,4 +1,4 @@
-from pygame import Rect, math, transform, MOUSEBUTTONUP
+from pygame import Rect, Vector2, transform, MOUSEBUTTONUP
 from pygame_gui.elements import UIImage, UIScreenSpaceHealthBar
 
 from game.app.panels import MessagePanel, SpeechPanel
@@ -33,7 +33,7 @@ class Tile(UIImage):
         super().__init__(relative_rect=relative_rect, image_surface=loaded_image, manager=manager, container=container)
         self.set_image(loaded_image)
 
-        self.pos = math.Vector2(start_pos)
+        self.pos = Vector2(start_pos)
         self.animation_count = 0
 
     # Fix blurry images with scaling
@@ -118,13 +118,13 @@ class Player(Tile):
                            container=container,
                            board_offset=board_offset)
         
-        # Ive put the img_path in here cause its not something that 'should' be changed on the fly as animations can break if changed as of now
         img_path='SproutLands/Characters/Basic Charakter Spritesheet.png'
         super().__init__(start_pos, tiles_size, img_path, manager, container, 0, board_offset)
 
-        self.vel = math.Vector2(0,0)
-        self.tiles_size = math.Vector2(tiles_size)
-        self.board_offset = math.Vector2(board_offset)
+        self.start_pos = Vector2(start_pos)
+        self.vel = Vector2(0,0)
+        self.tiles_size = Vector2(tiles_size)
+        self.board_offset = Vector2(board_offset)
 
         self.map_tiles = map_tiles
 
@@ -204,7 +204,7 @@ class Player(Tile):
         self.is_moving = False
         self.is_jumping = False
         self.state = 'idle'
-        self.vel = math.Vector2(0, 0)
+        self.vel = Vector2(0, 0)
 
     def _apply_jump(self):
         

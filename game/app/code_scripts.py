@@ -12,13 +12,13 @@ from game.support.ui import UIFactory, Button
 
 
 class ProblemPanel(UIPanel):
-    PANEL_SIZE = (550,300)
+    PANEL_SIZE = (625,300)
     PANEL_POS = (
         (SCREEN_WIDTH-PANEL_SIZE[0])//2,
         (SCREEN_HEIGHT-PANEL_SIZE[1])//2
     )
 
-    def __init__(self, spec_str, manager):
+    def __init__(self, spec_str_list, manager):
         super().__init__(
             relative_rect=Rect(self.PANEL_POS, self.PANEL_SIZE), 
             starting_height=8,
@@ -26,12 +26,17 @@ class ProblemPanel(UIPanel):
             object_id="#problem_panel"
         )
         
-        temp_str = spec_str.replace('  ','')
-        self.fix_string = re.sub(r'<[^>]+>', '', temp_str)
+        self.method_string = f'<b>{spec_str_list[0]}</b>'
+        self.fix_string = self.replace_string_html(spec_str_list[1])
 
         self.value = 0
 
         self.create_ui()
+
+    @staticmethod
+    def replace_string_html(string):
+        temp_str = string.replace('  ','')
+        return re.sub(r'<[^>]+>', '', temp_str)
 
     def create_ui(self):
         padding = 24
@@ -42,7 +47,7 @@ class ProblemPanel(UIPanel):
         buttons_x = (self.PANEL_SIZE[0] - total_button_width) // 2
 
         UILabel(
-            relative_rect=Rect((padding, 22), (self.PANEL_SIZE[0] - (padding * 2), 36)),
+            relative_rect=Rect((padding, 25), (self.PANEL_SIZE[0] - (padding * 2), 36)),
             text="Fix the Code!",
             manager=self.ui_manager,
             container=self,
@@ -50,15 +55,23 @@ class ProblemPanel(UIPanel):
         )
 
         self.help_text = UITextBox(
-            relative_rect=Rect((padding, 70), (self.PANEL_SIZE[0] - (padding * 2), 52)),
+            relative_rect=Rect((padding, 65), (self.PANEL_SIZE[0] - (padding * 2), 52)),
             html_text="Can you find the bug that breaks the player?",
+            manager=self.ui_manager,
+            container=self,
+            object_id="#body",
+        )
+        
+        UITextBox(
+            relative_rect=Rect((padding, 105), (self.PANEL_SIZE[0] - (padding * 2), 52)),
+            html_text=self.method_string,
             manager=self.ui_manager,
             container=self,
             object_id="#body",
         )
 
         self.entry_box = UITextEntryLine(
-            relative_rect=Rect((padding, 140), (self.PANEL_SIZE[0] - (padding * 2), 52)),
+            relative_rect=Rect((padding, 155), (self.PANEL_SIZE[0] - (padding * 2), 52)),
             manager=self.ui_manager,
             container=self,
             object_id="#entry_box",
@@ -119,9 +132,9 @@ class ProblemPanel(UIPanel):
             return
 
 class ProblemButton(Button):
-    def __init__(self, spec, spec_str, pos, line, manager, container = None):
+    def __init__(self, spec, spec_str_list, pos, line, manager, container = None):
         self.spec = spec
-        self.spec_str = spec_str
+        self.spec_str_list = spec_str_list
         self.size = Vector2(30, 30)
         self.pos = Vector2(self.get_line_pos(pos, line))
         self.line = line
@@ -149,7 +162,7 @@ class ProblemButton(Button):
         super().process_event(event)
         if self.on_click(event) and (self.problem_panel is None or not self.problem_panel.alive()):
             self.problem_panel = ProblemPanel(
-                spec_str=self.spec_str, 
+                spec_str_list=self.spec_str_list, 
                 manager=self.ui_manager
             )
 
@@ -352,6 +365,7 @@ class CodePanel(UIPanel, Interpreter):
         if self.next_step_index >= len(self._exec_steps):
             self.is_running = False
             self.next_step_index = 0
+            self.player.pos = self.player.start_pos.copy()
             self.player.deplete_energy()
             self.refresh_status()
             return
@@ -387,21 +401,24 @@ class CodePanel(UIPanel, Interpreter):
                     continue
                 seen_ids.append(spec.id)
                 
-                spec_str_list = self._format_spec_class(spec)
+                format_spec_list = self._format_spec_class(spec)
                 if 'fix' in spec.id and make_problem:
                     line_type = 2 if spec.action == 'jump' else 1
                     line_pos = len(self.class_list)+1+line_type
+
+                    spec_str_list = [format_spec_list[0], format_spec_list[line_type]]
+
                     self.problem_buttons.append(
                         ProblemButton(
                             spec=spec, 
-                            spec_str=spec_str_list[line_type], 
+                            spec_str_list=spec_str_list, 
                             pos=self.script_area_rect.topleft, 
                             line=line_pos, 
                             manager=self.ui_manager, 
                             container=self
                         )
                     )
-                self.class_list += spec_str_list
+                self.class_list += format_spec_list
 
     def _make_blocks(self):
         font_text = self._type_to_font(self.level_title, 'main')

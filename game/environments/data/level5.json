@@ -31,7 +31,7 @@
         "bounds": {
             "blocked":["water", "tree"]
         },
-        "energy": 50
+        "energy": 15
     },
   "npc":["Now that you've gained some experience with the blocks-"," you can see the underlying code in a pullout box!","This may be useful to look at for later on!", "Continue using the drop down boxes for movement for now", "Try help Kevin get to the carrot!"]
 }

@@ -34,7 +34,7 @@
             "blocked":["water", "tree"],
             "jumpable": ["fence"]
         },
-        "energy": 50
+        "energy": 5
     },
       "npc":["Kevin has now found himself on an island connected to others","Help Kevin traverse the bridges and obstacles to get the carrot!","Remember, the use of loops can really help!"]
 }

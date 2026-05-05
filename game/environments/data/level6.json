@@ -33,7 +33,7 @@
             "blocked":["water", "tree"],
             "jumpable": ["fence"]
         },
-        "energy": 50
+        "energy": 10
     },
   "npc":["It looks like Kevin has now learned how to use loops!","This means that instead of putting down and right 4 times each-","You can put Loop(4) with down and right directly under it","This will make moving around much easier!"]
 }

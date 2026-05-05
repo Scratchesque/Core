@@ -203,7 +203,7 @@ class LoopBlock(ScriptBlock):
         self.children_blocks.clear()
 
 class CodeBlocks(UIPanel):
-    SCRIPT_PROGRAM_LIMIT = 8
+    SCRIPT_PROGRAM_LIMIT = 7
     LOOP_PROGRAM_LIMIT = 2
     LOOP_CHILD_LIMIT = 4
     PANEL_PADDING = 18

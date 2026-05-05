@@ -1,5 +1,5 @@
 {
-    "env":{
+    "env": {
         "type": "Block",
         "title": "Start",
         "theme": "game",
@@ -9,20 +9,26 @@
         "allowed_blocks": ["down", "up"],
         "level_script": ["down", "down", "down"]
     },
-    "map":{
-        "water": ["Level_0/Level_0_water", "SproutLands/Tilesets/Water"],
-        "water_bounds": ["Level_0/Level_0_water_bounds", "SproutLands/Tilesets/Water"],
-        "terrain": ["Level_0/Level_0_terrain", "SproutLands/Tilesets/Grass"],
-        "floor": ["Level_0/Level_0_floor","SproutLands/Tilesets/Wooden_House_Walls_Tilset"],
-        "walls": ["Level_0/Level_0_walls","SproutLands/Tilesets/Wooden_House_Walls_Tilset"],
-        "door": ["Level_0/Level_0_door", "SproutLands/Tilesets/Doors"],
-        "furniture": ["Level_0/Level_0_furniture", "SproutLands/Objects/Basic_Furniture"],
-        "start_pos": "Level_0/start_pos"
+    "map": {
+        "water": "Tilesets/Water",
+        "water_bounds": "Tilesets/Water",
+        "terrain": "Tilesets/Grass",
+        "floor": "Tilesets/Wooden_House_Walls_Tilset",
+        "walls": "Tilesets/Wooden_House_Walls_Tilset",
+        "door": "Tilesets/Doors",
+        "furniture": "Objects/Basic_Furniture"
     },
-    "player":{
+    "player": {
         "bounds": {
-            "blocked":["walls", "door"]
+            "blocked": ["walls", "door"]
         }
     },
-  "npc":["Welcome to Rabbit Rush!", "This game is focussed on building up your problem solving skills", "And teaching you some of the basics of how to code!", "This level starts off with the building  blocks in place already.", "feel free to mess around with them", "And then press run when you're ready to start the game "]
+    "npc": [
+        "Welcome to Rabbit Rush!", 
+        "This game is focussed on building up your problem solving skills", 
+        "And teaching you some of the basics of how to code!", 
+        "This level starts off with the building  blocks in place already.", 
+        "feel free to mess around with them", 
+        "And then press run when you're ready to start the game "
+    ]
 }

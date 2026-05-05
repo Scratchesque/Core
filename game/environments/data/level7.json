@@ -1,5 +1,5 @@
 {
-    "env":{
+    "env": {
         "type": "Interpreter",
         "title": "Level 7",
         "theme": "game",
@@ -20,21 +20,24 @@
         ]
     },
     "map": {
-        "water": ["Level_7/Level_7_water", "SproutLands/Tilesets/Water"],
-        "water_bounds": ["Level_7/Level_7_water_bounds", "SproutLands/Tilesets/Water"],
-        "terrain": ["Level_7/Level_7_terrain", "SproutLands/Tilesets/Grass"],
-        "tree": ["Level_7/Level_7_tree","SproutLands/Objects/Basic_Grass_Biom_things"],
-        "fence": ["Level_7/Level_7_fence", "SproutLands/Tilesets/Fences"],
-        "bridge": ["Level_7/Level_7_bridge", "SproutLands/Objects/Wood_Bridge"],
-        "vegetation": ["Level_7/Level_7_vegetation", "SproutLands/Objects/Basic_Grass_Biom_things"],
-         "start_pos": "Level_7/start_pos"
+        "water": "Tilesets/Water",
+        "water_bounds": "Tilesets/Water",
+        "terrain": "Tilesets/Grass",
+        "tree": "Objects/Basic_Grass_Biom_things",
+        "fence": "Tilesets/Fences",
+        "bridge": "Objects/Wood_Bridge",
+        "vegetation": "Objects/Basic_Grass_Biom_things"
     },
-    "player":{
+    "player": {
         "bounds": {
-            "blocked":["water", "tree"],
+            "blocked": ["water", "tree"],
             "jumpable": ["fence"]
         },
         "energy": 5
     },
-      "npc":["Kevin has now found himself on an island connected to others","Help Kevin traverse the bridges and obstacles to get the carrot!","Remember, the use of loops can really help!"]
+    "npc":[
+        "Kevin has now found himself on an island connected to others",
+        "Help Kevin traverse the bridges and obstacles to get the carrot!",
+        "Remember, the use of loops can really help!"
+    ]
 }

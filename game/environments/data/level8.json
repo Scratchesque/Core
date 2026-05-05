@@ -1,5 +1,5 @@
 {
-    "env":{
+    "env": {
         "type": "Code",
         "title": "Level 8",
         "theme": "game",
@@ -15,18 +15,24 @@
         ]
     },
     "map": {
-        "water": ["Level_8/Level_8_water", "SproutLands/Tilesets/Water"],
-        "water_bounds": ["Level_8/Level_8_water_bounds", "SproutLands/Tilesets/Water"],
-        "terrain": ["Level_8/Level_8_terrain", "SproutLands/Tilesets/Grass"],
-        "tree": ["Level_8/Level_8_tree","SproutLands/Objects/Basic_Grass_Biom_things"],
-        "vegetation": ["Level_8/Level_8_vegetation", "SproutLands/Objects/Basic_Grass_Biom_things"],
-        "start_pos": "Level_8/start_pos"
+        "water": "Tilesets/Water",
+        "water_bounds": "Tilesets/Water",
+        "terrain": "Tilesets/Grass",
+        "tree":"Objects/Basic_Grass_Biom_things",
+        "vegetation": "Objects/Basic_Grass_Biom_things"
     },
-    "player":{
+    "player": {
         "bounds": {
-            "blocked":["water", "tree"]
+            "blocked": ["water", "tree"]
         },
         "energy": 2
     },
-  "npc":["It seems like you are now familiar with how the code works!","Do you see the ! on your screen?","Click that to edit the code on the screen","There is something stopping it from running", "Have a go at fixing it to really put your skills to the test!","Good Luck!"]
+    "npc": [
+        "It seems like you are now familiar with how the code works!",
+        "Do you see the ! button next to the lines of code?",
+        "Click that to edit the code on the screen",
+        "There is something stopping it from running", 
+        "Have a go at fixing it to really put your skills to the test!",
+        "Good Luck!"
+    ]
 }

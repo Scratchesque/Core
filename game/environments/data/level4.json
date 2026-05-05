@@ -1,5 +1,5 @@
 {
-    "env":{
+    "env": {
         "type": "Block",
         "title": "Level 4",
         "theme": "game",
@@ -19,20 +19,27 @@
         ]
     },
     "map": {
-        "water": ["Level_4/Level_4_water", "SproutLands/Tilesets/Water"],
-        "water_bounds": ["Level_4/Level_4_water_bounds", "SproutLands/Tilesets/Water"],
-        "terrain": ["Level_4/Level_4_terrain", "SproutLands/Tilesets/Grass"],
-        "tree": ["Level_4/Level_4_tree","SproutLands/Objects/Basic_Grass_Biom_things"],
-        "fence": ["Level_4/Level_4_fence", "SproutLands/Tilesets/Fences"],
-        "vegetation": ["Level_4/Level_4_vegetation", "SproutLands/Objects/Basic_Grass_Biom_things"],
-         "start_pos": "Level_4/start_pos"
+        "water": "Tilesets/Water",
+        "water_bounds": "Tilesets/Water",
+        "terrain": "Tilesets/Grass",
+        "tree": "Objects/Basic_Grass_Biom_things",
+        "fence": "Tilesets/Fences",
+        "vegetation": "Objects/Basic_Grass_Biom_things"
     },
-    "player":{
+    "player": {
         "bounds": {
-            "blocked":["water", "tree"],
+            "blocked": ["water", "tree"],
             "jumpable": ["fence"]
         },
         "energy": 20
     },
-      "npc":["Wow! It looks like that last Carrot made Kevin remember-"," how to jump in different directions!","Considering he's stuck in a fence-"," maybe these newly remembered abilities will help!","Try jumping out of the fence and getting the carrot!"]
+    "npc": [
+        "Wow! It looks like that last Carrot made Kevin remember-",
+        "how to jump in different directions!",
+        "It also looks like an energy bar has appeared!",
+        "Maybe you should use your run button wisely!",
+        "Considering he's stuck in a fence-",
+        "maybe these newly remembered abilities will help!",
+        "Try jumping out of the fence and getting the carrot!"
+    ]
 }

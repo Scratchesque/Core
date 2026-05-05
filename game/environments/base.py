@@ -75,8 +75,10 @@ class GameEnv(BaseEnvironment):
     CONFIRM_PANEL_SIZE = (525, 220)
 
     def get_board_grid_size(self):
-        for map_layer in self.env_data.map.__dict__.values():
-            csv_layout = import_map_layout(map_layer[0])
+        csv_title = self.title.replace(' ', '_')
+
+        for map_layer, _ in self.env_data.map.__dict__.items():
+            csv_layout = import_map_layout(f'{csv_title}/{map_layer}')
             if csv_layout:
                 return len(csv_layout[0]), len(csv_layout)
         raise RuntimeError("Board map data is empty.")

@@ -1,5 +1,5 @@
 {
-    "env":{
+    "env": {
         "type": "Block",
         "title": "Level 2",
         "theme": "game",
@@ -8,18 +8,21 @@
     "systems": {
         "allowed_blocks": ["up", "down", "left", "right"]
     },
-    "map":{
-        "water": ["Level_2/Level_2_water", "SproutLands/Tilesets/Water"],
-        "water_bounds": ["Level_2/Level_2_water_bounds", "SproutLands/Tilesets/Water"],
-        "terrain": ["Level_2/Level_2_terrain", "SproutLands/Tilesets/Grass"],
-        "tree": ["Level_2/Level_2_tree","SproutLands/Objects/Basic_Grass_Biom_things"],
-        "vegetation": ["Level_2/Level_2_vegetation", "SproutLands/Objects/Basic_Grass_Biom_things"],
-        "start_pos": "Level_2/start_pos"
+    "map": {
+        "water": "Tilesets/Water",
+        "water_bounds": "Tilesets/Water",
+        "terrain": "Tilesets/Grass",
+        "tree": "Objects/Basic_Grass_Biom_things",
+        "vegetation": "Objects/Basic_Grass_Biom_things"
     },
-    "player":{
+    "player": {
         "bounds": {
-            "blocked":["water","tree"]
+            "blocked": ["water","tree"]
         }
     },
-  "npc":["Now that you have figured out the basics-"," use all the skills you've learned to get the carrot", "Good Luck"]
+    "npc": [
+        "Now that you have figured out the basics-",
+        "use all the skills you've learned to get the carrot", 
+        "Good Luck!"
+    ]
 }

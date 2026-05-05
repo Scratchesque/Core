@@ -49,20 +49,20 @@ class Board(UIPanel):
             self.board_offset = (offset_x, offset_y)
 
     def create_ui(self):
-        for element_type, element_data in self.env_data.map.__dict__.items():
-            csv_map = element_data[0]
-            if element_type == 'start_pos':
-                csv_map = element_data
-            tile_img = element_data[1]
+        csv_title = self.env_data.env.title.replace(' ', '_')
+
+        self.env_data.map.__dict__["start_pos"] = ""
+
+        for element_type, tile_img in self.env_data.map.__dict__.items():
             self.map_tiles[element_type] = []
-            csv_layout = import_map_layout(csv_map)
+            csv_layout = import_map_layout(f'{csv_title}/{element_type}')
             height = len(csv_layout)
             for row_index, row in enumerate(csv_layout):
                 width = len(row)
                 self._scale_tiles(width,height)
                 for col_index, val in enumerate(row):
                     if val != '-1':
-                        tile = self.make_tile(col_index, row_index, val, tile_img)
+                        tile = self.make_tile(col_index, row_index, val, 'SproutLands/'+tile_img)
                         if element_type != 'start_pos':
                             self.map_tiles[element_type].append(tile)
 

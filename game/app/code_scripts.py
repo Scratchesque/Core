@@ -1,3 +1,9 @@
+# Rabbit Rush - code_scripts.py 
+#
+# Created By: VizzWizz, BoredHF, HJParker2802, KamranBasra, TafaraMangombe, Vladikusss
+#
+# Source: https://github.com/Scratchesque/Core
+
 import re
 from dataclasses import replace
 from pygame import Rect, Vector2, KEYUP, K_RETURN, K_ESCAPE

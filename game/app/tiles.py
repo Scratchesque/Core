@@ -1,3 +1,9 @@
+# Rabbit Rush - tiles.py
+#
+# Created By: VizzWizz, BoredHF, HJParker2802, KamranBasra, TafaraMangombe, Vladikusss
+#
+# Source: https://github.com/Scratchesque/Core
+
 from pygame import Rect, Vector2, transform, MOUSEBUTTONUP
 from pygame_gui.elements import UIImage, UIScreenSpaceHealthBar
 

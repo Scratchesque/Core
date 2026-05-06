@@ -1,3 +1,9 @@
+# Rabbit Rush - images.py
+#
+# Created By: VizzWizz, BoredHF, HJParker2802, KamranBasra, TafaraMangombe, Vladikusss
+#
+# Source: https://github.com/Scratchesque/Core
+
 from pygame import SRCALPHA, error, image
 
 from game.core.paths import resolve_project_path

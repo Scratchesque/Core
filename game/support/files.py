@@ -1,3 +1,9 @@
+# Rabbit Rush - files.py
+#
+# Created By: VizzWizz, BoredHF, HJParker2802, KamranBasra, TafaraMangombe, Vladikusss
+#
+# Source: https://github.com/Scratchesque/Core
+
 import json
 from types import SimpleNamespace
 from csv import reader

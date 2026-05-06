@@ -1,3 +1,9 @@
+# Rabbit Rush - env_manager.py
+#
+# Created By: VizzWizz, BoredHF, HJParker2802, KamranBasra, TafaraMangombe, Vladikusss
+#
+# Source: https://github.com/Scratchesque/Core
+
 import importlib
 import inspect
 import pkgutil

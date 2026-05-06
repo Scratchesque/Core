@@ -1,9 +1,8 @@
-# comment at top of each file
-# also format/organize files again cause they all over the place
-
-# names will, albert etc ..
-# group thirteen
-# https://github/repo link
+# Rabbit Rush - main.py
+#
+# Created By: VizzWizz, BoredHF, HJParker2802, KamranBasra, TafaraMangombe, Vladikusss
+#
+# Source: https://github.com/Scratchesque/Core
 
 import argparse
 

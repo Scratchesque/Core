@@ -1,3 +1,9 @@
+# Rabbit Rush - ui.py
+#
+# Created By: VizzWizz, BoredHF, HJParker2802, KamranBasra, TafaraMangombe, Vladikusss
+#
+# Source: https://github.com/Scratchesque/Core
+
 from pygame import Rect, transform
 from pygame_gui.elements import UIButton, UIImage, UILabel, UITextBox
 from pygame_gui._constants import UI_BUTTON_PRESSED

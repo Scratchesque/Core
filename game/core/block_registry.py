@@ -1,3 +1,9 @@
+# Rabbit Rush - block_registry.py
+#
+# Created By: VizzWizz, BoredHF, HJParker2802, KamranBasra, TafaraMangombe, Vladikusss
+#
+# Source: https://github.com/Scratchesque/Core
+
 from dataclasses import dataclass
 
 

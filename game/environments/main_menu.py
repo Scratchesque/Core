@@ -1,3 +1,9 @@
+# Rabbit Rush - main_menu.py
+#
+# Created By: VizzWizz, BoredHF, HJParker2802, KamranBasra, TafaraMangombe, Vladikusss
+#
+# Source: https://github.com/Scratchesque/Core
+
 from game.core.constants import SCREEN_HEIGHT, SCREEN_WIDTH
 from game.core.events import *
 from game.support.ui import UIFactory

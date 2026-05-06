@@ -1,3 +1,9 @@
+# Rabbit Rush - graphics.py
+#
+# Created By: VizzWizz, BoredHF, HJParker2802, KamranBasra, TafaraMangombe, Vladikusss
+#
+# Source: https://github.com/Scratchesque/Core
+
 from pygame import Surface, Rect
 
 from game.core.constants import IMG_TILE_SIZE

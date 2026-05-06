@@ -1,3 +1,9 @@
+# Rabbit Rush - pop_ups.py
+#
+# Created By: VizzWizz, BoredHF, HJParker2802, KamranBasra, TafaraMangombe, Vladikusss
+#
+# Source: https://github.com/Scratchesque/Core
+
 import pygame
 from pygame import Rect
 from pygame_gui.elements import UIPanel, UILabel

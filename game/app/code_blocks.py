@@ -3,10 +3,11 @@ from pygame.math import Vector2
 from pygame_gui.elements import UIButton, UILabel, UIPanel, UITextBox
 from pygame_gui._constants import UI_BUTTON_PRESSED, UI_BUTTON_START_PRESS
 
-from game.app.block_registry import get_block_library
+from game.core.block_registry import get_block_library
 from game.core.events import *
 
 
+# This class contains information about the movement blocks that the user can control the player with
 class ScriptBlock(UIPanel):
     REMOVE_BUTTON_SIZE = 24
     REMOVE_BUTTON_OFFSET = 6
@@ -89,6 +90,7 @@ class ScriptBlock(UIPanel):
         self.button.kill()
         self.remove_button.kill()
 
+# This class contains on data to nest ScriptBlocks to repeat player actions
 class LoopBlock(ScriptBlock):
     FOOTER_HEIGHT = 10
     CHILD_INDENT_X = 24
@@ -202,6 +204,7 @@ class LoopBlock(ScriptBlock):
             child.kill()
         self.children_blocks.clear()
 
+# This class contains all information needed for the user to move blocks into a script they can execute
 class CodeBlocks(UIPanel):
     SCRIPT_PROGRAM_LIMIT = 7
     LOOP_PROGRAM_LIMIT = 2
@@ -413,9 +416,11 @@ class CodeBlocks(UIPanel):
             object_id="#edit_button",
         )
 
+    # If the interpreter has been activated then set it here 
     def set_interpreter(self, interpreter):
         self.interpreter = interpreter
 
+    # Update the interpreters blocks if it has been set
     def update_interpreter(self):
         if self.interpreter is None: 
             return
@@ -443,6 +448,7 @@ class CodeBlocks(UIPanel):
             self.update_interpreter()
         self.status_display.set_text(status)
  
+    # Count total ammount of blocks, loops and total count of the program script
     def _count_total_steps(self):
         count = 0
         blocks = 0
@@ -457,6 +463,7 @@ class CodeBlocks(UIPanel):
                 blocks += 1
         return count, blocks, loops
     
+    # Build all of the program blocks into steps to execute
     def _build_exec_steps(self):
         steps = []
         for item in self.program_blocks:
@@ -539,6 +546,7 @@ class CodeBlocks(UIPanel):
             local_y - self.drag_offset.y,
         )
 
+    # If the user has clicked on a block, get the drag index and update relevant information
     def start_drag(self, block, mouse_pos, was_new):
         self.dragged_block = block
         self.drag_was_new = was_new
@@ -574,13 +582,15 @@ class CodeBlocks(UIPanel):
 
         self.move_dragged_block(mouse_pos)
         self.refresh_status()
-
+ 
+    # Move the dragged block that has been started
     def move_dragged_block(self, mouse_pos):
         if self.dragged_block is None:
             return
 
         self.dragged_block.set_position(self.drag_position(mouse_pos))
 
+    # Get the position in the screen where to place the block
     def get_drop_index(self, mouse_pos):
         if self.dragged_block is None:
             return None, None
@@ -620,6 +630,7 @@ class CodeBlocks(UIPanel):
         index = round(relative_y / self.slot_spacing)
         return max(0, min(index, len(self.program_blocks))), None
 
+    # Place the block to be part of the script
     def finish_drag(self, mouse_pos):
         if self.dragged_block is None:
             return

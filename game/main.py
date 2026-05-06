@@ -1,6 +1,13 @@
+# comment at top of each file
+# also format/organize files again cause they all over the place
+
+# names will, albert etc ..
+# group thirteen
+# https://github/repo link
+
 import argparse
 
-from game.window.game_manager import GameManager
+from game.window.env_manager import EnvManager
 
 
 def main():
@@ -12,7 +19,7 @@ def main():
     )
     args = parser.parse_args()
 
-    game = GameManager(debug=args.debug)
+    game = EnvManager(debug=args.debug)
     game.start()
 
 

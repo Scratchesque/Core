@@ -18,7 +18,6 @@ class Display:
         self.resolution = (SCREEN_WIDTH, SCREEN_HEIGHT)
         self.screen = pygame.display.set_mode(self.resolution, pygame.FULLSCREEN)
         self.surface = pygame.Surface(self.resolution)
-        # Can only see this when alt tabbing though
         self.set_icon("game/assets/levels/carrot.webp")
         self.cursor_img = load_image('game/assets/SproutLands/UI/Mouse/Triangle Mouse icon 1.png')
 
@@ -57,8 +56,9 @@ class Display:
     def update_frame(self, delta_time):
         # Things to update each frame in the environment
         self.env.update_frame(delta_time)
-        # pygame_gui manager updating/drawing
+        # pygame_gui manager updating elements
         self.env.ui_manager.update(delta_time)
+        # pygame drawing elements
         self.screen.blit(self.surface, (0, 0))
         self.env.ui_manager.draw_ui(self.screen)
 

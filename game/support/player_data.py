@@ -3,6 +3,7 @@ import json
 from game.core.paths import resolve_project_path
 
 
+# This class contains logic for saving player progress 
 class PlayerData:
     DEFAULT_UNLOCKED_LEVELS = ["Start"]
 

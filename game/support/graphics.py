@@ -21,6 +21,7 @@ def tile_graphics(surface):
     
     return cut_tiles
 
+# Gets a surface and returns a list of surfaces with the tiles cut out without blank gaps in the list, to make use for in animating the player
 def cut_graphics(img_surface, sprite_col_start, sprite_row_start, sprite_gap):
         total_tiles_per_row = img_surface.get_height() // IMG_TILE_SIZE
         total_tiles_per_col = img_surface.get_width() // IMG_TILE_SIZE

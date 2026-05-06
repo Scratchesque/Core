@@ -4,13 +4,13 @@ from pygame import Rect, Vector2, KEYUP, K_RETURN, K_ESCAPE
 from pygame_gui.elements import UIPanel, UITextBox, UIButton, UILabel, UITextEntryLine
 from pygame_gui._constants import UI_BUTTON_PRESSED
 
-from game.app.block_interpreter import Interpreter
-from game.app.block_registry import get_block_library
+from game.app.block_interpreter import BlockInterpreter
+from game.core.block_registry import get_block_library
 from game.core.events import *
 from game.core.constants import *
 from game.support.ui import UIFactory, Button
 
-
+# This popup will ask the user to change a line of code for the final levels
 class ProblemPanel(UIPanel):
     PANEL_SIZE = (625,300)
     PANEL_POS = (
@@ -32,11 +32,6 @@ class ProblemPanel(UIPanel):
         self.value = 0
 
         self.create_ui()
-
-    @staticmethod
-    def replace_string_html(string):
-        temp_str = string.replace('  ','')
-        return re.sub(r'<[^>]+>', '', temp_str)
 
     def create_ui(self):
         padding = 24
@@ -94,34 +89,6 @@ class ProblemPanel(UIPanel):
             manager=self.ui_manager,
             container=self
         )
-        pass
-
-    def get_values(self, string):
-        string_list = string.split(' ')
-        r_value = string_list.pop()
-        l_value = ' '.join(string_list)
-        return l_value, r_value 
-
-    def check_code_complete(self):
-        l_og_value, r_og_value = self.get_values(self.fix_string) 
-        l_box_value, r_box_value = self.get_values(self.entry_box.get_text()) 
-        if l_og_value != l_box_value:
-            self.help_text.set_text(Interpreter._type_to_font("You cannot change the Player Assignment!", "loop"))
-            return
-        
-        if r_og_value == r_box_value:
-            self.help_text.set_text(Interpreter._type_to_font("You haven't tried changing the ammount!", "loop"))
-            return
-        
-        try:
-            value = int(r_box_value)
-        except ValueError:
-            self.help_text.set_text(Interpreter._type_to_font("The player can't move with text!", "loop"))
-            return
-
-        if True:
-            self.value = value
-            self.kill()
 
     def process_event(self, event):
         if (event.type == KEYUP and event.key == K_ESCAPE) or self.cancel_button.on_click(event):
@@ -131,6 +98,41 @@ class ProblemPanel(UIPanel):
             self.check_code_complete()
             return
 
+    # Returns values on the left side and right side of a string 
+    def get_values(self, string):
+        string_list = string.split(' ')
+        r_value = string_list.pop()
+        l_value = ' '.join(string_list)
+        return l_value, r_value 
+
+    # Checks if the user has attempted correctly
+    def check_code_complete(self):
+        l_og_value, r_og_value = self.get_values(self.fix_string) 
+        l_box_value, r_box_value = self.get_values(self.entry_box.get_text()) 
+        if l_og_value != l_box_value:
+            self.help_text.set_text(self._type_to_font("You cannot change the Player Assignment!", "loop"))
+            return
+        
+        if r_og_value == r_box_value:
+            self.help_text.set_text(self._type_to_font("You haven't tried changing the ammount!", "loop"))
+            return
+        
+        try:
+            value = int(r_box_value)
+        except ValueError:
+            self.help_text.set_text(self._type_to_font("The player can't move with text!", "loop"))
+            return
+
+        if True:
+            self.value = value
+            self.kill()
+
+    @staticmethod
+    def replace_string_html(string):
+        temp_str = string.replace('  ','')
+        return re.sub(r'<[^>]+>', '', temp_str)
+
+# This button is shown next to lines of code that need to be repaied
 class ProblemButton(Button):
     def __init__(self, spec, spec_str_list, pos, line, manager, container = None):
         self.spec = spec
@@ -153,11 +155,13 @@ class ProblemButton(Button):
         self.problem_panel = None
         self.solved = False
 
+    # Gets position on the screen to place the ProblemButton
     def get_line_pos(self, block_pos, line):
         font_size=21
         line_y = block_pos[1]+5 + (line - 1) * font_size
         return (block_pos[0]-self.size.x-10, line_y)
-
+ 
+    # Checks if the user has closed the ProblemPanel and replaces the line of code with the new value
     def process_event(self, event):
         super().process_event(event)
         if self.on_click(event) and (self.problem_panel is None or not self.problem_panel.alive()):
@@ -179,7 +183,8 @@ class ProblemButton(Button):
             self.img.kill()
             self.kill()
 
-class CodePanel(UIPanel, Interpreter):
+# This class holds the panel information for the user to complete lines of code
+class CodeScripts(UIPanel, BlockInterpreter):
     BTN_SIZE = (30, 30)
 
     PANEL_PADDING = 18
@@ -293,29 +298,6 @@ class CodePanel(UIPanel, Interpreter):
             object_id='#text_code'
         )
 
-    def process_event(self, event):
-        if self.is_running:
-            return
-        
-        if event.type != UI_BUTTON_PRESSED:
-            return
-        
-        if event.ui_element == self.run_button:
-            self._exec_steps = self._build_exec_steps()
-            if not self._exec_steps:
-                return
-            self.is_running = True
-            self.next_step_index = 0
-            return
-
-        if event.ui_element == self.reset_button:
-            reset_event = pygame.event.Event(RESET_ENV_REQUESTED)
-            pygame.event.post(reset_event)
-            return
-
-    def update(self, delta_time):
-        self.run_next_step()
-
     def _build_exec_steps(self):
         steps = []
         for script_list in self.program_blocks:
@@ -345,6 +327,7 @@ class CodePanel(UIPanel, Interpreter):
             )
         self.status_display.set_text(status)
 
+    # Goes through the list of blocks to execute and replaces blocks with new information
     def change_block(self, block):
         for x in range(len(self.program_blocks)):
             spec_list = self.program_blocks[x][0]
@@ -375,6 +358,7 @@ class CodePanel(UIPanel, Interpreter):
         self.next_step_index += 1
         self.refresh_status()
 
+    # Gets a total of how many problems the user has completed
     def _count_problems_left(self):
         total_problems = 0
         problems_solved = 0
@@ -384,7 +368,7 @@ class CodePanel(UIPanel, Interpreter):
                 problems_solved += 1
         return total_problems - problems_solved
 
-
+    # Initalizes the blocks from the start script in the json file
     def _make_start_script(self, level_script):
         for script_line in level_script:
             blocks = get_block_library(script_line[0])
@@ -439,4 +423,26 @@ class CodePanel(UIPanel, Interpreter):
             else:
                 for spec in spec_list:
                     self.block_list.append(self._format_spec_code(spec))
-                pass
+    
+    def process_event(self, event):
+        if self.is_running:
+            return
+        
+        if event.type != UI_BUTTON_PRESSED:
+            return
+        
+        if event.ui_element == self.run_button:
+            self._exec_steps = self._build_exec_steps()
+            if not self._exec_steps:
+                return
+            self.is_running = True
+            self.next_step_index = 0
+            return
+
+        if event.ui_element == self.reset_button:
+            reset_event = pygame.event.Event(RESET_ENV_REQUESTED)
+            pygame.event.post(reset_event)
+            return
+
+    def update(self, delta_time):
+        self.run_next_step()

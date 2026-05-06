@@ -3,53 +3,6 @@ from pygame_gui.elements import UIButton, UIImage, UILabel, UITextBox
 from pygame_gui._constants import UI_BUTTON_PRESSED
 
 from game.core.images import load_image
-from game.support.html_typing import truncate_html
-
-
-# Making a button that can make it easy to check if itself has been pressed 
-class Button(UIButton):
-    def __init__(self, pos, size, text, manager, object_id=None, center=False, anchor=None, container=None):
-        rect = Rect((0, 0), size)
-        if anchor is not None:
-            # Use Rect anchor names, e.g. "center", "midtop", "midbottom".
-            setattr(rect, anchor, pos)
-        elif center:
-            rect.center = pos
-        else:
-            rect.topleft = pos
-        super().__init__(rect, text, manager, container=container, object_id=object_id)
-
-    def on_click(self, event):
-        if event.type == UI_BUTTON_PRESSED:
-            if event.ui_element == self:
-                return True
-        return False
-
-class ImageButton:
-    def __init__(self, image, button):
-        self.image = image
-        self.button = button
-
-    def on_click(self, event):
-        return self.button.on_click(event)
-
-    def kill(self):
-        self.image.kill()
-        self.button.kill()
-
-    def alive(self):
-        return self.button.alive()
-    
-    def change_layer(self, num):
-        self.image.change_layer(num)
-        self.button.change_layer(num)
-
-    def set_relative_position(self, pos):
-        self.image.set_relative_position(pos)
-        self.button.set_relative_position(pos)
-
-    def set_text(self, string):
-        self.button.set_text(string)
 
 # An easy way of accessing different ui elements that can do different things in one place
 class UIFactory:
@@ -108,7 +61,7 @@ class UIFactory:
 
         return ImageButton(img, button)
 
-
+# A UITextBox that can scroll through the text 
 class TypingTextBox(UITextBox):
     def __init__(self, pos, size, html_text, manager, object_id=None, container=None):
         super().__init__("", Rect(pos, size), manager, container=container, object_id=object_id)
@@ -126,9 +79,53 @@ class TypingTextBox(UITextBox):
         if self.visible_chars >= len(self.full_text):
             return
         self.elapsed += 1
-        new_count = self.elapsed * 0.5   # chars per frame
+        new_count = self.elapsed * 0.5  # chars per frame
         if new_count != self.visible_chars:
-            self.visible_chars = new_count
-            partial_html = truncate_html(self.full_text, self.visible_chars)
+            self.visible_chars = int(new_count)
+            partial_html = self.full_text[:self.visible_chars]
             self.set_text(partial_html)
 
+# Making a button that can make it easy to check if itself has been pressed 
+class Button(UIButton):
+    def __init__(self, pos, size, text, manager, object_id=None, center=False, anchor=None, container=None):
+        rect = Rect((0, 0), size)
+        if anchor is not None:
+            # Use Rect anchor names, e.g. "center", "midtop", "midbottom".
+            setattr(rect, anchor, pos)
+        elif center:
+            rect.center = pos
+        else:
+            rect.topleft = pos
+        super().__init__(rect, text, manager, container=container, object_id=object_id)
+
+    def on_click(self, event):
+        if event.type == UI_BUTTON_PRESSED:
+            if event.ui_element == self:
+                return True
+        return False
+
+class ImageButton:
+    def __init__(self, image, button):
+        self.image = image
+        self.button = button
+
+    def on_click(self, event):
+        return self.button.on_click(event)
+
+    def kill(self):
+        self.image.kill()
+        self.button.kill()
+
+    def alive(self):
+        return self.button.alive()
+    
+    def change_layer(self, num):
+        self.image.change_layer(num)
+        self.button.change_layer(num)
+
+    def set_relative_position(self, pos):
+        self.image.set_relative_position(pos)
+        self.button.set_relative_position(pos)
+
+    def set_text(self, string):
+        self.button.set_text(string)

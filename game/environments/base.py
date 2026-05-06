@@ -2,11 +2,10 @@ from pygame import Rect, KEYUP, K_ESCAPE, Color
 from pygame_gui.elements import UIPanel
 
 from game.app.block_interpreter import InterpreterPanel
-from game.app.code_scripts import CodePanel
+from game.app.code_scripts import CodeScripts
 from game.app.board import Board
 from game.app.code_blocks import CodeBlocks
-from game.app.panels import ConfirmationPanel, LevelText, SettingsMenu, MessagePanel
-from game.core.images import load_image
+from game.app.pop_ups import ConfirmationPanel, SettingsMenu, MessagePanel
 from game.core.paths import resolve_project_path
 from game.core.constants import *
 from game.core.events import *
@@ -59,7 +58,7 @@ class BaseEnvironment:
         # Per-frame updates (e.g., typing effects, animations).
         pass
      
-    # This is called when the screen is to be reset to recreate ui elements, it can also change the level from a level file
+    # This is called when the screen is to be reset to recreate ui elements
     def reset(self):
         self.ui_manager.clear_and_reset()
         self.game_manager.display.create_cursor()
@@ -72,8 +71,8 @@ class GameEnv(BaseEnvironment):
     PANEL_SHADOW_SPREAD = 10
     BLOCKS_PANEL_MIN_WIDTH = 700
     BLOCKS_PANEL_WIDTH_RATIO = 0.39
-    CONFIRM_PANEL_SIZE = (525, 220)
 
+    # Gets the ammount of tiles on x/y in the level csv
     def get_board_grid_size(self):
         csv_title = self.title.replace(' ', '_')
 
@@ -83,6 +82,7 @@ class GameEnv(BaseEnvironment):
                 return len(csv_layout[0]), len(csv_layout)
         raise RuntimeError("Board map data is empty.")
 
+    # Returns what screen position the board should be placed at 
     def get_board_panel_size(self, max_width, max_height):
         grid_width, grid_height = self.get_board_grid_size()
         max_scale_x = max_width // (grid_width * IMG_TILE_SIZE)
@@ -96,6 +96,7 @@ class GameEnv(BaseEnvironment):
             board_height + (self.BOARD_PANEL_PADDING * 2),
         )
 
+    # Creates a shadow behind the main panels 
     def create_shadow_panel(self, panel_pos, panel_size):
         shadow_rect = Rect(
             (panel_pos[0] - self.PANEL_SHADOW_SPREAD, panel_pos[1] - self.PANEL_SHADOW_SPREAD),
@@ -133,26 +134,36 @@ class GameEnv(BaseEnvironment):
 
         self.create_shadow_panel(self.board_pos, self.board_size)
 
-        # Takes data passed through and starts creating the tiles/player/goal
         self.board = Board(
             panel_pos=self.board_pos,
             panel_size=self.board_size,
             env_data=self.env_data, 
             manager=self.ui_manager)
         
-        # Setting level text from getting the env title
-        LevelText(
-            panel_pos=(10,-5), 
-            panel_size=(220, 50),
-            text=self.title, 
-            manager=self.ui_manager)
+        level_text_pos=(9,-6)
+        level_text_size=(220, 50)
+        UIFactory.image(
+            pos=level_text_pos,
+            size=level_text_size,
+            image_path='game/assets/SproutLands/cropped/brown_panel.png',
+            manager=self.ui_manager,
+            object_id="#transparent"
+        )
+        
+        UIFactory.label(
+            pos=level_text_pos,
+            size=level_text_size,
+            text=self.title,
+            manager=self.ui_manager,
+            object_id="#level_text"
+        )
 
         self.confirmation_panel = None
 
-        square_size = 30
+        square_btn_size = 30
         self.settings_button = UIFactory.button_img(
-            pos=(SCREEN_WIDTH-square_size-5, 5),
-            size=(square_size,square_size),
+            pos=(SCREEN_WIDTH-square_btn_size-5, 5),
+            size=(square_btn_size,square_btn_size),
             text="",
             image_path='game/assets/levels/hamburger_icon.png',
             manager=self.ui_manager,
@@ -164,10 +175,7 @@ class GameEnv(BaseEnvironment):
         super().on_ui_event(event)
         if (event.type == KEYUP and event.key == K_ESCAPE) or self.settings_button.on_click(event):
             if self.settings_panel is None or not self.settings_panel.alive():
-                self.settings_panel = SettingsMenu(
-                    panel_size=(200,250), 
-                    manager=self.ui_manager
-                )
+                self.settings_panel = SettingsMenu(manager=self.ui_manager)
             else:
                 self.settings_panel.kill()
                 self.settings_panel = None
@@ -197,17 +205,12 @@ class GameEnv(BaseEnvironment):
         if self.confirmation_panel and self.confirmation_panel.alive():
             self.confirmation_panel.kill()
 
-        panel_x = (SCREEN_WIDTH - self.CONFIRM_PANEL_SIZE[0]) // 2
-        panel_y = (SCREEN_HEIGHT - self.CONFIRM_PANEL_SIZE[1]) // 2
         self.confirmation_panel = ConfirmationPanel(
-            panel_pos=(panel_x, panel_y),
-            panel_size=self.CONFIRM_PANEL_SIZE,
             title=title,
             message=message,
             confirm_event_type=confirm_event_type,
             manager=self.ui_manager,
         )
-        
 
     def get_allowed_blocks(self):
         systems_data = getattr(self.env_data, "systems", None)
@@ -253,7 +256,7 @@ class BlockEnv(GameEnv):
         
         self.create_shadow_panel(self.blocks_pos, self.blocks_size)
     
-        # Where our code blocks will be placed and initalised
+        # Where our code blocks will be placed and initalised of the user to interact with
         self.blocks = CodeBlocks(
             panel_pos=self.blocks_pos,
             panel_size=self.blocks_size,
@@ -268,6 +271,7 @@ class InterpreterEnv(BlockEnv):
     def create_ui(self):
         super().create_ui()
 
+        # So that the user can understand blocks through code
         self.interpreter = InterpreterPanel(
             panel_pos=self.blocks_pos,
             panel_size=self.blocks_size, 
@@ -283,7 +287,8 @@ class CodeEnv(GameEnv):
     def create_ui(self):
         super().create_ui()
 
-        CodePanel(
+        # So that the user can attempt to fix code themselves
+        CodeScripts(
             player=self.board.player,
             panel_pos=self.blocks_pos,
             panel_size=self.blocks_size, 
@@ -291,5 +296,3 @@ class CodeEnv(GameEnv):
             level_title=self.title,
             level_script=self.get_level_script()
         )
-
-    pass

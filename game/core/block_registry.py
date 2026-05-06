@@ -10,7 +10,7 @@ class BlockSpec:
     x: int = 0
     y: int = 0
 
-
+# Available blocks that we can set in jsons to allow player to use
 DEFAULT_BLOCK_LIBRARY = (
     BlockSpec("up", "Move Up", "#motion_block", "up", y=-1),
     BlockSpec("down", "Move Down", "#motion_block", "down", y=1),

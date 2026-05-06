@@ -2,14 +2,13 @@ from game.core.constants import SCREEN_HEIGHT, SCREEN_WIDTH
 from game.core.events import *
 from game.support.ui import UIFactory
 from game.environments.base import BaseEnvironment
-from game.app.panels import DialoguePanel
+from game.app.pop_ups import DialoguePanel
 
 
 class LevelSelect(BaseEnvironment):
     LOGO_SIZE = (760, 270)
     SUBTITLE_SIZE = (520, 32)
     BUTTON_SIZE = (360, 84)
-    INTRO_SIZE = (1000, 300)
     BUTTON_GAP = 20
 
     def __init__(self, level_file="menu"):
@@ -65,15 +64,14 @@ class LevelSelect(BaseEnvironment):
         if total_unlocked == 1:
             # only start level unlocked
             DialoguePanel(
-                panel_pos=((SCREEN_WIDTH - self.INTRO_SIZE[0])//2, (SCREEN_HEIGHT - self.INTRO_SIZE[1])//2+ 40),
-                panel_size=self.INTRO_SIZE,
                 title="Welcome to Rabbit Rush! Your Introduction to Computer Science!",
                 message=(
                     "Kevin the Bunny has lost his Carrots and abilities.\n"
                     "It's your goal to gain them back.\n"
                     "Learn how to read and implement code to help Kevin reach his goal!"
                 ),
-                manager=self.ui_manager)
+                manager=self.ui_manager
+            )
 
         self.quit_button = UIFactory.button_img(
             pos=(SCREEN_WIDTH // 2, SCREEN_HEIGHT - 50),

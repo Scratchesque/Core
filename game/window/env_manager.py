@@ -11,7 +11,7 @@ from game.window.display import Display
 
 
 # This process is explained on trello under (Completed) 'Start getting the core of the program'
-class GameManager:
+class EnvManager:
     def __init__(self, debug=False):
         self.debug = debug
         self.player_data = PlayerData()

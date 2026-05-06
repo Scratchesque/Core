@@ -1,10 +1,12 @@
-from pygame import Rect, Vector2, MOUSEBUTTONUP
+from pygame import Rect, Vector2
 from pygame_gui.elements import UIPanel, UITextBox
 
-from game.app.block_registry import get_block_library
+from game.core.block_registry import get_block_library
 from game.support.ui import UIFactory
 
-class Interpreter:
+
+# This class is made so it can be inherited by other classes that will use functions related to turning blocks into code 
+class BlockInterpreter:
     GAP = ' ' * 4
     MIN_CODE_LINES = 45
 
@@ -32,12 +34,13 @@ class Interpreter:
         player_font = self._type_to_font('Player', 'main')
         x_font = self._type_to_font('X', 'vars')
         y_font = self._type_to_font('Y', 'vars')
+        z_font = self._type_to_font('Z', 'vars')
 
         text_list = []
         if 'loop' == spec.id:
             return []
         if 'jump' == spec.id:
-            jump_font = f'{self.GAP*2}{player_font}.{y_font}'
+            jump_font = f'{self.GAP*2}{player_font}.{z_font}'
             text_list.append(f'{jump_font} = 1')
             text_list.append(f'{jump_font} = -1')
         elif 'jump' in spec.id:
@@ -73,7 +76,8 @@ class Interpreter:
 
         return f'<font color=#{colour}>{text}</font>'
 
-class InterpreterPanel(UIPanel, Interpreter):
+# This panel is shown during the levels with the interpreter activated, (levels 5/6/7), to show the current block script
+class InterpreterPanel(UIPanel, BlockInterpreter):
     PANEL_WIDTH = 350
     PULL_BUTTON_SIZE = (30, 30) 
 
@@ -128,42 +132,12 @@ class InterpreterPanel(UIPanel, Interpreter):
         self.pull_button.change_layer(5)
         self._update_button_pos()
 
-    def process_event(self, event):
-        if self.is_moving:
-            return
-        
-        if self.pull_button.on_click(event):
-            if self.is_visible == True:
-                self.is_visible = False
-                self.pull_button.set_text('<')
-            else:
-                self.text_box.visible = 1
-                self.is_visible = True
-                self.pull_button.set_text('>')
-            self.move_timer = 10
-            self.is_moving = True
-            pass
-
-    def update(self, time_delta):
-        if not self.is_moving:
-            return
-        
-        self.move_timer -= 1
-        self.progress = 1 - (self.move_timer / 10)
-
-        if self.move_timer <= 0:
-            self.is_moving = False
-            if not self.is_visible:
-                self.text_box.visible = 0
-            return
-        
-        self._update_pos()
-
     def update_text(self, program_blocks):
         self._make_blocks(program_blocks)
         block_text = self._translate_blocks()
         self.text_box.set_text(block_text)
 
+    # Changes the panel position
     def _update_pos(self):
         distance = self.PANEL_WIDTH/4.5
         offset = self.progress * (distance if self.is_visible else -distance)
@@ -173,6 +147,7 @@ class InterpreterPanel(UIPanel, Interpreter):
         self.set_relative_position(self.pos)
         self._update_button_pos()
 
+    # Set the position of the button on screen to be slightly off center to where the panel is
     def _update_button_pos(self):
         rect = self.get_relative_rect() 
         left = (rect.left)
@@ -197,4 +172,33 @@ class InterpreterPanel(UIPanel, Interpreter):
                     self.block_list.append(self._format_spec_code(child.spec, func_gap=True))
             else:
                 self.block_list.append(self._format_spec_code(block.spec))
+    
+    def process_event(self, event):
+        if self.is_moving:
+            return
         
+        if self.pull_button.on_click(event):
+            if self.is_visible == True:
+                self.is_visible = False
+                self.pull_button.set_text('<')
+            else:
+                self.text_box.visible = 1
+                self.is_visible = True
+                self.pull_button.set_text('>')
+            self.move_timer = 10
+            self.is_moving = True
+
+    def update(self, time_delta):
+        if not self.is_moving:
+            return
+        
+        self.move_timer -= 1
+        self.progress = 1 - (self.move_timer / 10)
+
+        if self.move_timer <= 0:
+            self.is_moving = False
+            if not self.is_visible:
+                self.text_box.visible = 0
+            return
+        
+        self._update_pos()

@@ -1,24 +1,36 @@
-from pygame import Rect
-from pygame_gui.elements import UIImage, UIPanel, UILabel
+# Rabbit Rush - pop_ups.py
+#
+# Created By: VizzWizz, BoredHF, HJParker2802, KamranBasra, TafaraMangombe, Vladikusss
+#
+# Source: https://github.com/Scratchesque/Core
 
-from game.core.constants import SCREEN_WIDTH, SCREEN_HEIGHT 
-from game.core.events import *
-from game.core.images import load_image
+import pygame
+from pygame import Rect
+from pygame_gui.elements import UILabel, UIPanel
+
+from game.core.constants import SCREEN_HEIGHT, SCREEN_WIDTH
+from game.core.events import CHANGE_ENV_CONFIRMED, MENU_ENV_REQUESTED, QUIT_EMV_REQUESTED
 from game.support.ui import TypingTextBox, UIFactory
 
-
+# A panel to explain to the user in the main menu an introduction
 class DialoguePanel(UIPanel):
-    def __init__(self, panel_pos, panel_size, title, message, manager):
-        super().__init__(Rect(panel_pos, panel_size), manager=manager, object_id="#dialogue_panel", starting_height=5)
-        
-        self.create_ui(title, message, panel_size)
+    PANEL_SIZE = (1000, 300)
+    PANEL_POS = (
+        (SCREEN_WIDTH - PANEL_SIZE[0])//2, 
+        (SCREEN_HEIGHT - PANEL_SIZE[1])//2+ 40
+    )
 
-    def create_ui(self, title, message, panel_size):
+    def __init__(self, title, message, manager):
+        super().__init__(Rect(self.PANEL_POS, self.PANEL_SIZE), manager=manager, object_id="#dialogue_panel", starting_height=5)
+        
+        self.create_ui(title, message)
+
+    def create_ui(self, title, message):
         padding = 24
         button_size = (160, 54)
 
         UILabel(
-            relative_rect=Rect((padding, 22), (panel_size[0] - (padding * 2), 36)),
+            relative_rect=Rect((padding, 22), (self.PANEL_SIZE[0] - (padding * 2), 36)),
             text=title,
             manager=self.ui_manager,
             container=self,
@@ -27,14 +39,15 @@ class DialoguePanel(UIPanel):
 
         TypingTextBox(
             pos=(padding, 78),
-            size=((panel_size[0] - padding * 2), (panel_size[1] -  padding * 2 - 125)),
+            size=((self.PANEL_SIZE[0] - padding * 2), (self.PANEL_SIZE[1] -  padding * 2 - 125)),
             html_text=message,
             manager=self.ui_manager,
             container=self,
-            object_id="#body")
-        
+            object_id="#body",
+        )
+
         self.confirm_button = UIFactory.button_img(
-            pos=((panel_size[0] - button_size[0]) // 2, panel_size[1] - 78),
+            pos=((self.PANEL_SIZE[0] - button_size[0]) // 2, self.PANEL_SIZE[1] - 78),
             size=button_size,
             image_path="game/assets/SproutLands/cropped/brown_button.png",
             text="Confirm",
@@ -47,9 +60,13 @@ class DialoguePanel(UIPanel):
         if self.confirm_button.on_click(event):
             self.kill()
 
+# Notifying the player of any changes, eg the environment being reset/changed 
 class MessagePanel(UIPanel):
     PANEL_SIZE = (300,160)
-    PANEL_POS = ((SCREEN_WIDTH-PANEL_SIZE[0])//2), ((SCREEN_HEIGHT-PANEL_SIZE[1])//2)
+    PANEL_POS = (
+        (SCREEN_WIDTH-PANEL_SIZE[0])//2, 
+        (SCREEN_HEIGHT-PANEL_SIZE[1])//2,
+    )
 
     def __init__(self, title, message, manager):
         super().__init__(
@@ -79,42 +96,47 @@ class MessagePanel(UIPanel):
             object_id="#body",
         )
 
-
 class SpeechPanel(UIPanel):
-    def __init__(self, panel_pos, panel_size, message_list, manager):
+    PANEL_SIZE = (250,80)
+
+    def __init__(self, panel_pos, message_list, manager):
         super().__init__(
-            Rect(panel_pos, panel_size),
+            Rect(panel_pos, self.PANEL_SIZE),
             manager=manager,
             object_id="#speech_panel",
             starting_height=2,
         )
         self.message_list = message_list
         self.message_index = 0
-        self.create_ui(panel_size)
+        self.create_ui()
 
-    def create_ui(self, panel_size):
+    def create_ui(self):
         padding = 10
-        button_size = (35,25)
+        button_size = (35, 25)
         button_diff = 30
 
         UIFactory.image(
             pos=(0,0),
-            size=panel_size,
+            size=self.PANEL_SIZE,
             image_path="game/assets/SproutLands/UI/Dialouge/dialog box big.png",
             manager=self.ui_manager,
-            container=self
+            container=self,
         )
 
         self.text_box = TypingTextBox(
             pos=(padding, padding),
-            size=(panel_size[0] - padding * 2 - button_diff, panel_size[1]- padding * 2),
+            size=(self.PANEL_SIZE[0] - padding * 2 - button_diff, self.PANEL_SIZE[1]- padding * 2),
             html_text=self.message_list[0],
             manager=self.ui_manager,
             container=self,
-            object_id="#body")
+            object_id="#body",
+        )
 
         self.next_button = UIFactory.button(
-            pos=(panel_size[0]-button_size[0]-padding/2,panel_size[1]-button_size[1]-padding),
+            pos=(
+                self.PANEL_SIZE[0]-button_size[0]-padding/2,
+                self.PANEL_SIZE[1]-button_size[1]-padding
+            ),
             size=button_size,
             text="OK",
             manager=self.ui_manager,
@@ -131,28 +153,37 @@ class SpeechPanel(UIPanel):
                 return
             self.text_box.set_full_text(self.message_list[self.message_index])
 
-
+# Asking if the user is sure that they want to confirm to select their action
 class ConfirmationPanel(UIPanel):
-    def __init__(self, panel_pos, panel_size, title, message, confirm_event_type, manager):
+    PANEL_SIZE = (525, 220)
+    PANEL_POS = (
+        (SCREEN_WIDTH-PANEL_SIZE[0])//2, 
+        (SCREEN_HEIGHT-PANEL_SIZE[1])//2,
+    )
+
+    def __init__(self, title, message, confirm_event_type, manager):
         super().__init__(
-            Rect(panel_pos, panel_size),
+            Rect(self.PANEL_POS, self.PANEL_SIZE),
             manager=manager,
             object_id="#confirm_panel",
             starting_height=9,
         )
         self.confirm_event_type = confirm_event_type
-        self.create_ui(title, message, panel_size)
+        self.create_ui(title, message)
 
-    def create_ui(self, title, message, panel_size):
+    def create_ui(self, title, message):
         padding = 24
         button_gap = 18
         button_size = (160, 54)
-        button_y = panel_size[1] - 78
+        button_y = self.PANEL_SIZE[1] - 78
         total_button_width = (button_size[0] * 2) + button_gap
-        buttons_x = (panel_size[0] - total_button_width) // 2
+        buttons_x = (self.PANEL_SIZE[0] - total_button_width) // 2
 
         UILabel(
-            relative_rect=Rect((padding, 22), (panel_size[0] - (padding * 2), 36)),
+            relative_rect=Rect(
+                (padding, 22), 
+                (self.PANEL_SIZE[0] - (padding * 2), 36)
+            ),
             text=title,
             manager=self.ui_manager,
             container=self,
@@ -160,7 +191,10 @@ class ConfirmationPanel(UIPanel):
         )
 
         UILabel(
-            relative_rect=Rect((padding, 78), (panel_size[0] - (padding * 2), 52)),
+            relative_rect=Rect(
+                (padding, 78), 
+                (self.PANEL_SIZE[0] - (padding * 2), 52)
+            ),
             text=message,
             manager=self.ui_manager,
             container=self,
@@ -173,7 +207,7 @@ class ConfirmationPanel(UIPanel):
             image_path="game/assets/SproutLands/cropped/grey_button.png",
             text="Cancel",
             manager=self.ui_manager,
-            container=self
+            container=self,
         )
         self.confirm_button = UIFactory.button_img(
             pos=(buttons_x + button_size[0] + button_gap, button_y),
@@ -181,7 +215,7 @@ class ConfirmationPanel(UIPanel):
             image_path="game/assets/SproutLands/cropped/brown_button.png",
             text="Confirm",
             manager=self.ui_manager,
-            container=self
+            container=self,
         )
 
     def process_event(self, event):
@@ -190,52 +224,37 @@ class ConfirmationPanel(UIPanel):
             return
         if self.confirm_button.on_click(event):
             self.kill()
-            confirm_event = pygame.event.Event(CHANGE_ENV_CONFIRMED, {'change_env': self.confirm_event_type})
+            confirm_event = pygame.event.Event(
+                CHANGE_ENV_CONFIRMED, {"change_env": self.confirm_event_type}
+            )
             pygame.event.post(confirm_event)
 
-
-# Making the level text a ui panel so that it can change heights and not be lost in the rendering order
-class LevelText(UIPanel):
-    def __init__(self, panel_pos, panel_size, text, manager):
-        # Setting the starting height to 4 here since it should be above any other ui panels to be rendered, but below the dialouge text
-        super().__init__(Rect(panel_pos, panel_size), manager=manager, object_id="#level_text_panel", starting_height=4)
-
-        UIFactory.image(
-            pos=(-1,-1),
-            size=panel_size,
-            image_path='game/assets/SproutLands/cropped/brown_panel.png',
-            manager=self.ui_manager,
-            container=self)
-        
-        UILabel(relative_rect=Rect((-1,-1),panel_size),
-            text=text,
-            manager=self.ui_manager,
-            container=self)
-        
+# A settings menu for the user to select to go to menu or quit while playing 
 class SettingsMenu(UIPanel):
-    def __init__(self, panel_size, manager):
+    PANEL_SIZE = (200,250)
+    PANEL_POS = (
+        (SCREEN_WIDTH-PANEL_SIZE[0])//2, 
+        (SCREEN_HEIGHT-PANEL_SIZE[1])//2
+    )
 
-        panel_pos = (
-            (SCREEN_WIDTH-panel_size[0])//2, 
-            (SCREEN_HEIGHT-panel_size[1])//2
-        )
+    def __init__(self, manager):
         super().__init__(
-            Rect(panel_pos, panel_size), 
+            Rect(self.PANEL_POS, self.PANEL_SIZE), 
             manager=manager, 
             object_id="#settings_panel", 
             starting_height=10
         )
         
-        self.create_ui(panel_size)
+        self.create_ui()
 
-    def create_ui(self, panel_size):
+    def create_ui(self):
         padding_x = 20
         padding_y = 10
-        size_x  = panel_size[0] - padding_x * 2
+        size_x  = self.PANEL_SIZE[0] - padding_x * 2
         label_size = (size_x, 75)
         button_size = (size_x, 54)
         button_y = label_size[1] + padding_y * 2
-        button_gap = button_size[1] + padding_y 
+        button_gap = button_size[1] + padding_y
 
         UILabel(
             relative_rect=Rect((padding_x, 0), label_size),

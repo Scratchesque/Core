@@ -1,33 +1,40 @@
+# Rabbit Rush - code_scripts.py 
+#
+# Created By: VizzWizz, BoredHF, HJParker2802, KamranBasra, TafaraMangombe, Vladikusss
+#
+# Source: https://github.com/Scratchesque/Core
+
 import re
 from dataclasses import replace
-from pygame import Rect, Vector2, KEYUP, K_RETURN, K_ESCAPE
-from pygame_gui.elements import UIPanel, UITextBox, UIButton, UILabel, UITextEntryLine
+import pygame
+from pygame import K_ESCAPE, K_RETURN, KEYUP, Rect, Vector2
 from pygame_gui._constants import UI_BUTTON_PRESSED
+from pygame_gui.elements import UIButton, UILabel, UIPanel, UITextBox, UITextEntryLine
 
-from game.app.block_interpreter import Interpreter
-from game.app.block_registry import get_block_library
-from game.core.events import *
-from game.core.constants import *
-from game.support.ui import UIFactory, Button
+from game.app.block_interpreter import BlockInterpreter
+from game.core.block_registry import get_block_library
+from game.core.constants import SCREEN_HEIGHT, SCREEN_WIDTH
+from game.core.events import RESET_ENV_REQUESTED
+from game.support.ui import Button, UIFactory
 
-
+# This popup will ask the user to change a line of code for the final levels
 class ProblemPanel(UIPanel):
-    PANEL_SIZE = (625,300)
+    PANEL_SIZE = (625, 300)
     PANEL_POS = (
-        (SCREEN_WIDTH-PANEL_SIZE[0])//2,
-        (SCREEN_HEIGHT-PANEL_SIZE[1])//2
+        (SCREEN_WIDTH - PANEL_SIZE[0]) // 2,
+        (SCREEN_HEIGHT - PANEL_SIZE[1]) // 2,
     )
 
-    def __init__(self, spec_str_list, manager):
+    def __init__(self, spec_text_list, manager):
         super().__init__(
-            relative_rect=Rect(self.PANEL_POS, self.PANEL_SIZE), 
+            relative_rect=Rect(self.PANEL_POS, self.PANEL_SIZE),
             starting_height=8,
-            manager=manager, 
-            object_id="#problem_panel"
+            manager=manager,
+            object_id="#problem_panel",
         )
-        
-        self.method_string = f'<b>{spec_str_list[0]}</b>'
-        self.fix_string = self.replace_string_html(spec_str_list[1])
+
+        self.method_string = f"<b>{spec_text_list[0]}</b>"
+        self.fix_string = self.replace_string_html(spec_text_list[1])
 
         self.value = 0
 
@@ -35,8 +42,8 @@ class ProblemPanel(UIPanel):
 
     @staticmethod
     def replace_string_html(string):
-        temp_str = string.replace('  ','')
-        return re.sub(r'<[^>]+>', '', temp_str)
+        normalized_text = string.replace("  ", "")
+        return re.sub(r"<[^>]+>", "", normalized_text)
 
     def create_ui(self):
         padding = 24
@@ -61,9 +68,11 @@ class ProblemPanel(UIPanel):
             container=self,
             object_id="#body",
         )
-        
+
         UITextBox(
-            relative_rect=Rect((padding, 105), (self.PANEL_SIZE[0] - (padding * 2), 52)),
+            relative_rect=Rect(
+                (padding, 105), (self.PANEL_SIZE[0] - (padding * 2), 52)
+            ),
             html_text=self.method_string,
             manager=self.ui_manager,
             container=self,
@@ -71,7 +80,9 @@ class ProblemPanel(UIPanel):
         )
 
         self.entry_box = UITextEntryLine(
-            relative_rect=Rect((padding, 155), (self.PANEL_SIZE[0] - (padding * 2), 52)),
+            relative_rect=Rect(
+                (padding, 155), (self.PANEL_SIZE[0] - (padding * 2), 52)
+            ),
             manager=self.ui_manager,
             container=self,
             object_id="#entry_box",
@@ -84,7 +95,7 @@ class ProblemPanel(UIPanel):
             image_path="game/assets/SproutLands/cropped/grey_button.png",
             text="Cancel",
             manager=self.ui_manager,
-            container=self
+            container=self,
         )
         self.confirm_button = UIFactory.button_img(
             pos=(buttons_x + button_size[0] + button_gap, button_y),
@@ -92,55 +103,67 @@ class ProblemPanel(UIPanel):
             image_path="game/assets/SproutLands/cropped/brown_button.png",
             text="Confirm",
             manager=self.ui_manager,
-            container=self
+            container=self,
         )
-        pass
 
     def get_values(self, string):
-        string_list = string.split(' ')
+        string_list = string.split(" ")
         r_value = string_list.pop()
-        l_value = ' '.join(string_list)
-        return l_value, r_value 
+        l_value = " ".join(string_list)
+        return l_value, r_value
 
     def check_code_complete(self):
-        l_og_value, r_og_value = self.get_values(self.fix_string) 
-        l_box_value, r_box_value = self.get_values(self.entry_box.get_text()) 
-        if l_og_value != l_box_value:
-            self.help_text.set_text(Interpreter._type_to_font("You cannot change the Player Assignment!", "loop"))
-            return
-        
-        if r_og_value == r_box_value:
-            self.help_text.set_text(Interpreter._type_to_font("You haven't tried changing the ammount!", "loop"))
-            return
-        
-        try:
-            value = int(r_box_value)
-        except ValueError:
-            self.help_text.set_text(Interpreter._type_to_font("The player can't move with text!", "loop"))
+        left_original_value, right_original_value = self.get_values(self.fix_string)
+        left_input_value, right_input_value = self.get_values(self.entry_box.get_text())
+        if left_original_value != left_input_value:
+            self.help_text.set_text(
+                BlockInterpreter._type_to_font(
+                    "You cannot change the Player Assignment!", "loop"
+                )
+            )
             return
 
-        if True:
-            self.value = value
-            self.kill()
+        if right_original_value == right_input_value:
+            self.help_text.set_text(
+                BlockInterpreter._type_to_font(
+                    "You haven't tried changing the ammount!", "loop"
+                )
+            )
+            return
+
+        try:
+            value = int(right_input_value)
+        except ValueError:
+            self.help_text.set_text(
+                BlockInterpreter._type_to_font("The player can't move with text!", "loop")
+            )
+            return
+
+        self.value = value
+        self.kill()
 
     def process_event(self, event):
-        if (event.type == KEYUP and event.key == K_ESCAPE) or self.cancel_button.on_click(event):
+        if (
+            event.type == KEYUP and event.key == K_ESCAPE
+        ) or self.cancel_button.on_click(event):
             self.kill()
             return
-        if (event.type == KEYUP and event.key == K_RETURN) or self.confirm_button.on_click(event):
+        if (
+            event.type == KEYUP and event.key == K_RETURN
+        ) or self.confirm_button.on_click(event):
             self.check_code_complete()
             return
 
 class ProblemButton(Button):
-    def __init__(self, spec, spec_str_list, pos, line, manager, container = None):
+    def __init__(self, spec, spec_text_list, pos, line, manager, container=None):
         self.spec = spec
-        self.spec_str_list = spec_str_list
+        self.spec_text_list = spec_text_list
         self.size = Vector2(30, 30)
         self.pos = Vector2(self.get_line_pos(pos, line))
         self.line = line
         self.container = container
-        
-        self.img = UIFactory.image(           
+
+        self.img = UIFactory.image(
             pos=self.pos,
             size=self.size,
             image_path="game/assets/SproutLands/cropped/brown_block.png",
@@ -148,25 +171,35 @@ class ProblemButton(Button):
             container=container,
         )
 
-        super().__init__(self.pos, self.size, "!", manager, object_id="#transparent", container=container)
-        
+        super().__init__(
+            self.pos,
+            self.size,
+            "!",
+            manager,
+            object_id="#transparent",
+            container=container,
+        )
+
         self.problem_panel = None
         self.solved = False
 
+    # Gets position on the screen to place the ProblemButton
     def get_line_pos(self, block_pos, line):
-        font_size=21
-        line_y = block_pos[1]+5 + (line - 1) * font_size
-        return (block_pos[0]-self.size.x-10, line_y)
+        font_size = 21
+        line_y = block_pos[1] + 5 + (line - 1) * font_size
+        return (block_pos[0] - self.size.x - 10, line_y)
 
     def process_event(self, event):
         super().process_event(event)
-        if self.on_click(event) and (self.problem_panel is None or not self.problem_panel.alive()):
+        if self.on_click(event) and (
+            self.problem_panel is None or not self.problem_panel.alive()
+        ):
             self.problem_panel = ProblemPanel(
-                spec_str_list=self.spec_str_list, 
-                manager=self.ui_manager
+                spec_text_list=self.spec_text_list, manager=self.ui_manager
             )
 
-        if self.problem_panel == None: return
+        if self.problem_panel is None:
+            return
 
         if not self.problem_panel.alive() and self.problem_panel.value != 0:
             if self.spec.x != 0:
@@ -179,7 +212,8 @@ class ProblemButton(Button):
             self.img.kill()
             self.kill()
 
-class CodePanel(UIPanel, Interpreter):
+# This class holds the panel information for the user to complete lines of code
+class CodeScripts(UIPanel, BlockInterpreter):
     BTN_SIZE = (30, 30)
 
     PANEL_PADDING = 18
@@ -189,27 +223,29 @@ class CodePanel(UIPanel, Interpreter):
     ACTION_BUTTON_HEIGHT = 54
     RESET_BUTTON_HEIGHT = 50
 
-    def __init__(self, player, panel_pos, panel_size, level_script, manager, level_title):
-        self.player=player
+    def __init__(
+        self, player, panel_pos, panel_size, level_script, manager, level_title
+    ):
+        self.player = player
         self._change_min_lines(34)
         self.size = Vector2(panel_size)
         self.pos = Vector2(panel_pos)
-        self.level_title = level_title 
+        self.level_title = level_title
         super().__init__(
             relative_rect=Rect(panel_pos, panel_size),
             starting_height=3,
             manager=manager,
-            object_id="#code_panel"
+            object_id="#code_panel",
         )
-        
+
         self.is_running = False
         self.program_blocks = []
         self._exec_steps = []
         self.problem_buttons = []
-        
+
         self.configure_layout()
 
-        self._make_start_script(level_script)   
+        self._make_start_script(level_script)
         self._make_classes(make_problem=True)
         self._make_blocks()
 
@@ -230,7 +266,7 @@ class CodePanel(UIPanel, Interpreter):
 
         self.script_area_rect = Rect(
             (self.PANEL_PADDING + self.SCRIPT_LANE_PADDING, content_top),
-            (inner_width-self.SCRIPT_LANE_PADDING, content_height),
+            (inner_width - self.SCRIPT_LANE_PADDING, content_height),
         )
         self.status_rect = Rect(
             (self.PANEL_PADDING, self.script_area_rect.bottom + self.SECTION_GAP),
@@ -241,15 +277,18 @@ class CodePanel(UIPanel, Interpreter):
         self.run_button_rect = Rect(
             (self.PANEL_PADDING, buttons_y),
             (inner_width, self.RESET_BUTTON_HEIGHT),
-        ) 
+        )
         self.reset_button_rect = Rect(
-            (self.PANEL_PADDING, buttons_y + self.ACTION_BUTTON_HEIGHT + self.SECTION_GAP),
+            (
+                self.PANEL_PADDING,
+                buttons_y + self.ACTION_BUTTON_HEIGHT + self.SECTION_GAP,
+            ),
             (inner_width, self.RESET_BUTTON_HEIGHT),
-        ) 
+        )
 
         self.text_rect = Rect(
-            (self.script_area_rect.x+5, self.script_area_rect.y+5),
-            (self.script_area_rect.size[0],self.script_area_rect.size[1]+50)
+            (self.script_area_rect.x + 5, self.script_area_rect.y + 5),
+            (self.script_area_rect.size[0], self.script_area_rect.size[1] + 50),
         )
 
     def create_ui(self):
@@ -287,19 +326,19 @@ class CodePanel(UIPanel, Interpreter):
         block_text = self._translate_blocks()
         self.text_box = UITextBox(
             relative_rect=self.text_rect,
-            html_text=block_text, 
-            manager=self.ui_manager, 
-            container=self, 
-            object_id='#text_code'
+            html_text=block_text,
+            manager=self.ui_manager,
+            container=self,
+            object_id="#text_code",
         )
 
     def process_event(self, event):
         if self.is_running:
             return
-        
+
         if event.type != UI_BUTTON_PRESSED:
             return
-        
+
         if event.ui_element == self.run_button:
             self._exec_steps = self._build_exec_steps()
             if not self._exec_steps:
@@ -345,6 +384,7 @@ class CodePanel(UIPanel, Interpreter):
             )
         self.status_display.set_text(status)
 
+    # Goes through the list of blocks to execute and replaces blocks with new information
     def change_block(self, block):
         for x in range(len(self.program_blocks)):
             spec_list = self.program_blocks[x][0]
@@ -369,12 +409,13 @@ class CodePanel(UIPanel, Interpreter):
             self.player.deplete_energy()
             self.refresh_status()
             return
-        
+
         spec = self._exec_steps[self.next_step_index]
         self.player.do_action(spec.action, x=spec.x, y=spec.y)
         self.next_step_index += 1
         self.refresh_status()
 
+    # Gets a total of how many problems the user has completed
     def _count_problems_left(self):
         total_problems = 0
         problems_solved = 0
@@ -384,59 +425,58 @@ class CodePanel(UIPanel, Interpreter):
                 problems_solved += 1
         return total_problems - problems_solved
 
-
+    # Initalizes the blocks from the start script in the json file
     def _make_start_script(self, level_script):
         for script_line in level_script:
             blocks = get_block_library(script_line[0])
-            self.program_blocks.append([blocks,script_line[1]])
+            self.program_blocks.append([blocks, script_line[1]])
 
-    def _make_classes(self, make_problem = False):
-        font_text = self._type_to_font('Blocks', 'main')
-        self.class_list = [f'Class {font_text}:']
+    def _make_classes(self, make_problem=False):
+        font_text = self._type_to_font("Blocks", "main")
+        self.class_list = [f"Class {font_text}:"]
         all_specs = []
 
         for script_list in self.program_blocks:
             for spec in script_list[0]:
-                if spec in all_specs: 
+                if spec in all_specs:
                     continue
                 all_specs.append(spec)
 
         all_specs.sort(key=lambda p: p.label, reverse=True)
 
         for spec in all_specs:
-                format_spec_list = self._format_spec_class(spec)
-                if 'fix' in spec.id and make_problem:
-                    line_type = 2 if spec.action == 'jump' else 1
-                    line_pos = len(self.class_list)+1+line_type
+            format_spec_list = self._format_spec_class(spec)
+            if "fix" in spec.id and make_problem:
+                line_type = 2 if spec.action == "jump" else 1
+                line_pos = len(self.class_list) + 1 + line_type
 
-                    spec_str_list = [format_spec_list[0], format_spec_list[line_type]]
+                spec_text_list = [format_spec_list[0], format_spec_list[line_type]]
 
-                    self.problem_buttons.append(
-                        ProblemButton(
-                            spec=spec, 
-                            spec_str_list=spec_str_list, 
-                            pos=self.script_area_rect.topleft, 
-                            line=line_pos, 
-                            manager=self.ui_manager, 
-                            container=self
-                        )
+                self.problem_buttons.append(
+                    ProblemButton(
+                        spec=spec,
+                        spec_text_list=spec_text_list,
+                        pos=self.script_area_rect.topleft,
+                        line=line_pos,
+                        manager=self.ui_manager,
+                        container=self,
                     )
-                self.class_list += format_spec_list
+                )
+            self.class_list += format_spec_list
 
     def _make_blocks(self):
-        font_text = self._type_to_font(self.level_title, 'main')
-        self.block_list =  [f'Script {font_text}:']
+        font_text = self._type_to_font(self.level_title, "main")
+        self.block_list = [f"Script {font_text}:"]
 
         for script_list in self.program_blocks:
             spec_list = script_list[0]
-            repeat_amm = script_list[1]
-            if repeat_amm != 1:
-                loop_font = self._type_to_font('Loop', 'loop')
-                self.block_list.append(f'{self.GAP}{loop_font} ({repeat_amm}):')
+            repeat_amount = script_list[1]
+            if repeat_amount != 1:
+                loop_font = self._type_to_font("Loop", "loop")
+                self.block_list.append(f"{self.GAP}{loop_font} ({repeat_amount}):")
 
                 for spec in spec_list:
                     self.block_list.append(self._format_spec_code(spec, func_gap=True))
             else:
                 for spec in spec_list:
                     self.block_list.append(self._format_spec_code(spec))
-                pass

@@ -92,9 +92,6 @@
   "#problem_panel":{
     "prototype": "#core_panel"
   },
-  "#level_text_panel":{
-    "prototype": "#transparent"
-  },
   "#panel_shadow": {
     "colours": {
       "dark_bg": "#00000030"
@@ -402,13 +399,12 @@
       "shadow_width": "0"
     }
   },
-  "#level_text_panel.label":{
+  "#level_text":{
     "font":{
       "name":"pixel_font"
     },
     "colours":{
       "normal_text":"#FFF8F5"
     }
-
   }
 }

@@ -1,5 +1,5 @@
 {
-    "env":{
+    "env": {
         "type": "Code",
         "title": "Final",
         "theme": "game",
@@ -18,20 +18,26 @@
         ]
     },
     "map": {
-        "water": ["Level_9/Level_9_water", "SproutLands/Tilesets/Water"],
-        "water_bounds": ["Level_9/Level_9_water_bounds", "SproutLands/Tilesets/Water"],
-        "terrain": ["Level_9/Level_9_terrain", "SproutLands/Tilesets/Grass"],
-        "tree": ["Level_9/Level_9_tree","SproutLands/Objects/Basic_Grass_Biom_things"],
-        "fence": ["Level_9/Level_9_fence", "SproutLands/Tilesets/Fences"],
-        "vegetation": ["Level_9/Level_9_vegetation", "SproutLands/Objects/Basic_Grass_Biom_things"],
-         "start_pos": "Level_9/start_pos"
+        "water": "Tilesets/Water",
+        "water_bounds": "Tilesets/Water",
+        "terrain": "Tilesets/Grass",
+        "tree":"Objects/Basic_Grass_Biom_things",
+        "fence": "Tilesets/Fences",
+        "vegetation": "Objects/Basic_Grass_Biom_things"
     },
-    "player":{
+    "player": {
         "bounds": {
-            "blocked":["water", "tree"],
+            "blocked": ["water", "tree"],
             "jumpable": ["fence"]
         },
         "energy": 2
     },
-    "npc": ["This is the final level!","There is some code that needs fixing-","Take your time, this one is tricky!","The path at the bottom has already been written,","See what you can do!","hint, the jump might need to be 2..."]
+    "npc": [
+        "This is the final level!",
+        "There is some code that needs fixing-",
+        "Take your time, this one is tricky!",
+        "The path at the bottom has already been written,",
+        "See what you can do!",
+        "hint, the jump might need to be 2..."
+    ]
 }

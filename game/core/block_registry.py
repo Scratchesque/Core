@@ -1,3 +1,9 @@
+# Rabbit Rush - block_registry.py
+#
+# Created By: VizzWizz, BoredHF, HJParker2802, KamranBasra, TafaraMangombe, Vladikusss
+#
+# Source: https://github.com/Scratchesque/Core
+
 from dataclasses import dataclass
 
 
@@ -10,7 +16,7 @@ class BlockSpec:
     x: int = 0
     y: int = 0
 
-
+# Available blocks that we can set in jsons to allow player to use
 DEFAULT_BLOCK_LIBRARY = (
     BlockSpec("up", "Move Up", "#motion_block", "up", y=-1),
     BlockSpec("down", "Move Down", "#motion_block", "down", y=1),
@@ -21,8 +27,7 @@ DEFAULT_BLOCK_LIBRARY = (
     BlockSpec("jump_right", "Jump Right", "#jump_block", "jump", x=2),
     BlockSpec("jump_up", "Jump Up", "#jump_block", "jump", y=-2),
     BlockSpec("jump_down", "Jump Down", "#jump_block", "jump", y=2),
-    BlockSpec("loop","Loop", "#loop_block"),
-
+    BlockSpec("loop", "Loop", "#loop_block"),
     BlockSpec("fix_up", "Move Up", "#motion_block", "up", y=1),
     BlockSpec("fix_down", "Move Down", "#motion_block", "down", y=-1),
     BlockSpec("fix_left", "Move Left", "#motion_block", "left", x=1),
@@ -32,6 +37,7 @@ DEFAULT_BLOCK_LIBRARY = (
     BlockSpec("fix_jump_up", "Jump Up", "#jump_block", "jump", y=1),
     BlockSpec("fix_jump_down", "Jump Down", "#jump_block", "jump", y=-1),
 )
+
 
 def get_block_library(allowed_block_ids=None):
     if not allowed_block_ids:

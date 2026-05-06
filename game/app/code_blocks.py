@@ -1,19 +1,27 @@
+# Rabbit Rush - code_blocks.py
+#
+# Created By: VizzWizz, BoredHF, HJParker2802, KamranBasra, TafaraMangombe, Vladikusss
+#
+# Source: https://github.com/Scratchesque/Core
+
+import pygame
 from pygame import MOUSEBUTTONUP, MOUSEMOTION, Rect
 from pygame.math import Vector2
-from pygame_gui.elements import UIButton, UILabel, UIPanel, UITextBox
 from pygame_gui._constants import UI_BUTTON_PRESSED, UI_BUTTON_START_PRESS
+from pygame_gui.elements import UIButton, UILabel, UIPanel, UITextBox
 
-from game.app.block_registry import get_block_library
-from game.core.events import *
+from game.app.block_interpreter import get_block_library
+from game.core.events import RESET_ENV_REQUESTED
 
 
+# This class contains information about the movement blocks that the user can control the player with
 class ScriptBlock(UIPanel):
     REMOVE_BUTTON_SIZE = 24
     REMOVE_BUTTON_OFFSET = 6
     SCRIPT_BLOCK_LAYER = 6
 
     def __init__(self, position, size, manager, container, spec):
-        super().__init__(Rect((0,0),(0,0)), 0, manager)
+        super().__init__(Rect((0, 0), (0, 0)), 0, manager)
         self.container = container
         self.spec = spec
         self.size = Vector2(size)
@@ -35,7 +43,10 @@ class ScriptBlock(UIPanel):
         self.remove_button = UIButton(
             relative_rect=Rect(
                 (
-                    self.position.x + self.size.x - self.REMOVE_BUTTON_SIZE - self.REMOVE_BUTTON_OFFSET,
+                    self.position.x
+                    + self.size.x
+                    - self.REMOVE_BUTTON_SIZE
+                    - self.REMOVE_BUTTON_OFFSET,
                     self.position.y + self.REMOVE_BUTTON_OFFSET,
                 ),
                 (self.REMOVE_BUTTON_SIZE, self.REMOVE_BUTTON_SIZE),
@@ -58,13 +69,18 @@ class ScriptBlock(UIPanel):
 
         if self.parent_block is None:
             self.button.set_dimensions(self.size)
-        else: 
-            self.button.set_dimensions((self.size.x-LoopBlock.CHILD_INDENT_X, self.size.y))
+        else:
+            self.button.set_dimensions(
+                (self.size.x - LoopBlock.CHILD_INDENT_X, self.size.y)
+            )
 
         self.button.set_relative_position((x, y))
         self.remove_button.set_relative_position(
             (
-                x + self.button.get_relative_rect().width - self.REMOVE_BUTTON_SIZE - self.REMOVE_BUTTON_OFFSET,
+                x
+                + self.button.get_relative_rect().width
+                - self.REMOVE_BUTTON_SIZE
+                - self.REMOVE_BUTTON_OFFSET,
                 y + self.REMOVE_BUTTON_OFFSET,
             )
         )
@@ -89,6 +105,7 @@ class ScriptBlock(UIPanel):
         self.button.kill()
         self.remove_button.kill()
 
+# This class contains on data to nest ScriptBlocks to repeat player actions
 class LoopBlock(ScriptBlock):
     FOOTER_HEIGHT = 10
     CHILD_INDENT_X = 24
@@ -104,7 +121,7 @@ class LoopBlock(ScriptBlock):
         self.target_position = Vector2(position)
 
         super().__init__(position, size, manager, container, spec)
-        
+
     def create_ui(self):
         super().create_ui()
 
@@ -125,7 +142,10 @@ class LoopBlock(ScriptBlock):
             starting_height=self.SCRIPT_BLOCK_LAYER + 1,
         )
         self.footer_panel = UIPanel(
-            relative_rect=Rect((self.position.x, self.position.y + self.size.y), (self.size.x, self.FOOTER_HEIGHT)),
+            relative_rect=Rect(
+                (self.position.x, self.position.y + self.size.y),
+                (self.size.x, self.FOOTER_HEIGHT),
+            ),
             manager=self.ui_manager,
             container=self.container,
             starting_height=self.SCRIPT_BLOCK_LAYER,
@@ -135,12 +155,16 @@ class LoopBlock(ScriptBlock):
             text=str(self.repeat_count),
             manager=self.ui_manager,
             container=self.container,
-            object_id="#loop_count_txt"
+            object_id="#loop_count_txt",
         )
         self.count_label.change_layer(self.SCRIPT_BLOCK_LAYER + 1)
 
     def total_height(self):
-        child_area = len(self.children_blocks) * self.CHILD_SLOT_SPACING if self.children_blocks else self.CHILD_SLOT_SPACING
+        child_area = (
+            len(self.children_blocks) * self.CHILD_SLOT_SPACING
+            if self.children_blocks
+            else self.CHILD_SLOT_SPACING
+        )
         return self.size.y + child_area + self.FOOTER_HEIGHT
 
     def child_slot_y(self, child_index):
@@ -150,7 +174,7 @@ class LoopBlock(ScriptBlock):
         if self.container.is_running:
             return
         self.repeat_count += ammount
-        if self.repeat_count > self.MAX_REPEAT: 
+        if self.repeat_count > self.MAX_REPEAT:
             self.repeat_count = self.MAX_REPEAT
         elif self.repeat_count < self.MIN_REPEAT:
             self.repeat_count = self.MIN_REPEAT
@@ -169,7 +193,9 @@ class LoopBlock(ScriptBlock):
 
         self.dec_button.set_relative_position((group_x, btn_y))
         self.count_label.set_relative_position(((group_x + btn_size + 2, btn_y + 2)))
-        self.inc_button.set_relative_position((group_x + btn_size + 2 + label_w + 2, btn_y))
+        self.inc_button.set_relative_position(
+            (group_x + btn_size + 2 + label_w + 2, btn_y)
+        )
 
         footer_y = y + self.total_height() - self.FOOTER_HEIGHT
         self.footer_panel.set_relative_position((x, footer_y))
@@ -202,8 +228,9 @@ class LoopBlock(ScriptBlock):
             child.kill()
         self.children_blocks.clear()
 
+# This class contains all information needed for the user to move blocks into a script they can execute
 class CodeBlocks(UIPanel):
-    SCRIPT_PROGRAM_LIMIT = 8
+    SCRIPT_PROGRAM_LIMIT = 7
     LOOP_PROGRAM_LIMIT = 2
     LOOP_CHILD_LIMIT = 4
     PANEL_PADDING = 18
@@ -222,7 +249,15 @@ class CodeBlocks(UIPanel):
     PALETTE_FALLBACK_MIN_WIDTH = 116
     LANE_MIN_WIDTH = 220
 
-    def __init__(self, panel_pos, panel_size, manager, player, allowed_blocks=None, level_script=None):
+    def __init__(
+        self,
+        panel_pos,
+        panel_size,
+        manager,
+        player,
+        allowed_blocks=None,
+        level_script=None,
+    ):
         super().__init__(
             Rect(panel_pos, panel_size),
             manager=manager,
@@ -276,15 +311,27 @@ class CodeBlocks(UIPanel):
             self.PALETTE_FALLBACK_MIN_WIDTH,
             min(preferred_palette_width, max_palette_width),
         )
-        if inner_width >= self.PALETTE_MIN_WIDTH + self.SECTION_GAP + self.LANE_MIN_WIDTH:
+        if (
+            inner_width
+            >= self.PALETTE_MIN_WIDTH + self.SECTION_GAP + self.LANE_MIN_WIDTH
+        ):
             self.palette_width = max(self.palette_width, self.PALETTE_MIN_WIDTH)
 
         lane_width = max(
-            self.LANE_MIN_WIDTH if inner_width >= self.PALETTE_FALLBACK_MIN_WIDTH + self.SECTION_GAP + self.LANE_MIN_WIDTH else 0,
+            (
+                self.LANE_MIN_WIDTH
+                if inner_width
+                >= self.PALETTE_FALLBACK_MIN_WIDTH
+                + self.SECTION_GAP
+                + self.LANE_MIN_WIDTH
+                else 0
+            ),
             inner_width - self.palette_width - self.SECTION_GAP,
         )
 
-        self.palette_title_rect = Rect((self.PANEL_PADDING, content_top), (self.palette_width, 30))
+        self.palette_title_rect = Rect(
+            (self.PANEL_PADDING, content_top), (self.palette_width, 30)
+        )
         self.palette_y = self.palette_title_rect.bottom + 12
         self.palette_button_width = self.palette_width
         self.script_area_rect = Rect(
@@ -311,13 +358,18 @@ class CodeBlocks(UIPanel):
             (self.run_button_rect.right + self.ACTION_BUTTON_GAP, buttons_y),
             (button_width, self.ACTION_BUTTON_HEIGHT),
         )
-        clear_button_width = inner_width - (button_width * 2) - (self.ACTION_BUTTON_GAP * 2)
+        clear_button_width = (
+            inner_width - (button_width * 2) - (self.ACTION_BUTTON_GAP * 2)
+        )
         self.clear_button_rect = Rect(
             (self.undo_button_rect.right + self.ACTION_BUTTON_GAP, buttons_y),
             (clear_button_width, self.ACTION_BUTTON_HEIGHT),
         )
         self.reset_button_rect = Rect(
-            (self.PANEL_PADDING, buttons_y + self.ACTION_BUTTON_HEIGHT + self.SECTION_GAP),
+            (
+                self.PANEL_PADDING,
+                buttons_y + self.ACTION_BUTTON_HEIGHT + self.SECTION_GAP,
+            ),
             (inner_width, self.RESET_BUTTON_HEIGHT),
         )
 
@@ -413,11 +465,13 @@ class CodeBlocks(UIPanel):
             object_id="#edit_button",
         )
 
+    # If the interpreter has been activated then set it here 
     def set_interpreter(self, interpreter):
         self.interpreter = interpreter
 
+    # Update the interpreters blocks if it has been set
     def update_interpreter(self):
-        if self.interpreter is None: 
+        if self.interpreter is None:
             return
         self.interpreter.update_text(self.program_blocks)
 
@@ -443,6 +497,7 @@ class CodeBlocks(UIPanel):
             self.update_interpreter()
         self.status_display.set_text(status)
  
+    # Count total ammount of blocks, loops and total count of the program script
     def _count_total_steps(self):
         count = 0
         blocks = 0
@@ -457,6 +512,7 @@ class CodeBlocks(UIPanel):
                 blocks += 1
         return count, blocks, loops
     
+    # Build all of the program blocks into steps to execute
     def _build_exec_steps(self):
         steps = []
         for item in self.program_blocks:
@@ -470,13 +526,13 @@ class CodeBlocks(UIPanel):
 
     def create_script_block(self, spec, pos):
         args = dict(
-            position=pos, 
-            size=self.slot_size, 
-            manager=self.ui_manager, 
-            container=self, 
-            spec=spec
+            position=pos,
+            size=self.slot_size,
+            manager=self.ui_manager,
+            container=self,
+            spec=spec,
         )
-        if spec.id == 'loop':
+        if spec.id == "loop":
             block = LoopBlock(**args)
         else:
             block = ScriptBlock(**args)
@@ -494,7 +550,9 @@ class CodeBlocks(UIPanel):
         self.placed_blocks_history.append(block)
 
     def _remove_from_placement_history(self, block):
-        self.placed_blocks_history = [item for item in self.placed_blocks_history if item is not block]
+        self.placed_blocks_history = [
+            item for item in self.placed_blocks_history if item is not block
+        ]
         if isinstance(block, LoopBlock):
             for child in block.children_blocks:
                 self._remove_from_placement_history(child)
@@ -528,7 +586,9 @@ class CodeBlocks(UIPanel):
             ),
             (
                 self.script_area_rect.width - 12,
-                self.script_area_rect.height - self.LANE_HEADER_HEIGHT - self.LANE_BOTTOM_PADDING,
+                self.script_area_rect.height
+                - self.LANE_HEADER_HEIGHT
+                - self.LANE_BOTTOM_PADDING,
             ),
         )
 
@@ -539,6 +599,7 @@ class CodeBlocks(UIPanel):
             local_y - self.drag_offset.y,
         )
 
+    # If the user has clicked on a block, get the drag index and update relevant information
     def start_drag(self, block, mouse_pos, was_new):
         self.dragged_block = block
         self.drag_was_new = was_new
@@ -574,13 +635,15 @@ class CodeBlocks(UIPanel):
 
         self.move_dragged_block(mouse_pos)
         self.refresh_status()
-
+ 
+    # Move the dragged block that has been started
     def move_dragged_block(self, mouse_pos):
         if self.dragged_block is None:
             return
 
         self.dragged_block.set_position(self.drag_position(mouse_pos))
 
+    # Get the position in the screen where to place the block
     def get_drop_index(self, mouse_pos):
         if self.dragged_block is None:
             return None, None
@@ -589,9 +652,11 @@ class CodeBlocks(UIPanel):
         block_center = dragged_rect.center
         drop_rect = self.script_drop_rect().inflate(24, 12)
 
-        if not drop_rect.collidepoint(block_center) and not drop_rect.colliderect(dragged_rect):
+        if not drop_rect.collidepoint(block_center) and not drop_rect.colliderect(
+            dragged_rect
+        ):
             return None, None
-        
+
         if not self.script_lane.panel_container.rect.collidepoint(mouse_pos):
             return None, None
 
@@ -600,11 +665,21 @@ class CodeBlocks(UIPanel):
             if isinstance(item, LoopBlock):
                 child_top = running_y + self.slot_size[1]
                 child_bottom = running_y + item.total_height() - LoopBlock.FOOTER_HEIGHT
-                if (child_top <= block_center[1] < child_bottom
-                        and self.script_area_rect.x <= block_center[0] < self.script_area_rect.right
-                        and len(item.children_blocks) < self.LOOP_CHILD_LIMIT):
+                if (
+                    child_top <= block_center[1] < child_bottom
+                    and self.script_area_rect.x
+                    <= block_center[0]
+                    < self.script_area_rect.right
+                    and len(item.children_blocks) < self.LOOP_CHILD_LIMIT
+                ):
                     rel_y = block_center[1] - child_top
-                    child_index = max(0, min(round(rel_y / LoopBlock.CHILD_SLOT_SPACING), len(item.children_blocks)))
+                    child_index = max(
+                        0,
+                        min(
+                            round(rel_y / LoopBlock.CHILD_SLOT_SPACING),
+                            len(item.children_blocks),
+                        ),
+                    )
                     return child_index, item
                 running_y += item.total_height()
             else:
@@ -615,11 +690,14 @@ class CodeBlocks(UIPanel):
             drop_rect.bottom - self.slot_size[1],
             lane_top + ((self.SCRIPT_PROGRAM_LIMIT - 1) * self.slot_spacing),
         )
-        clamped_y = max(lane_top, min(block_center[1] - (self.slot_size[1] // 2), lane_bottom))
+        clamped_y = max(
+            lane_top, min(block_center[1] - (self.slot_size[1] // 2), lane_bottom)
+        )
         relative_y = clamped_y - lane_top
         index = round(relative_y / self.slot_spacing)
         return max(0, min(index, len(self.program_blocks))), None
 
+    # Place the block to be part of the script
     def finish_drag(self, mouse_pos):
         if self.dragged_block is None:
             return
@@ -655,11 +733,18 @@ class CodeBlocks(UIPanel):
                 self.destroy_script_block(dragged_block)
             else:
                 if self.drag_original_loop is not None:
-                    restore_index = min(self.drag_original_index, len(self.drag_original_loop.children_blocks))
-                    self.drag_original_loop.children_blocks.insert(restore_index, dragged_block)
+                    restore_index = min(
+                        self.drag_original_index,
+                        len(self.drag_original_loop.children_blocks),
+                    )
+                    self.drag_original_loop.children_blocks.insert(
+                        restore_index, dragged_block
+                    )
                     dragged_block.parent_block = self.drag_original_loop
                 else:
-                    restore_index = min(self.drag_original_index, len(self.program_blocks))
+                    restore_index = min(
+                        self.drag_original_index, len(self.program_blocks)
+                    )
                     self.program_blocks.insert(restore_index, dragged_block)
                 self.relayout_program_blocks()
         elif self.drag_was_new:
@@ -677,14 +762,15 @@ class CodeBlocks(UIPanel):
         self.refresh_status()
 
     def _make_start_script(self):
-        if self.starting_blocks is None: return 
+        if self.starting_blocks is None:
+            return
         for element_block in self.starting_blocks:
             spec = get_block_library([element_block])
             new_block = self.create_script_block(spec[0], (0, 0))
             self.program_blocks.append(new_block)
         self.relayout_program_blocks()
         self.refresh_status()
-    
+
     def clear_program(self):
         if self.is_running:
             return
@@ -779,7 +865,11 @@ class CodeBlocks(UIPanel):
             self.move_dragged_block(event.pos)
             return
 
-        if event.type == MOUSEBUTTONUP and event.button == 1 and self.dragged_block is not None:
+        if (
+            event.type == MOUSEBUTTONUP
+            and event.button == 1
+            and self.dragged_block is not None
+        ):
             self.finish_drag(event.pos)
             return
 
@@ -787,15 +877,21 @@ class CodeBlocks(UIPanel):
             if event.ui_element in self.palette_button_to_spec:
                 spec = self.palette_button_to_spec[event.ui_element]
                 self.palette_drag_source = event.ui_element
-                mouse_pos = getattr(event, "mouse_pos", event.ui_element.get_abs_rect().center)
+                mouse_pos = getattr(
+                    event, "mouse_pos", event.ui_element.get_abs_rect().center
+                )
                 if self.dragged_block is not None:
                     self.finish_drag(mouse_pos)
-                new_block = self.create_script_block(spec, self.panel_local_pos(mouse_pos))
+                new_block = self.create_script_block(
+                    spec, self.panel_local_pos(mouse_pos)
+                )
                 self.start_drag(new_block, mouse_pos, was_new=True)
                 return
             if event.ui_element in self.script_button_to_block:
                 block = self.script_button_to_block[event.ui_element]
-                mouse_pos = getattr(event, "mouse_pos", event.ui_element.get_abs_rect().topleft)
+                mouse_pos = getattr(
+                    event, "mouse_pos", event.ui_element.get_abs_rect().topleft
+                )
                 if self.dragged_block is not None:
                     self.finish_drag(mouse_pos)
                 self.start_drag(block, mouse_pos, was_new=False)

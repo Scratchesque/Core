@@ -1,22 +1,34 @@
+# Rabbit Rush - base.py
+#
+# Created By: VizzWizz, BoredHF, HJParker2802, KamranBasra, TafaraMangombe, Vladikusss
+#
+# Source: https://github.com/Scratchesque/Core
+
+import pygame
 from pygame import Rect, KEYUP, K_ESCAPE, Color
 from pygame_gui.elements import UIPanel
 
 from game.app.block_interpreter import InterpreterPanel
-from game.app.code_scripts import CodePanel
+from game.app.code_scripts import CodeScripts
 from game.app.board import Board
 from game.app.code_blocks import CodeBlocks
-from game.app.panels import ConfirmationPanel, LevelText, SettingsMenu, MessagePanel
-from game.core.images import load_image
+from game.app.pop_ups import ConfirmationPanel, SettingsMenu, MessagePanel
 from game.core.paths import resolve_project_path
-from game.core.constants import *
-from game.core.events import *
+from game.core.constants import IMG_TILE_SIZE, SCREEN_HEIGHT, SCREEN_WIDTH
+from game.core.events import (
+    CHANGE_ENV_CONFIRMED,
+    LEVEL_COMPLETED,
+    MENU_ENV_REQUESTED,
+    QUIT_EMV_REQUESTED,
+    RESET_ENV_REQUESTED,
+)
 from game.support.files import import_map_layout, load_json
 from game.support.ui import UIFactory
 
 
-# New environemnts/screens that are loaded through the game manager should inherit this class
+# Base class for environments/screens loaded by the game manager.
 class BaseEnvironment:
-    # When an environemnt using this class init's, it loads all relevant data from 'environments/data/{level_file}.json" to be used
+    # Load shared defaults and level-specific environment data.
     def __init__(self, level_file):
         root_dir = "game/environments/data/"
         default_data = load_json(f"{root_dir}default.json")
@@ -25,15 +37,19 @@ class BaseEnvironment:
         if not hasattr(default_data, "env"):
             raise ValueError("Default environment data is missing an 'env' section.")
         if not hasattr(self.env_data, "env"):
-            raise ValueError(f"Environment data for '{level_file}' is missing an 'env' section.")
+            raise ValueError(
+                f"Environment data for '{level_file}' is missing an 'env' section."
+            )
 
         env_data = self.env_data.env
         self.title = env_data.title
-        self.theme_path = str(resolve_project_path(f"game/environments/themes/{env_data.theme}.json"))
+        self.theme_path = str(
+            resolve_project_path(f"game/environments/themes/{env_data.theme}.json")
+        )
 
-        self.background_colour = Color(f'#{default_data.env.background}')
-        if hasattr(env_data, 'background'):
-            self.background_colour = Color(f'#{env_data.background}')
+        self.background_colour = Color(f"#{default_data.env.background}")
+        if hasattr(env_data, "background"):
+            self.background_colour = Color(f"#{env_data.background}")
 
     def create_ui(self):
         pass
@@ -43,7 +59,7 @@ class BaseEnvironment:
             MessagePanel(
                 title="Please Wait!",
                 message="Loading level...",
-                manager=self.ui_manager
+                manager=self.ui_manager,
             )
             self.game_manager.change_env(event.change_env)
         if event.type == LEVEL_COMPLETED:
@@ -58,29 +74,33 @@ class BaseEnvironment:
     def update_frame(self, delta_time):
         # Per-frame updates (e.g., typing effects, animations).
         pass
-     
-    # This is called when the screen is to be reset to recreate ui elements, it can also change the level from a level file
+
+    # Reset and recreate environment UI state.
     def reset(self):
         self.ui_manager.clear_and_reset()
         self.game_manager.display.create_cursor()
         self.create_ui()
- 
-# This contains all of the info that will be consistent accross each of the levels
+
+
+# Shared level environment behavior.
 class GameEnv(BaseEnvironment):
     BOARD_PANEL_PADDING = 28
     BOARD_PANEL_MIN_SCALE = 1
     PANEL_SHADOW_SPREAD = 10
     BLOCKS_PANEL_MIN_WIDTH = 700
     BLOCKS_PANEL_WIDTH_RATIO = 0.39
-    CONFIRM_PANEL_SIZE = (525, 220)
 
+    # Gets the ammount of tiles on x/y in the level csv
     def get_board_grid_size(self):
-        for map_layer in self.env_data.map.__dict__.values():
-            csv_layout = import_map_layout(map_layer[0])
+        csv_title = self.title.replace(' ', '_')
+
+        for map_layer, _ in self.env_data.map.__dict__.items():
+            csv_layout = import_map_layout(f'{csv_title}/{map_layer}')
             if csv_layout:
                 return len(csv_layout[0]), len(csv_layout)
         raise RuntimeError("Board map data is empty.")
 
+    # Returns what screen position the board should be placed at 
     def get_board_panel_size(self, max_width, max_height):
         grid_width, grid_height = self.get_board_grid_size()
         max_scale_x = max_width // (grid_width * IMG_TILE_SIZE)
@@ -94,9 +114,13 @@ class GameEnv(BaseEnvironment):
             board_height + (self.BOARD_PANEL_PADDING * 2),
         )
 
+    # Creates a shadow behind the main panels 
     def create_shadow_panel(self, panel_pos, panel_size):
         shadow_rect = Rect(
-            (panel_pos[0] - self.PANEL_SHADOW_SPREAD, panel_pos[1] - self.PANEL_SHADOW_SPREAD),
+            (
+                panel_pos[0] - self.PANEL_SHADOW_SPREAD,
+                panel_pos[1] - self.PANEL_SHADOW_SPREAD,
+            ),
             (
                 panel_size[0] + (self.PANEL_SHADOW_SPREAD * 2),
                 panel_size[1] + (self.PANEL_SHADOW_SPREAD * 2),
@@ -122,7 +146,10 @@ class GameEnv(BaseEnvironment):
         board_max_width = available_width - blocks_width
 
         self.board_size = self.get_board_panel_size(board_max_width, available_height)
-        self.board_pos = (outer_margin, outer_margin + ((available_height - self.board_size[1]) // 2))
+        self.board_pos = (
+            outer_margin,
+            outer_margin + ((available_height - self.board_size[1]) // 2),
+        )
         self.blocks_size = (blocks_width, available_height)
         self.blocks_pos = (SCREEN_WIDTH - outer_margin - blocks_width, outer_margin)
 
@@ -131,41 +158,50 @@ class GameEnv(BaseEnvironment):
 
         self.create_shadow_panel(self.board_pos, self.board_size)
 
-        # Takes data passed through and starts creating the tiles/player/goal
         self.board = Board(
             panel_pos=self.board_pos,
             panel_size=self.board_size,
             env_data=self.env_data, 
             manager=self.ui_manager)
         
-        # Setting level text from getting the env title
-        LevelText(
-            panel_pos=(10,-5), 
-            panel_size=(220, 50),
-            text=self.title, 
-            manager=self.ui_manager)
-
-        self.confirmation_panel = None
-
-        square_size = 30
-        self.settings_button = UIFactory.button_img(
-            pos=(SCREEN_WIDTH-square_size-5, 5),
-            size=(square_size,square_size),
-            text="",
-            image_path='game/assets/levels/hamburger_icon.png',
+        level_text_pos= (9, -6)
+        level_text_size= (220, 50)
+        UIFactory.image(
+            pos=level_text_pos,
+            size=level_text_size,
+            image_path='game/assets/SproutLands/cropped/brown_panel.png',
             manager=self.ui_manager,
             object_id="#transparent"
         )
-        self.settings_panel = None
         
+        UIFactory.label(
+            pos=level_text_pos,
+            size=level_text_size,
+            text=self.title,
+            manager=self.ui_manager,
+            object_id="#level_text"
+        )
+
+        self.confirmation_panel = None
+
+        square_btn_size = 30
+        self.settings_button = UIFactory.button_img(
+            pos=(SCREEN_WIDTH - square_btn_size - 5, 5),
+            size=(square_btn_size, square_btn_size),
+            text="",
+            image_path="game/assets/levels/hamburger_icon.png",
+            manager=self.ui_manager,
+            object_id="#transparent",
+        )
+        self.settings_panel = None
+
     def on_ui_event(self, event):
         super().on_ui_event(event)
-        if (event.type == KEYUP and event.key == K_ESCAPE) or self.settings_button.on_click(event):
+        if (
+            event.type == KEYUP and event.key == K_ESCAPE
+        ) or self.settings_button.on_click(event):
             if self.settings_panel is None or not self.settings_panel.alive():
-                self.settings_panel = SettingsMenu(
-                    panel_size=(200,250), 
-                    manager=self.ui_manager
-                )
+                self.settings_panel = SettingsMenu(manager=self.ui_manager)
             else:
                 self.settings_panel.kill()
                 self.settings_panel = None
@@ -173,21 +209,21 @@ class GameEnv(BaseEnvironment):
             self.open_confirmation_panel(
                 title="Quit game?",
                 message="Exit the program on this level.",
-                confirm_event_type='QUIT',
+                confirm_event_type="QUIT",
             )
             return
         if event.type == RESET_ENV_REQUESTED:
             self.open_confirmation_panel(
                 title="Reset level?",
                 message="Current Level and Script will be reset.",
-                confirm_event_type='RESET',
+                confirm_event_type="RESET",
             )
             return
         if event.type == MENU_ENV_REQUESTED:
             self.open_confirmation_panel(
                 title="Return to menu?",
                 message="Leave this level and go to main menu.",
-                confirm_event_type='Main Menu',
+                confirm_event_type="Main Menu",
             )
             return
 
@@ -195,35 +231,26 @@ class GameEnv(BaseEnvironment):
         if self.confirmation_panel and self.confirmation_panel.alive():
             self.confirmation_panel.kill()
 
-        panel_x = (SCREEN_WIDTH - self.CONFIRM_PANEL_SIZE[0]) // 2
-        panel_y = (SCREEN_HEIGHT - self.CONFIRM_PANEL_SIZE[1]) // 2
         self.confirmation_panel = ConfirmationPanel(
-            panel_pos=(panel_x, panel_y),
-            panel_size=self.CONFIRM_PANEL_SIZE,
             title=title,
             message=message,
             confirm_event_type=confirm_event_type,
             manager=self.ui_manager,
         )
-        
 
     def get_allowed_blocks(self):
         systems_data = getattr(self.env_data, "systems", None)
-        if systems_data is None:
-            return None
-        return getattr(systems_data, "allowed_blocks", None)
-    
+        return getattr(systems_data, "allowed_blocks", None) if systems_data else None
+
     def get_level_script(self):
         systems_data = getattr(self.env_data, "systems", None)
-        if systems_data is None:
-            return None
-        return getattr(systems_data, "level_script", None)
-    
+        return getattr(systems_data, "level_script", None) if systems_data else None
+
     def update_frame(self, delta_time):
         self.check_level_complete()
-        
+
     def check_level_complete(self):
-        if self.board.completed_level == False:
+        if not self.board.completed_level:
             player = self.board.player
             goal = self.board.goal
             if player.goal_check(goal):
@@ -231,63 +258,68 @@ class GameEnv(BaseEnvironment):
                 MessagePanel(
                     title="You Win!",
                     message="Loading next level...",
-                    manager=self.ui_manager)
+                    manager=self.ui_manager,
+                )
                 level_complete_event = pygame.event.Event(LEVEL_COMPLETED)
                 pygame.event.post(level_complete_event)
                 return
-        
+
             if player.current_health <= 0:
                 MessagePanel(
                     title="Level Reset!",
                     message="No energy remaining!",
-                    manager=self.ui_manager)
-                self.game_manager.change_env('RESET')
+                    manager=self.ui_manager,
+                )
+                self.game_manager.change_env("RESET")
                 return
 
+
 class BlockEnv(GameEnv):
-    
+
     def create_ui(self):
         super().create_ui()
-        
+
         self.create_shadow_panel(self.blocks_pos, self.blocks_size)
     
-        # Where our code blocks will be placed and initalised
+        # Where our code blocks will be placed and initalised of the user to interact with
         self.blocks = CodeBlocks(
             panel_pos=self.blocks_pos,
             panel_size=self.blocks_size,
-            manager=self.ui_manager, 
+            manager=self.ui_manager,
             player=self.board.player,
             allowed_blocks=self.get_allowed_blocks(),
-            level_script=self.get_level_script()
-        )    
+            level_script=self.get_level_script(),
+        )
+
 
 class InterpreterEnv(BlockEnv):
 
     def create_ui(self):
         super().create_ui()
 
+        # So that the user can understand blocks through code
         self.interpreter = InterpreterPanel(
             panel_pos=self.blocks_pos,
-            panel_size=self.blocks_size, 
+            panel_size=self.blocks_size,
             manager=self.ui_manager,
             allowed_blocks=self.get_allowed_blocks(),
-            level_title=self.title
+            level_title=self.title,
         )
 
         self.blocks.set_interpreter(self.interpreter)
+
 
 class CodeEnv(GameEnv):
 
     def create_ui(self):
         super().create_ui()
 
-        CodePanel(
+        # So that the user can attempt to fix code themselves
+        CodeScripts(
             player=self.board.player,
             panel_pos=self.blocks_pos,
-            panel_size=self.blocks_size, 
+            panel_size=self.blocks_size,
             manager=self.ui_manager,
             level_title=self.title,
-            level_script=self.get_level_script()
+            level_script=self.get_level_script(),
         )
-
-    pass

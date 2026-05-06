@@ -1,5 +1,5 @@
 {
-    "env":{
+    "env": {
         "type": "Block",
         "title": "Level 1",
         "theme": "game",
@@ -9,19 +9,28 @@
         "allowed_blocks": ["left", "right"]
     },
     "map": {
-        "water": ["Level_1/Level_1_water", "SproutLands/Tilesets/Water"],
-        "water_bounds": ["Level_1/Level_1_water_bounds", "SproutLands/Tilesets/Water"],
-        "terrain": ["Level_1/Level_1_terrain", "SproutLands/Tilesets/Grass"],
-        "tree": ["Level_1/Level_1_tree","SproutLands/Objects/Basic_Grass_Biom_things"],
-        "house": ["Level_1/Level_1_house", "SproutLands/Tilesets/Wooden_House_Walls_Tilset"],
-        "door": ["Level_1/Level_1_door", "SproutLands/Tilesets/Doors"],
-        "vegetation": ["Level_1/Level_1_vegetation", "SproutLands/Objects/Basic_Grass_Biom_things"],
-        "start_pos": "Level_1/start_pos"
+        "water": "Tilesets/Water",
+        "water_bounds": "Tilesets/Water",
+        "terrain": "Tilesets/Grass",
+        "tree": "Objects/Basic_Grass_Biom_things",
+        "house": "Tilesets/Wooden_House_Walls_Tilset",
+        "door": "Tilesets/Doors",
+        "vegetation": "Objects/Basic_Grass_Biom_things"
     },
-    "player":{
+    "player": {
         "bounds": {
-            "blocked":["water","tree"]
+            "blocked": ["water","tree"]
         }
     },
-  "npc":["Now that you've helped Kevin leave his house/cabin", "he appears to be on a green island!","In the distance he can see a Carrot next to a tree. ","Maybe you should go to the Carrot!", "Kevin has recently forgotten how to do many things","The things he can remember-,", "you can see in the form of draggable boxes","As you get more carrots-", "he should start to remember how to do more things"]
+    "npc": [
+        "Now that you've helped Kevin leave his cabin", 
+        "he appears to be on a green island!",
+        "In the distance he can see a Carrot next to a tree. ",
+        "Maybe you should go to the Carrot!", 
+        "Kevin has recently forgotten how to do many things",
+        "The things he can remember-,", 
+        "you can see in the form of draggable boxes",
+        "As you get more carrots-", 
+        "he should start to remember how to do more things"
+    ]
 }

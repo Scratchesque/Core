@@ -1,6 +1,12 @@
+# Rabbit Rush - main.py
+#
+# Created By: VizzWizz, BoredHF, HJParker2802, KamranBasra, TafaraMangombe, Vladikusss
+#
+# Source: https://github.com/Scratchesque/Core
+
 import argparse
 
-from game.window.game_manager import GameManager
+from game.window.env_manager import EnvManager
 
 
 def main():
@@ -12,7 +18,7 @@ def main():
     )
     args = parser.parse_args()
 
-    game = GameManager(debug=args.debug)
+    game = EnvManager(debug=args.debug)
     game.start()
 
 

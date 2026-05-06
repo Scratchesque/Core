@@ -1,5 +1,5 @@
 {
-    "env":{
+    "env": {
         "type": "Interpreter",
         "title": "Level 6",
         "theme": "game",
@@ -20,20 +20,24 @@
         ]
     },
     "map": {
-        "water": ["Level_6/Level_6_water", "SproutLands/Tilesets/Water"],
-        "water_bounds": ["Level_6/Level_6_water_bounds", "SproutLands/Tilesets/Water"],
-        "terrain": ["Level_6/Level_6_terrain", "SproutLands/Tilesets/Grass"],
-        "tree": ["Level_6/Level_6_tree","SproutLands/Objects/Basic_Grass_Biom_things"],
-        "fence": ["Level_6/Level_6_fence", "SproutLands/Tilesets/Fences"],
-        "vegetation": ["Level_6/Level_6_vegetation", "SproutLands/Objects/Basic_Grass_Biom_things"],
-         "start_pos": "Level_6/start_pos"
+        "water": "Tilesets/Water",
+        "water_bounds": "Tilesets/Water",
+        "terrain": "Tilesets/Grass",
+        "tree": "Objects/Basic_Grass_Biom_things",
+        "fence": "Tilesets/Fences",
+        "vegetation": "Objects/Basic_Grass_Biom_things"
     },
-    "player":{
+    "player": {
         "bounds": {
-            "blocked":["water", "tree"],
+            "blocked": ["water", "tree"],
             "jumpable": ["fence"]
         },
-        "energy": 50
+        "energy": 10
     },
-  "npc":["It looks like Kevin has now learned how to use loops!","This means that instead of putting down and right 4 times each-","You can put Loop(4) with down and right directly under it","This will make moving around much easier!"]
+    "npc":[
+        "It looks like Kevin has now learned how to use loops!",
+        "This means that instead of putting down and right 4 times each-",
+        "You can put Loop(4) with down and right directly under it",
+        "This will make moving around much easier!"
+    ]
 }

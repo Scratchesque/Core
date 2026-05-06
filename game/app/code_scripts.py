@@ -1,14 +1,15 @@
 import re
 from dataclasses import replace
-from pygame import Rect, Vector2, KEYUP, K_RETURN, K_ESCAPE
-from pygame_gui.elements import UIPanel, UITextBox, UIButton, UILabel, UITextEntryLine
+import pygame
+from pygame import K_ESCAPE, K_RETURN, KEYUP, Rect, Vector2
 from pygame_gui._constants import UI_BUTTON_PRESSED
+from pygame_gui.elements import UIButton, UILabel, UIPanel, UITextBox, UITextEntryLine
 
 from game.app.block_interpreter import Interpreter
 from game.app.block_registry import get_block_library
-from game.core.events import *
-from game.core.constants import *
-from game.support.ui import UIFactory, Button
+from game.core.constants import SCREEN_HEIGHT, SCREEN_WIDTH
+from game.core.events import RESET_ENV_REQUESTED
+from game.support.ui import Button, UIFactory
 
 
 class ProblemPanel(UIPanel):

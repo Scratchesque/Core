@@ -1,3 +1,4 @@
+import pygame
 from pygame import Rect, KEYUP, K_ESCAPE, Color
 from pygame_gui.elements import UIPanel
 
@@ -6,10 +7,15 @@ from game.app.code_scripts import CodePanel
 from game.app.board import Board
 from game.app.code_blocks import CodeBlocks
 from game.app.panels import ConfirmationPanel, LevelText, SettingsMenu, MessagePanel
-from game.core.images import load_image
 from game.core.paths import resolve_project_path
-from game.core.constants import *
-from game.core.events import *
+from game.core.constants import IMG_TILE_SIZE, SCREEN_HEIGHT, SCREEN_WIDTH
+from game.core.events import (
+    CHANGE_ENV_CONFIRMED,
+    LEVEL_COMPLETED,
+    MENU_ENV_REQUESTED,
+    QUIT_EMV_REQUESTED,
+    RESET_ENV_REQUESTED,
+)
 from game.support.files import import_map_layout, load_json
 from game.support.ui import UIFactory
 

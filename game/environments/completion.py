@@ -1,8 +1,9 @@
+import pygame
 from pygame import Rect
 from pygame_gui.elements import UIPanel
 
-from game.core.events import *
-from game.core.constants import SCREEN_HEIGHT, SCREEN_WIDTH
+from game.core.constants import SCREEN_WIDTH
+from game.core.events import CHANGE_ENV_CONFIRMED
 from game.environments.base import BaseEnvironment
 from game.support.ui import UIFactory
 

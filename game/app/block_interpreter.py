@@ -1,4 +1,4 @@
-from pygame import Rect, Vector2, MOUSEBUTTONUP
+from pygame import Rect, Vector2
 from pygame_gui.elements import UIPanel, UITextBox
 
 from game.app.block_registry import get_block_library

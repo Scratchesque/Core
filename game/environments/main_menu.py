@@ -1,8 +1,10 @@
+import pygame
+
 from game.core.constants import SCREEN_HEIGHT, SCREEN_WIDTH
-from game.core.events import *
-from game.support.ui import UIFactory
+from game.core.events import CHANGE_ENV_CONFIRMED
 from game.environments.base import BaseEnvironment
 from game.app.panels import DialoguePanel
+from game.support.ui import UIFactory
 
 
 class LevelSelect(BaseEnvironment):

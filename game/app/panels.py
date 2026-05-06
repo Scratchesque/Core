@@ -1,9 +1,9 @@
+import pygame
 from pygame import Rect
-from pygame_gui.elements import UIImage, UIPanel, UILabel
+from pygame_gui.elements import UILabel, UIPanel
 
-from game.core.constants import SCREEN_WIDTH, SCREEN_HEIGHT
-from game.core.events import *
-from game.core.images import load_image
+from game.core.constants import SCREEN_HEIGHT, SCREEN_WIDTH
+from game.core.events import CHANGE_ENV_CONFIRMED, MENU_ENV_REQUESTED, QUIT_EMV_REQUESTED
 from game.support.ui import TypingTextBox, UIFactory
 
 

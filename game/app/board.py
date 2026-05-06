@@ -2,8 +2,7 @@ from pygame import Rect
 from pygame_gui.elements import UIPanel
 
 from game.app.tiles import Tile, Player, NPC
-from game.core.constants import *
-from game.core.events import *
+from game.core.constants import IMG_TILE_SIZE
 from game.support.files import import_map_layout
 
 

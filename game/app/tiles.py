@@ -1,9 +1,7 @@
 from pygame import Rect, Vector2, transform, MOUSEBUTTONUP
 from pygame_gui.elements import UIImage, UIScreenSpaceHealthBar
 
-from game.app.panels import MessagePanel, SpeechPanel
-from game.core.constants import *
-from game.core.events import *
+from game.app.panels import SpeechPanel
 from game.core.images import load_image
 from game.support.graphics import cut_graphics, tile_graphics
 

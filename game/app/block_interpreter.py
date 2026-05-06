@@ -9,8 +9,8 @@ class Interpreter:
     GAP = " " * 4
     MIN_CODE_LINES = 45
 
-    def _change_min_lines(self, amm):
-        self.MIN_CODE_LINES = amm
+    def _change_min_lines(self, amount):
+        self.MIN_CODE_LINES = amount
 
     def _translate_blocks(self):
 

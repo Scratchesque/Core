@@ -59,14 +59,14 @@ class Board(UIPanel):
             for row_index, row in enumerate(csv_layout):
                 width = len(row)
                 self._scale_tiles(width, height)
-                for col_index, val in enumerate(row):
-                    if val != "-1":
-                        tile = self.make_tile(col_index, row_index, val, tile_img)
+                for col_index, tile_value in enumerate(row):
+                    if tile_value != "-1":
+                        tile = self.make_tile(col_index, row_index, tile_value, tile_img)
                         if element_type != "start_pos":
                             self.map_tiles[element_type].append(tile)
 
-    def make_tile(self, x, y, val, tile_img):
-        match val:
+    def make_tile(self, x, y, tile_value, tile_img):
+        match tile_value:
             case "g":  # Goal
                 self.goal = Tile(
                     start_pos=(x, y),
@@ -104,6 +104,6 @@ class Board(UIPanel):
                     img_path=tile_img + ".png",
                     manager=self.ui_manager,
                     container=self,
-                    tile=int(val),
+                    tile=int(tile_value),
                     board_offset=self.board_offset,
                 )

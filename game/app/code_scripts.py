@@ -19,7 +19,7 @@ class ProblemPanel(UIPanel):
         (SCREEN_HEIGHT - PANEL_SIZE[1]) // 2,
     )
 
-    def __init__(self, spec_str_list, manager):
+    def __init__(self, spec_text_list, manager):
         super().__init__(
             relative_rect=Rect(self.PANEL_POS, self.PANEL_SIZE),
             starting_height=8,
@@ -27,8 +27,8 @@ class ProblemPanel(UIPanel):
             object_id="#problem_panel",
         )
 
-        self.method_string = f"<b>{spec_str_list[0]}</b>"
-        self.fix_string = self.replace_string_html(spec_str_list[1])
+        self.method_string = f"<b>{spec_text_list[0]}</b>"
+        self.fix_string = self.replace_string_html(spec_text_list[1])
 
         self.value = 0
 
@@ -36,8 +36,8 @@ class ProblemPanel(UIPanel):
 
     @staticmethod
     def replace_string_html(string):
-        temp_str = string.replace("  ", "")
-        return re.sub(r"<[^>]+>", "", temp_str)
+        normalized_text = string.replace("  ", "")
+        return re.sub(r"<[^>]+>", "", normalized_text)
 
     def create_ui(self):
         padding = 24
@@ -108,9 +108,9 @@ class ProblemPanel(UIPanel):
         return l_value, r_value
 
     def check_code_complete(self):
-        l_og_value, r_og_value = self.get_values(self.fix_string)
-        l_box_value, r_box_value = self.get_values(self.entry_box.get_text())
-        if l_og_value != l_box_value:
+        left_original_value, right_original_value = self.get_values(self.fix_string)
+        left_input_value, right_input_value = self.get_values(self.entry_box.get_text())
+        if left_original_value != left_input_value:
             self.help_text.set_text(
                 Interpreter._type_to_font(
                     "You cannot change the Player Assignment!", "loop"
@@ -118,7 +118,7 @@ class ProblemPanel(UIPanel):
             )
             return
 
-        if r_og_value == r_box_value:
+        if right_original_value == right_input_value:
             self.help_text.set_text(
                 Interpreter._type_to_font(
                     "You haven't tried changing the ammount!", "loop"
@@ -127,7 +127,7 @@ class ProblemPanel(UIPanel):
             return
 
         try:
-            value = int(r_box_value)
+            value = int(right_input_value)
         except ValueError:
             self.help_text.set_text(
                 Interpreter._type_to_font("The player can't move with text!", "loop")
@@ -152,9 +152,9 @@ class ProblemPanel(UIPanel):
 
 
 class ProblemButton(Button):
-    def __init__(self, spec, spec_str_list, pos, line, manager, container=None):
+    def __init__(self, spec, spec_text_list, pos, line, manager, container=None):
         self.spec = spec
-        self.spec_str_list = spec_str_list
+        self.spec_text_list = spec_text_list
         self.size = Vector2(30, 30)
         self.pos = Vector2(self.get_line_pos(pos, line))
         self.line = line
@@ -191,7 +191,7 @@ class ProblemButton(Button):
             self.problem_panel is None or not self.problem_panel.alive()
         ):
             self.problem_panel = ProblemPanel(
-                spec_str_list=self.spec_str_list, manager=self.ui_manager
+                spec_text_list=self.spec_text_list, manager=self.ui_manager
             )
 
         if self.problem_panel == None:
@@ -443,12 +443,12 @@ class CodePanel(UIPanel, Interpreter):
                 line_type = 2 if spec.action == "jump" else 1
                 line_pos = len(self.class_list) + 1 + line_type
 
-                spec_str_list = [format_spec_list[0], format_spec_list[line_type]]
+                spec_text_list = [format_spec_list[0], format_spec_list[line_type]]
 
                 self.problem_buttons.append(
                     ProblemButton(
                         spec=spec,
-                        spec_str_list=spec_str_list,
+                        spec_text_list=spec_text_list,
                         pos=self.script_area_rect.topleft,
                         line=line_pos,
                         manager=self.ui_manager,
@@ -463,10 +463,10 @@ class CodePanel(UIPanel, Interpreter):
 
         for script_list in self.program_blocks:
             spec_list = script_list[0]
-            repeat_amm = script_list[1]
-            if repeat_amm != 1:
+            repeat_amount = script_list[1]
+            if repeat_amount != 1:
                 loop_font = self._type_to_font("Loop", "loop")
-                self.block_list.append(f"{self.GAP}{loop_font} ({repeat_amm}):")
+                self.block_list.append(f"{self.GAP}{loop_font} ({repeat_amount}):")
 
                 for spec in spec_list:
                     self.block_list.append(self._format_spec_code(spec, func_gap=True))

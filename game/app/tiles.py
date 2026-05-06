@@ -1,7 +1,13 @@
+# Rabbit Rush - tiles.py
+#
+# Created By: VizzWizz, BoredHF, HJParker2802, KamranBasra, TafaraMangombe, Vladikusss
+#
+# Source: https://github.com/Scratchesque/Core
+
 from pygame import Rect, Vector2, transform, MOUSEBUTTONUP
 from pygame_gui.elements import UIImage, UIScreenSpaceHealthBar
 
-from game.app.panels import SpeechPanel
+from game.app.pop_ups import SpeechPanel
 from game.core.images import load_image
 from game.support.graphics import cut_graphics, tile_graphics
 
@@ -96,7 +102,7 @@ class Tile(UIImage):
         if x and y:
             return True
 
-
+# The NPC tile where is passed through the data to tell to the player through a SpeechPanel 
 class NPC(Tile):
     def __init__(
         self,
@@ -123,7 +129,6 @@ class NPC(Tile):
     def create_speech(self):
         self.speech_bubble = SpeechPanel(
             panel_pos=(self.bubble_x, self.bubble_y),
-            panel_size=(250, 80),
             message_list=self.message_list,
             manager=self.ui_manager,
         )
@@ -138,6 +143,7 @@ class NPC(Tile):
                 )
 
 
+# The player tile itself with all movement logic
 class Player(Tile):
     def __init__(
         self,
@@ -250,6 +256,7 @@ class Player(Tile):
         self.state = "idle"
         self.vel = Vector2(0, 0)
 
+    # Apply an artifical y value to the player so it seems like the player is jumping when in reality they have only been moved up and down slightly
     def _apply_jump(self):
 
         if self.is_jumping:
@@ -259,8 +266,7 @@ class Player(Tile):
                 return artificial_y
             else:
                 return jump_height - artificial_y
-
-        # No additional vertical offset when not jumping.
+            
         return 0
 
     def update_movement(self):
@@ -286,7 +292,7 @@ class Player(Tile):
 
     def update_tile_collisions(self):
         if self.vel.x == 0 and self.vel.y == 0:
-            # If standing on invalid jump-only tiles, revert to previous position.
+            # This code is for that if they are ontop of a tile that they shouldnt be, then tp them back
             if not self.is_jumping:
                 for collision_name in self.jumpable_tiles:
                     for sprite in self.map_tiles[collision_name]:
@@ -296,19 +302,19 @@ class Player(Tile):
             return
 
         for collision in self.boundary_tiles:
-            # While jumping, ignore collisions with jumpable tiles.
+            # This is so that if they are jumping, they can go through tiles and skip those collisons
             if self.is_jumping and collision in self.jumpable_tiles:
                 continue
             for sprite in self.map_tiles[collision]:
-                # Remove visual jump offset before collision checks.
+                # So that collision works while jumping, remove the artifical jump height added when checking for collisions
                 collision_pos = self.pos.copy()
                 collision_pos.y -= self._apply_jump()
                 if self.collision_check(collision_pos, sprite.pos):
                     self.pos = self.og_pos.copy()
                     self.set_idle()
 
+    # This updates the position of the player tile and the created shadow tile
     def update_position(self):
-        # Update player and shadow sprite positions.
         player_x = int(self.board_offset.x + self.pos.x * self.tiles_size.x)
         player_y = int(self.board_offset.y + self.pos.y * self.tiles_size.y)
 

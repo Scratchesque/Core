@@ -1,7 +1,14 @@
+# Rabbit Rush - paths.py
+#
+# Created By: VizzWizz, BoredHF, HJParker2802, KamranBasra, TafaraMangombe, Vladikusss
+#
+# Source: https://github.com/Scratchesque/Core
+
 from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
+# This file resolves the user directory path from a string
 
 def _resolve_case_insensitive_part(parent: Path, child_name: str) -> Path:
     exact_match = parent / child_name
@@ -14,7 +21,6 @@ def _resolve_case_insensitive_part(parent: Path, child_name: str) -> Path:
             return candidate
 
     return exact_match
-
 
 def resolve_project_path(relative_path: str) -> Path:
     current = PROJECT_ROOT

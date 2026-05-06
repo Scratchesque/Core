@@ -1,3 +1,9 @@
+# Rabbit Rush - completion.py
+#
+# Created By: VizzWizz, BoredHF, HJParker2802, KamranBasra, TafaraMangombe, Vladikusss
+#
+# Source: https://github.com/Scratchesque/Core
+
 import pygame
 from pygame import Rect
 from pygame_gui.elements import UIPanel
@@ -130,12 +136,14 @@ class CompletionScreen(BaseEnvironment):
             title = env.title
             if title == "Main Menu" or title == self.title:
                 continue
-            if title == "Start" or title.startswith("Level "):
+            if title == "Start" or title == "Final" or title.startswith("Level "):
                 story_envs.append(env)
 
         def env_sort_key(env):
             if env.title == "Start":
                 return (0, 0)
+            if env.title == "Final":
+                return (2, 0)
             suffix = env.title.removeprefix("Level ")
             return (1, int(suffix) if suffix.isdigit() else 999)
 

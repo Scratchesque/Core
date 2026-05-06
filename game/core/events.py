@@ -1,3 +1,9 @@
+# Rabbit Rush - events.py
+#
+# Created By: VizzWizz, BoredHF, HJParker2802, KamranBasra, TafaraMangombe, Vladikusss
+#
+# Source: https://github.com/Scratchesque/Core
+
 import pygame
 
 CHANGE_ENV_CONFIRMED = pygame.event.custom_type()

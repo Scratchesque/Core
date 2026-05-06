@@ -1,3 +1,9 @@
+# Rabbit Rush - env_manager.py
+#
+# Created By: VizzWizz, BoredHF, HJParker2802, KamranBasra, TafaraMangombe, Vladikusss
+#
+# Source: https://github.com/Scratchesque/Core
+
 import importlib
 import inspect
 import pkgutil
@@ -16,8 +22,8 @@ from game.support.player_data import PlayerData
 from game.window.display import Display
 
 
-# Coordinate environment loading, switching, and game loop startup.
-class GameManager:
+# This process is explained on trello under (Completed) 'Start getting the core of the program'
+class EnvManager:
     def __init__(self, debug=False):
         self.debug = debug
         self.player_data = PlayerData()

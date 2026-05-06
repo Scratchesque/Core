@@ -1,9 +1,14 @@
+# Rabbit Rush - ui.py
+#
+# Created By: VizzWizz, BoredHF, HJParker2802, KamranBasra, TafaraMangombe, Vladikusss
+#
+# Source: https://github.com/Scratchesque/Core
+
 from pygame import Rect, transform
 from pygame_gui.elements import UIButton, UIImage, UILabel, UITextBox
 from pygame_gui._constants import UI_BUTTON_PRESSED
 
 from game.core.images import load_image
-from game.support.html_typing import truncate_html
 
 
 # Making a button that can make it easy to check if itself has been pressed
@@ -154,7 +159,7 @@ class UIFactory:
 
         return ImageButton(img, button)
 
-
+# A UITextBox that can scroll through the text 
 class TypingTextBox(UITextBox):
     def __init__(self, pos, size, html_text, manager, object_id=None, container=None):
         super().__init__(
@@ -176,6 +181,6 @@ class TypingTextBox(UITextBox):
         self.elapsed += 1
         new_count = self.elapsed * 0.5  # chars per frame
         if new_count != self.visible_chars:
-            self.visible_chars = new_count
-            partial_html = truncate_html(self.full_text, self.visible_chars)
+            self.visible_chars = int(new_count)
+            partial_html = self.full_text[:self.visible_chars]
             self.set_text(partial_html)

@@ -1,3 +1,9 @@
+# Rabbit Rush - code_scripts.py 
+#
+# Created By: VizzWizz, BoredHF, HJParker2802, KamranBasra, TafaraMangombe, Vladikusss
+#
+# Source: https://github.com/Scratchesque/Core
+
 import re
 from dataclasses import replace
 import pygame
@@ -5,13 +11,13 @@ from pygame import K_ESCAPE, K_RETURN, KEYUP, Rect, Vector2
 from pygame_gui._constants import UI_BUTTON_PRESSED
 from pygame_gui.elements import UIButton, UILabel, UIPanel, UITextBox, UITextEntryLine
 
-from game.app.block_interpreter import Interpreter
-from game.app.block_registry import get_block_library
+from game.app.block_interpreter import BlockInterpreter
+from game.core.block_registry import get_block_library
 from game.core.constants import SCREEN_HEIGHT, SCREEN_WIDTH
 from game.core.events import RESET_ENV_REQUESTED
 from game.support.ui import Button, UIFactory
 
-
+# This popup will ask the user to change a line of code for the final levels
 class ProblemPanel(UIPanel):
     PANEL_SIZE = (625, 300)
     PANEL_POS = (
@@ -111,7 +117,7 @@ class ProblemPanel(UIPanel):
         left_input_value, right_input_value = self.get_values(self.entry_box.get_text())
         if left_original_value != left_input_value:
             self.help_text.set_text(
-                Interpreter._type_to_font(
+                BlockInterpreter._type_to_font(
                     "You cannot change the Player Assignment!", "loop"
                 )
             )
@@ -119,7 +125,7 @@ class ProblemPanel(UIPanel):
 
         if right_original_value == right_input_value:
             self.help_text.set_text(
-                Interpreter._type_to_font(
+                BlockInterpreter._type_to_font(
                     "You haven't tried changing the ammount!", "loop"
                 )
             )
@@ -129,7 +135,7 @@ class ProblemPanel(UIPanel):
             value = int(right_input_value)
         except ValueError:
             self.help_text.set_text(
-                Interpreter._type_to_font("The player can't move with text!", "loop")
+                BlockInterpreter._type_to_font("The player can't move with text!", "loop")
             )
             return
 
@@ -147,7 +153,6 @@ class ProblemPanel(UIPanel):
         ) or self.confirm_button.on_click(event):
             self.check_code_complete()
             return
-
 
 class ProblemButton(Button):
     def __init__(self, spec, spec_text_list, pos, line, manager, container=None):
@@ -178,6 +183,7 @@ class ProblemButton(Button):
         self.problem_panel = None
         self.solved = False
 
+    # Gets position on the screen to place the ProblemButton
     def get_line_pos(self, block_pos, line):
         font_size = 21
         line_y = block_pos[1] + 5 + (line - 1) * font_size
@@ -206,8 +212,8 @@ class ProblemButton(Button):
             self.img.kill()
             self.kill()
 
-
-class CodePanel(UIPanel, Interpreter):
+# This class holds the panel information for the user to complete lines of code
+class CodeScripts(UIPanel, BlockInterpreter):
     BTN_SIZE = (30, 30)
 
     PANEL_PADDING = 18
@@ -378,6 +384,7 @@ class CodePanel(UIPanel, Interpreter):
             )
         self.status_display.set_text(status)
 
+    # Goes through the list of blocks to execute and replaces blocks with new information
     def change_block(self, block):
         for x in range(len(self.program_blocks)):
             spec_list = self.program_blocks[x][0]
@@ -408,6 +415,7 @@ class CodePanel(UIPanel, Interpreter):
         self.next_step_index += 1
         self.refresh_status()
 
+    # Gets a total of how many problems the user has completed
     def _count_problems_left(self):
         total_problems = 0
         problems_solved = 0
@@ -417,6 +425,7 @@ class CodePanel(UIPanel, Interpreter):
                 problems_solved += 1
         return total_problems - problems_solved
 
+    # Initalizes the blocks from the start script in the json file
     def _make_start_script(self, level_script):
         for script_line in level_script:
             blocks = get_block_library(script_line[0])

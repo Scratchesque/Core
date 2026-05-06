@@ -1,3 +1,9 @@
+# Rabbit Rush - display.py
+#
+# Created By: VizzWizz, BoredHF, HJParker2802, KamranBasra, TafaraMangombe, Vladikusss
+#
+# Source: https://github.com/Scratchesque/Core
+
 import pygame
 import pygame_gui
 
@@ -54,7 +60,9 @@ class Display:
     # Render frame and update UI manager.
     def update_frame(self, delta_time):
         self.env.update_frame(delta_time)
+        # pygame_gui manager updating elements
         self.env.ui_manager.update(delta_time)
+        # pygame drawing elements
         self.screen.blit(self.surface, (0, 0))
         self.env.ui_manager.draw_ui(self.screen)
 

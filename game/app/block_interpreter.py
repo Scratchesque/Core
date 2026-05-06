@@ -1,11 +1,17 @@
+# Rabbit Rush - block_interpreter.py
+#
+# Created By: VizzWizz, BoredHF, HJParker2802, KamranBasra, TafaraMangombe, Vladikusss
+#
+# Source: https://github.com/Scratchesque/Core
+
 from pygame import Rect, Vector2
 from pygame_gui.elements import UIPanel, UITextBox
 
-from game.app.block_registry import get_block_library
+from game.core.block_registry import get_block_library
 from game.support.ui import UIFactory
 
 
-class Interpreter:
+class BlockInterpreter:
     GAP = " " * 4
     MIN_CODE_LINES = 45
 
@@ -35,12 +41,13 @@ class Interpreter:
         player_font = self._type_to_font("Player", "main")
         x_font = self._type_to_font("X", "vars")
         y_font = self._type_to_font("Y", "vars")
+        z_font = self._type_to_font("Z", "vars")
 
         text_list = []
         if "loop" == spec.id:
             return []
         if "jump" == spec.id:
-            jump_font = f"{self.GAP*2}{player_font}.{y_font}"
+            jump_font = f"{self.GAP*2}{player_font}.{z_font}"
             text_list.append(f"{jump_font} = 1")
             text_list.append(f"{jump_font} = -1")
         elif "jump" in spec.id:
@@ -77,7 +84,8 @@ class Interpreter:
         return f"<font color=#{colour}>{text}</font>"
 
 
-class InterpreterPanel(UIPanel, Interpreter):
+# This panel is shown during the levels with the interpreter activated, (levels 5/6/7), to show the current block script
+class InterpreterPanel(UIPanel, BlockInterpreter):
     PANEL_WIDTH = 350
     PULL_BUTTON_SIZE = (30, 30)
 
@@ -164,6 +172,7 @@ class InterpreterPanel(UIPanel, Interpreter):
         block_text = self._translate_blocks()
         self.text_box.set_text(block_text)
 
+    # Changes the panel position
     def _update_pos(self):
         distance = self.PANEL_WIDTH / 4.5
         offset = self.progress * (distance if self.is_visible else -distance)
@@ -173,6 +182,7 @@ class InterpreterPanel(UIPanel, Interpreter):
         self.set_relative_position(self.pos)
         self._update_button_pos()
 
+    # Set the position of the button on screen to be slightly off center to where the panel is
     def _update_button_pos(self):
         rect = self.get_relative_rect()
         left = rect.left

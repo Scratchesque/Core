@@ -21,7 +21,7 @@ class DialoguePanel(UIPanel):
     )
 
     def __init__(self, title, message, manager):
-        super().__init__(Rect(self.PANEL_SIZE, self.PANEL_SIZE), manager=manager, object_id="#dialogue_panel", starting_height=5)
+        super().__init__(Rect(self.PANEL_POS, self.PANEL_SIZE), manager=manager, object_id="#dialogue_panel", starting_height=5)
         
         self.create_ui(title, message)
 

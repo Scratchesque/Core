@@ -309,5 +309,3 @@ class CodeEnv(GameEnv):
             level_title=self.title,
             level_script=self.get_level_script(),
         )
-
-    pass

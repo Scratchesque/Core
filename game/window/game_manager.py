@@ -2,16 +2,16 @@ import importlib
 import inspect
 import pkgutil
 
-from game.core.paths import resolve_project_path
-from game.support.files import load_json
 import game.environments as environments_pkg
+from game.core.paths import resolve_project_path
 from game.environments.base import (
-    BaseEnvironment,
-    GameEnv,
     BlockEnv,
-    InterpreterEnv,
+    BaseEnvironment,
     CodeEnv,
+    GameEnv,
+    InterpreterEnv,
 )
+from game.support.files import load_json
 from game.support.player_data import PlayerData
 from game.window.display import Display
 

@@ -99,7 +99,6 @@ class ProblemPanel(UIPanel):
             manager=self.ui_manager,
             container=self,
         )
-        pass
 
     def get_values(self, string):
         string_list = string.split(" ")
@@ -472,4 +471,3 @@ class CodePanel(UIPanel, Interpreter):
             else:
                 for spec in spec_list:
                     self.block_list.append(self._format_spec_code(spec))
-                pass

@@ -143,7 +143,6 @@ class InterpreterPanel(UIPanel, Interpreter):
                 self.pull_button.set_text(">")
             self.move_timer = 10
             self.is_moving = True
-            pass
 
     def update(self, time_delta):
         if not self.is_moving:

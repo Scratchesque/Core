@@ -45,15 +45,25 @@ class LevelSelect(BaseEnvironment):
 
         total_unlocked = 0
         for index, env in enumerate(playable_envs):
-            button_x, button_y  = self._get_button_pos(index, SCREEN_WIDTH // 2-(self.BUTTON_SIZE[0]+self.BUTTON_GAP)//2, start_y)
-            is_unlocked = self.game_manager.player_data.is_unlocked(env.title) or getattr(self.game_manager, "debug", False)
-            total_unlocked+=1 if is_unlocked else 0
+            button_x, button_y = self._get_button_pos(
+                index,
+                SCREEN_WIDTH // 2 - (self.BUTTON_SIZE[0] + self.BUTTON_GAP) // 2,
+                start_y,
+            )
+            is_unlocked = self.game_manager.player_data.is_unlocked(
+                env.title
+            ) or getattr(self.game_manager, "debug", False)
+            total_unlocked += 1 if is_unlocked else 0
             button_text = env.title if is_unlocked else f"Locked: {env.title}"
             button_path = "game/assets/SproutLands/cropped/"
             button = UIFactory.button_img(
-                pos=(button_x,button_y),
+                pos=(button_x, button_y),
                 size=self.BUTTON_SIZE,
-                image_path=f"{button_path}brown_button.png" if is_unlocked else f"{button_path}grey_button.png",
+                image_path=(
+                    f"{button_path}brown_button.png"
+                    if is_unlocked
+                    else f"{button_path}grey_button.png"
+                ),
                 text=button_text,
                 manager=self.ui_manager,
                 object_id="#menu_image_button",
@@ -61,11 +71,13 @@ class LevelSelect(BaseEnvironment):
             )
             self.level_buttons.append((button, env.title, is_unlocked))
 
-        
         if total_unlocked == 1:
             # only start level unlocked
             DialoguePanel(
-                panel_pos=((SCREEN_WIDTH - self.INTRO_SIZE[0])//2, (SCREEN_HEIGHT - self.INTRO_SIZE[1])//2+ 40),
+                panel_pos=(
+                    (SCREEN_WIDTH - self.INTRO_SIZE[0]) // 2,
+                    (SCREEN_HEIGHT - self.INTRO_SIZE[1]) // 2 + 40,
+                ),
                 panel_size=self.INTRO_SIZE,
                 title="Welcome to Rabbit Rush! Your Introduction to Computer Science!",
                 message=(
@@ -73,7 +85,8 @@ class LevelSelect(BaseEnvironment):
                     "It's your goal to gain them back.\n"
                     "Learn how to read and implement code to help Kevin reach his goal!"
                 ),
-                manager=self.ui_manager)
+                manager=self.ui_manager,
+            )
 
         self.quit_button = UIFactory.button_img(
             pos=(SCREEN_WIDTH // 2, SCREEN_HEIGHT - 50),
@@ -91,11 +104,11 @@ class LevelSelect(BaseEnvironment):
         change_env_data = {}
         for button, env_title, is_unlocked in self.level_buttons:
             if is_unlocked and button.on_click(event):
-                change_env_data = {'change_env': env_title}
+                change_env_data = {"change_env": env_title}
                 continue
 
         if self.quit_button and self.quit_button.on_click(event):
-            change_env_data = {'change_env': 'QUIT'}
+            change_env_data = {"change_env": "QUIT"}
 
         if change_env_data != {}:
             env_event = pygame.event.Event(CHANGE_ENV_CONFIRMED, change_env_data)
@@ -104,15 +117,14 @@ class LevelSelect(BaseEnvironment):
     def _get_button_pos(self, index, start_x, start_y):
 
         buttons_per_col = 5
-        
+
         col = index // buttons_per_col
         row = index % buttons_per_col
-        
+
         button_x = start_x + col * (self.BUTTON_SIZE[0] + self.BUTTON_GAP)
         button_y = start_y + row * (self.BUTTON_SIZE[1] + self.BUTTON_GAP)
-        
-        return button_x, button_y
 
+        return button_x, button_y
 
     def _get_playable_envs(self):
         playable_envs = [

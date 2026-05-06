@@ -109,15 +109,15 @@ class CompletionScreen(BaseEnvironment):
     def on_ui_event(self, event):
         super().on_ui_event(event)
 
-        change_env_data = {} 
+        change_env_data = {}
         if self.replay_button and self.replay_button.on_click(event):
-            change_env_data = {'change_env': 'Start'}
+            change_env_data = {"change_env": "Start"}
 
         if self.menu_button and self.menu_button.on_click(event):
-            change_env_data = {'change_env': 'Main Menu'}
+            change_env_data = {"change_env": "Main Menu"}
 
         if self.quit_button and self.quit_button.on_click(event):
-            change_env_data = {'change_env': 'QUIT'}
+            change_env_data = {"change_env": "QUIT"}
 
         if change_env_data != {}:
             env_event = pygame.event.Event(CHANGE_ENV_CONFIRMED, change_env_data)

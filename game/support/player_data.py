@@ -21,7 +21,9 @@ class PlayerData:
             data = json.load(save_file)
 
         self.completed_levels = set(data.get("completed_levels", []))
-        self.unlocked_levels = set(data.get("unlocked_levels", self.DEFAULT_UNLOCKED_LEVELS))
+        self.unlocked_levels = set(
+            data.get("unlocked_levels", self.DEFAULT_UNLOCKED_LEVELS)
+        )
         if not self.unlocked_levels:
             self.unlocked_levels = set(self.DEFAULT_UNLOCKED_LEVELS)
 

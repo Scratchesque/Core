@@ -12,14 +12,14 @@ class Board(UIPanel):
     def __init__(self, panel_pos, panel_size, env_data, manager):
         # Starting_height is the panel's layer height
         # For UIPanels you should either put all object that are supposed updated inside of the panels container
-        # or for example, use a UIPanel as a gui hud element like player health without a container 
+        # or for example, use a UIPanel as a gui hud element like player health without a container
         super().__init__(
-            Rect(panel_pos, panel_size), 
-            manager=manager, 
-            object_id="#game_panel", 
-            starting_height=1
+            Rect(panel_pos, panel_size),
+            manager=manager,
+            object_id="#game_panel",
+            starting_height=1,
         )
-        
+
         # Load vars to be used accross the class
         self.env_data = env_data
         self.completed_level = False
@@ -30,7 +30,7 @@ class Board(UIPanel):
         # Render the tiles
         self.create_ui()
 
-    # Gets the size of this panel container, and divdes it by the ammount of tiles in the level to get the size of the tile 
+    # Gets the size of this panel container, and divdes it by the ammount of tiles in the level to get the size of the tile
     def _scale_tiles(self, width, height):
         if self.tiles_size == None:
             panel_width, panel_height = self.get_relative_rect().size
@@ -51,7 +51,7 @@ class Board(UIPanel):
     def create_ui(self):
         for element_type, element_data in self.env_data.map.__dict__.items():
             csv_map = element_data[0]
-            if element_type == 'start_pos':
+            if element_type == "start_pos":
                 csv_map = element_data
             tile_img = element_data[1]
             self.map_tiles[element_type] = []
@@ -59,45 +59,52 @@ class Board(UIPanel):
             height = len(csv_layout)
             for row_index, row in enumerate(csv_layout):
                 width = len(row)
-                self._scale_tiles(width,height)
+                self._scale_tiles(width, height)
                 for col_index, val in enumerate(row):
-                    if val != '-1':
+                    if val != "-1":
                         tile = self.make_tile(col_index, row_index, val, tile_img)
-                        if element_type != 'start_pos':
+                        if element_type != "start_pos":
                             self.map_tiles[element_type].append(tile)
 
     def make_tile(self, x, y, val, tile_img):
         match val:
-            case 'g': # Goal
-                self.goal = Tile(start_pos=(x, y), 
+            case "g":  # Goal
+                self.goal = Tile(
+                    start_pos=(x, y),
                     tiles_size=self.tiles_size,
-                    img_path='levels/carrot.webp', 
-                    manager=self.ui_manager, 
+                    img_path="levels/carrot.webp",
+                    manager=self.ui_manager,
                     container=self,
-                    board_offset=self.board_offset)
-            case 'p': # Player
-                self.player = Player(start_pos=(x, y), 
+                    board_offset=self.board_offset,
+                )
+            case "p":  # Player
+                self.player = Player(
+                    start_pos=(x, y),
                     tiles_size=self.tiles_size,
                     map_tiles=self.map_tiles,
                     player_data=self.env_data.player,
                     manager=self.ui_manager,
                     container=self,
-                    board_offset=self.board_offset)
+                    board_offset=self.board_offset,
+                )
                 self.player.change_layer(3)
-            case 'n': # NPC
-                self.npc = NPC(start_pos=(x, y), 
+            case "n":  # NPC
+                self.npc = NPC(
+                    start_pos=(x, y),
                     tiles_size=self.tiles_size,
                     npc_data=self.env_data.npc,
-                    manager=self.ui_manager, 
+                    manager=self.ui_manager,
                     container=self,
-                    board_offset=self.board_offset)
-                self.map_tiles['npc'] = [self.npc]
+                    board_offset=self.board_offset,
+                )
+                self.map_tiles["npc"] = [self.npc]
             case _:
-                return Tile(start_pos=(x, y), 
+                return Tile(
+                    start_pos=(x, y),
                     tiles_size=self.tiles_size,
-                    img_path=tile_img+".png", 
-                    manager=self.ui_manager, 
-                    container=self, 
+                    img_path=tile_img + ".png",
+                    manager=self.ui_manager,
+                    container=self,
                     tile=int(val),
-                    board_offset=self.board_offset)
-        
+                    board_offset=self.board_offset,
+                )

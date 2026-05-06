@@ -20,20 +20,24 @@ class Display:
         self.surface = pygame.Surface(self.resolution)
         # Can only see this when alt tabbing though
         self.set_icon("game/assets/levels/carrot.webp")
-        self.cursor_img = load_image('game/assets/SproutLands/UI/Mouse/Triangle Mouse icon 1.png')
+        self.cursor_img = load_image(
+            "game/assets/SproutLands/UI/Mouse/Triangle Mouse icon 1.png"
+        )
 
     def run(self, env: BaseEnvironment):
         pygame.display.set_caption(env.title)
 
         self.env = env
         self.running = True
-        env.ui_manager = pygame_gui.UIManager(self.resolution, theme_path=env.theme_path)
+        env.ui_manager = pygame_gui.UIManager(
+            self.resolution, theme_path=env.theme_path
+        )
 
         self.surface.fill(env.background_colour)
         env.reset()
 
         pygame.mouse.set_visible(False)
-        
+
         self.main_loop()
 
     # The main window loop for rendering the environment
@@ -79,18 +83,15 @@ class Display:
 
     def create_cursor(self):
         self.cursor = pygame_gui.elements.UIImage(
-            relative_rect=pygame.Rect(
-                (0,0),
-                (self.CURSOR_SIZE,self.CURSOR_SIZE)
-            ),
+            relative_rect=pygame.Rect((0, 0), (self.CURSOR_SIZE, self.CURSOR_SIZE)),
             image_surface=self.cursor_img,
-            manager=self.env.ui_manager
+            manager=self.env.ui_manager,
         )
         self.cursor.change_layer(50)
- 
+
     def update_cursor(self):
         pos = pygame.mouse.get_pos()
-        self.cursor.set_position((pos[0]+1,pos[1]+1))
+        self.cursor.set_position((pos[0] + 1, pos[1] + 1))
 
     # Sets icon for window, at least 32x32
     def set_icon(self, path):

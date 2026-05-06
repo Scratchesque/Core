@@ -6,12 +6,11 @@ from game.core.constants import IMG_TILE_SIZE
 from game.support.files import import_map_layout
 
 
-# This file renders the map along with player/npc/goal tiles
+# Render map layers and entity tiles (player/NPC/goal).
 class Board(UIPanel):
     def __init__(self, panel_pos, panel_size, env_data, manager):
-        # Starting_height is the panel's layer height
-        # For UIPanels you should either put all object that are supposed updated inside of the panels container
-        # or for example, use a UIPanel as a gui hud element like player health without a container
+        # `starting_height` controls panel render order.
+        # Place map elements in this panel container so they update/render together.
         super().__init__(
             Rect(panel_pos, panel_size),
             manager=manager,
@@ -19,17 +18,17 @@ class Board(UIPanel):
             starting_height=1,
         )
 
-        # Load vars to be used accross the class
+        # Cached state used while building and rendering map tiles.
         self.env_data = env_data
         self.completed_level = False
         self.tiles_size = None
         self.board_offset = (0, 0)
         self.map_tiles = {}
 
-        # Render the tiles
+        # Build tiles and entities from map data.
         self.create_ui()
 
-    # Gets the size of this panel container, and divdes it by the ammount of tiles in the level to get the size of the tile
+    # Scale tiles to fit the panel while preserving map proportions.
     def _scale_tiles(self, width, height):
         if self.tiles_size is None:
             panel_width, panel_height = self.get_relative_rect().size

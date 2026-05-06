@@ -214,10 +214,10 @@ class ConfirmationPanel(UIPanel):
             pygame.event.post(confirm_event)
 
 
-# Making the level text a ui panel so that it can change heights and not be lost in the rendering order
+# Level title panel pinned above gameplay panels.
 class LevelText(UIPanel):
     def __init__(self, panel_pos, panel_size, text, manager):
-        # Setting the starting height to 4 here since it should be above any other ui panels to be rendered, but below the dialouge text
+        # Keep title visible above most panels, but below dialogue overlays.
         super().__init__(
             Rect(panel_pos, panel_size),
             manager=manager,

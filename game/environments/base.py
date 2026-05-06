@@ -20,9 +20,9 @@ from game.support.files import import_map_layout, load_json
 from game.support.ui import UIFactory
 
 
-# New environemnts/screens that are loaded through the game manager should inherit this class
+# Base class for environments/screens loaded by the game manager.
 class BaseEnvironment:
-    # When an environemnt using this class init's, it loads all relevant data from 'environments/data/{level_file}.json" to be used
+    # Load shared defaults and level-specific environment data.
     def __init__(self, level_file):
         root_dir = "game/environments/data/"
         default_data = load_json(f"{root_dir}default.json")
@@ -69,14 +69,14 @@ class BaseEnvironment:
         # Per-frame updates (e.g., typing effects, animations).
         pass
 
-    # This is called when the screen is to be reset to recreate ui elements, it can also change the level from a level file
+    # Reset and recreate environment UI state.
     def reset(self):
         self.ui_manager.clear_and_reset()
         self.game_manager.display.create_cursor()
         self.create_ui()
 
 
-# This contains all of the info that will be consistent accross each of the levels
+# Shared level environment behavior.
 class GameEnv(BaseEnvironment):
     BOARD_PANEL_PADDING = 28
     BOARD_PANEL_MIN_SCALE = 1
@@ -148,7 +148,7 @@ class GameEnv(BaseEnvironment):
 
         self.create_shadow_panel(self.board_pos, self.board_size)
 
-        # Takes data passed through and starts creating the tiles/player/goal
+        # Build board entities (tiles, player, goal) from environment data.
         self.board = Board(
             panel_pos=self.board_pos,
             panel_size=self.board_size,
@@ -156,7 +156,7 @@ class GameEnv(BaseEnvironment):
             manager=self.ui_manager,
         )
 
-        # Setting level text from getting the env title
+        # Display current level title.
         LevelText(
             panel_pos=(10, -5),
             panel_size=(220, 50),
@@ -269,7 +269,7 @@ class BlockEnv(GameEnv):
 
         self.create_shadow_panel(self.blocks_pos, self.blocks_size)
 
-        # Where our code blocks will be placed and initalised
+        # Create and initialize the block panel.
         self.blocks = CodeBlocks(
             panel_pos=self.blocks_pos,
             panel_size=self.blocks_size,

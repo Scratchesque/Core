@@ -16,7 +16,7 @@ from game.support.player_data import PlayerData
 from game.window.display import Display
 
 
-# This process is explained on trello under (Completed) 'Start getting the core of the program'
+# Coordinate environment loading, switching, and game loop startup.
 class GameManager:
     def __init__(self, debug=False):
         self.debug = debug

@@ -74,7 +74,7 @@ class LevelSelect(BaseEnvironment):
             self.level_buttons.append((button, env.title, is_unlocked))
 
         if total_unlocked == 1:
-            # only start level unlocked
+            # Show the intro prompt when only the start level is unlocked.
             DialoguePanel(
                 panel_pos=(
                     (SCREEN_WIDTH - self.INTRO_SIZE[0]) // 2,

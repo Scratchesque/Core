@@ -6,7 +6,7 @@ from game.core.images import load_image
 from game.support.graphics import cut_graphics, tile_graphics
 
 
-# The main class that each tile is using so that they can be rendered on the board map
+# Base tile class used for map and entity rendering.
 class Tile(UIImage):
     MOVEMENT_DURATION = 10
 
@@ -20,7 +20,7 @@ class Tile(UIImage):
         tile=None,
         board_offset=(0, 0),
     ):
-        # Setup pos/size of tile
+        # Set up tile position and size.
         self.tiles_size = (int(tiles_size[0]), int(tiles_size[1]))
         self.board_offset = (int(board_offset[0]), int(board_offset[1]))
 
@@ -30,7 +30,7 @@ class Tile(UIImage):
         )
         relative_rect = Rect(relative_pos, tiles_size)
 
-        # Setup image graphics
+        # Set up tile graphics.
         self.full_img = load_image(f"game/assets/{img_path}")
         if tile is None:
             loaded_image = self.full_img
@@ -49,12 +49,12 @@ class Tile(UIImage):
         self.pos = Vector2(start_pos)
         self.animation_count = 0
 
-    # Fix blurry images with scaling
+    # Scale image to tile size to avoid blurry rendering.
     def set_image(self, image_surface, image_is_alpha_premultiplied=False):
         scaled_image = transform.scale(image_surface, self.tiles_size)
         super().set_image(scaled_image, image_is_alpha_premultiplied)
 
-    # Setup animations with cutting parameters of image
+    # Configure animation frames from the sprite sheet.
     def _setup_animations(
         self, animation_frames, sprite_col_start=0, sprite_row_start=0, sprite_gap=0
     ):
@@ -74,7 +74,7 @@ class Tile(UIImage):
             for frame in frames:
                 self.animations[name].append(animation_list[frame])
 
-    # Update animation image state
+    # Advance animation frame.
     def update(self, delta_time):
         if self.animation_count == 0:
             return
@@ -88,7 +88,7 @@ class Tile(UIImage):
         self.set_image(self.sprite_list[tile_number])
         self.animation_count += 1
 
-    # Check the absolute distance between 2 objects
+    # Check overlap threshold between two tile positions.
     @staticmethod
     def collision_check(pos1, pos2):
         x = abs(pos1.x - pos2.x) < 1
@@ -205,7 +205,7 @@ class Player(Tile):
             self.jumpable_tiles = map_bounds.jumpable
         self.boundary_tiles += map_bounds.blocked + self.jumpable_tiles
 
-        # set up the energy bar if it is present in the env data json
+        # Set up the energy bar when defined in environment data.
         if hasattr(player_data, "energy"):
             player_energy = player_data.energy
             self.health_capacity = player_energy
@@ -220,8 +220,7 @@ class Player(Tile):
                 container=self.ui_container,
             )
 
-    # right now the only way to get the health lower is through this function that is called in code blocks
-    # so that you can change the energy per level, you can set values from the env data json
+    # Reduce energy based on configured movement cost.
     def deplete_energy(self):
         self.current_health -= self.move_cost
 
@@ -261,7 +260,7 @@ class Player(Tile):
             else:
                 return jump_height - artificial_y
 
-        # if not jumping, then no change
+        # No additional vertical offset when not jumping.
         return 0
 
     def update_movement(self):
@@ -287,7 +286,7 @@ class Player(Tile):
 
     def update_tile_collisions(self):
         if self.vel.x == 0 and self.vel.y == 0:
-            # this code is for that if they are ontop of a tile that they shouldnt be, then tp them back
+            # If standing on invalid jump-only tiles, revert to previous position.
             if not self.is_jumping:
                 for collision_name in self.jumpable_tiles:
                     for sprite in self.map_tiles[collision_name]:
@@ -297,11 +296,11 @@ class Player(Tile):
             return
 
         for collision in self.boundary_tiles:
-            # this is so that if they are jumping, they can go through tiles and skip those collisons
+            # While jumping, ignore collisions with jumpable tiles.
             if self.is_jumping and collision in self.jumpable_tiles:
                 continue
             for sprite in self.map_tiles[collision]:
-                # so that collision works while jumping, remove the artifical jump height added when checking for collisions
+                # Remove visual jump offset before collision checks.
                 collision_pos = self.pos.copy()
                 collision_pos.y -= self._apply_jump()
                 if self.collision_check(collision_pos, sprite.pos):
@@ -309,7 +308,7 @@ class Player(Tile):
                     self.set_idle()
 
     def update_position(self):
-        # this updates the position of the player tile and the created shadow tile
+        # Update player and shadow sprite positions.
         player_x = int(self.board_offset.x + self.pos.x * self.tiles_size.x)
         player_y = int(self.board_offset.y + self.pos.y * self.tiles_size.y)
 

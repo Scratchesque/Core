@@ -228,21 +228,17 @@ class GameEnv(BaseEnvironment):
 
     def get_allowed_blocks(self):
         systems_data = getattr(self.env_data, "systems", None)
-        if systems_data is None:
-            return None
-        return getattr(systems_data, "allowed_blocks", None)
+        return getattr(systems_data, "allowed_blocks", None) if systems_data else None
 
     def get_level_script(self):
         systems_data = getattr(self.env_data, "systems", None)
-        if systems_data is None:
-            return None
-        return getattr(systems_data, "level_script", None)
+        return getattr(systems_data, "level_script", None) if systems_data else None
 
     def update_frame(self, delta_time):
         self.check_level_complete()
 
     def check_level_complete(self):
-        if self.board.completed_level == False:
+        if not self.board.completed_level:
             player = self.board.player
             goal = self.board.goal
             if player.goal_check(goal):

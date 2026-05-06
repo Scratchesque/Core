@@ -31,7 +31,7 @@ class Board(UIPanel):
 
     # Gets the size of this panel container, and divdes it by the ammount of tiles in the level to get the size of the tile
     def _scale_tiles(self, width, height):
-        if self.tiles_size == None:
+        if self.tiles_size is None:
             panel_width, panel_height = self.get_relative_rect().size
             max_scale_x = panel_width // (width * IMG_TILE_SIZE)
             max_scale_y = panel_height // (height * IMG_TILE_SIZE)

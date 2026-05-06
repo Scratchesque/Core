@@ -134,7 +134,7 @@ class InterpreterPanel(UIPanel, Interpreter):
             return
 
         if self.pull_button.on_click(event):
-            if self.is_visible == True:
+            if self.is_visible:
                 self.is_visible = False
                 self.pull_button.set_text("<")
             else:

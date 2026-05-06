@@ -134,9 +134,8 @@ class ProblemPanel(UIPanel):
             )
             return
 
-        if True:
-            self.value = value
-            self.kill()
+        self.value = value
+        self.kill()
 
     def process_event(self, event):
         if (
@@ -194,7 +193,7 @@ class ProblemButton(Button):
                 spec_text_list=self.spec_text_list, manager=self.ui_manager
             )
 
-        if self.problem_panel == None:
+        if self.problem_panel is None:
             return
 
         if not self.problem_panel.alive() and self.problem_panel.value != 0:

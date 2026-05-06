@@ -32,7 +32,7 @@ class Tile(UIImage):
 
         # Setup image graphics
         self.full_img = load_image(f"game/assets/{img_path}")
-        if tile == None:
+        if tile is None:
             loaded_image = self.full_img
         else:
             self.sprite_list = tile_graphics(self.full_img)
